@@ -15,7 +15,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
     async function fetchProducts() {
       console.log('fetching products');
       try {
-        const response = await fetch('http://localhost:3000/api/scrapeProducts');
+        //const response = await fetch('http://localhost:3000/api/scrapeProducts');
+        const response = await fetch('https://alkoholperkrona-1nml7gj5b-marcusxenons-projects.vercel.app//api/scrapeProducts');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
