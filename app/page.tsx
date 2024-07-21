@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 
-export default function Home({ searchParams }) {
+export default function Home({ searchParams }: { searchParams: any }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {

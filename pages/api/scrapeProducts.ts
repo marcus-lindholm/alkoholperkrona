@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 //const pupperteer = require('puppeteer');
 const cheerio = require('cheerio');
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   console.log("scrapeProducts API called");
     if (req.method === 'GET') {
         try {
@@ -49,12 +49,12 @@ async function runScraper() {
   
     
   
-    const wait = (ms) => {
+    const wait = (ms: any) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
   
     
-    const clickHref = async (page) => {
+    const clickHref = async (page: any) => {
       let counter = 0;
       const hrefAttribute = '/';
   
@@ -72,7 +72,7 @@ async function runScraper() {
       await page.click(`a[href="${hrefAttribute}"]`);
     }
   
-    const acceptCookies = async (page) => {
+    const acceptCookies = async (page: any) => {
       let counter = 0;
       const buttonClass = 'css-hjlgj3';
       console.log("running acceptCookies");
@@ -92,7 +92,7 @@ async function runScraper() {
       await page.click(`button.${buttonClass}`);
     }
   
-    const clickSortiment = async (page) => {
+    const clickSortiment = async (page: any) => {
       let counter = 0;
       const attribute = '/sortiment/';
       console.log("running clickSortiment");
@@ -112,7 +112,7 @@ async function runScraper() {
       await page.click(`a[href="${attribute}"]`);
     }
   
-    const getProductInfo = async (page) => {
+    const getProductInfo = async (page: any) => {
       let counter = 0;
       const $ = cheerio.load(await page.content());
       const products = [];
@@ -130,10 +130,10 @@ async function runScraper() {
         return;
       }
   
-    function processPriceString(input) {
+    function processPriceString(input: any) {
       input = input.replace(/\*/g, '');
   
-      return input.replace(/:(.)/, (match, nextChar) => {
+      return input.replace(/:(.)/, (match: any, nextChar: any) => {
         if (nextChar === "-") {
           // If "-" follows ":", remove ":" and all characters after it
           return '';
@@ -144,7 +144,7 @@ async function runScraper() {
       });
     }
   
-    function processAlcString(input) {
+    function processAlcString(input: any) {
       const startIndex = input.indexOf(" ml") + 3;
       const endIndex = input.indexOf("%");
   
@@ -158,7 +158,7 @@ async function runScraper() {
       return "";
     }
   
-    function processVolumeString(input) {
+    function processVolumeString(input: any) {
       // Remove all characters before the first number
       const firstNumberIndex = input.search(/\d/);
       const cleanedInput = input.substring(firstNumberIndex);
@@ -173,7 +173,7 @@ async function runScraper() {
     }
   
       const aTags = $('div.css-176nwz9 a');
-      aTags.each((index, element) => {
+      aTags.each((index: any, element: any) => {
         const priceString = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-8zpafe p.css-17znts1').text();
         const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
   
