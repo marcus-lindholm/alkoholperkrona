@@ -18,11 +18,16 @@ export default async function handler(req: any, res: any) {
 }
 
 async function runScraper() {
-  const browser = puppeteer.launch(
+  /* const browser = puppeteer.launch(
     {
       headless: false,
       
-    })
+    }) */
+  
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: true,
+  });
   const page = await (await browser).newPage();
 
   await page.setViewport({
@@ -35,7 +40,7 @@ async function runScraper() {
     waitUntil: 'domcontentloaded'
   });
   
-  await wait(3000);
+  await wait(2000);
 
   await clickHref(page);
   await wait(1500);
