@@ -1,10 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
+import ProductComponent from './components/ProductComponent';
 
 export default function Home({ searchParams }: { searchParams: any }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasClicked, setHasClicked] = useState(false);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -19,11 +23,14 @@ export default function Home({ searchParams }: { searchParams: any }) {
         setProducts(data.products);
       } catch (error) {
         console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     if(searchParams.runScraperButton) {
       console.log(searchParams);
+      setHasClicked(true);
       fetchProducts();
     }
   }, [searchParams.runScraperButton]); // Dependency array includes searchParams.runScraperButton to re-run effect when it changes
@@ -32,6 +39,11 @@ export default function Home({ searchParams }: { searchParams: any }) {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <RunScraperButton />
       {/* Optionally render fetched products here */}
+      {isLoading && hasClicked ? (
+        <div>Loading...</div>
+      ) : (
+        <ProductComponent products={products} />
+      )}
     </main>
   );
 }
