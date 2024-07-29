@@ -1,4 +1,7 @@
 import puppeteer from "puppeteer";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 //const pupperteer = require('puppeteer');
 const cheerio = require('cheerio');
@@ -49,6 +52,13 @@ async function runScraper() {
   await clickSortiment(page);
   await wait(1000);
   const products = await getProductInfo(page);
+
+  addProductsToDatabase(products).catch(e => {
+    throw e
+  }).finally(async () => {
+    await prisma.$disconnect()
+  });
+
   return products;
 
   }
@@ -159,7 +169,7 @@ function processVolumeString(input: any) {
 const getProductInfo = async (page: any) => {
   let counter = 0;
   const $ = cheerio.load(await page.content());
-  const products: { name: any; url: string; price: number; percentage: number; volume: number; }[] = [];
+  const products: { name: any; url: string; price: number; alcohol: number; volume: number; }[] = [];
   console.log("running getProductInfo");
 
   if(!await page.$('div.css-176nwz9 a')) {
@@ -180,14 +190,29 @@ const getProductInfo = async (page: any) => {
     const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
 
     const product = {
-      name: $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4').text(),
+      brand: $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text(),
+      name: $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text(),
       url: "https://systembolaget.se" + $(element).attr('href'),
       price: parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, '')),
-      percentage: parseFloat(processAlcString(volumeAndAlcohol)),
+      alcohol: parseFloat(processAlcString(volumeAndAlcohol)),
       volume: parseInt(processVolumeString(volumeAndAlcohol)),
     }
     products.push(product);
     //console.log(product);
   })
   return products;
+}
+
+async function addProductsToDatabase(products: any) {
+  for (let product of products) {
+    await prisma.beverage.upsert({
+      where: { url: product.url },
+      update: product,
+      create: product,
+    });
+  }
+}
+
+export async function fetchProducts() {
+  return await prisma.beverage.findMany();
 }

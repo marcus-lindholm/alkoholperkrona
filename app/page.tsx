@@ -5,11 +5,27 @@ import ReactDOM from 'react-dom';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
+import { PrismaClient } from "@prisma/client";
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasClicked, setHasClicked] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<ProductType[]>([]);
+
+  const prisma = new PrismaClient();
+
+  type ProductType = {
+    id: string;
+    brand: string;
+    name: string;
+    type: string | null;
+    alcohol: number;
+    volume: number;
+    price: number;
+    url: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
   useEffect(() => {
     async function fetchProducts() {
@@ -21,7 +37,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setProducts(data.products);
+        //setProducts(data.products);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -36,9 +52,14 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   }, [searchParams.runScraperButton]); // Dependency array includes searchParams.runScraperButton to re-run effect when it changes
 
-  async function getProducts() {
-    
+  async function fetchProducts() {
+    const products = await prisma.beverage.findMany();
+    return products;
   }
+
+  useEffect(() => {
+    fetchProducts().then((products) => setProducts(products));
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

@@ -28,3 +28,16 @@ model User {
   posts         Post[]
   @@map(name: "users")
 }
+
+model Beverage {
+  id        String     @default(cuid()) @id
+  brand     String
+  name      String
+  type      String?
+  alcohol   Float
+  volume    Float
+  price     Float
+  url       String    @unique
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+}
