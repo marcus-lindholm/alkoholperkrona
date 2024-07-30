@@ -33,6 +33,7 @@ model Beverage {
   id        String     @default(cuid()) @id
   brand     String
   name      String
+  apk       Float
   type      String?
   alcohol   Float
   volume    Float

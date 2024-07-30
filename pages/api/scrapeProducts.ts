@@ -21,6 +21,7 @@ export default async function handler(req: any, res: any) {
 }
 
 async function runScraper() {
+  console.time('runScraper');
   /* const browser = puppeteer.launch(
     {
       headless: false,
@@ -29,7 +30,7 @@ async function runScraper() {
   
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: true,
+    headless: false,
   });
   const page = await (await browser).newPage();
 
@@ -49,7 +50,7 @@ async function runScraper() {
   await wait(1500);
   await acceptCookies(page);
   await wait(1000);
-  await clickSortiment(page);
+  await navigateSortiment(page);
   await wait(1000);
   const products = await getProductInfo(page);
 
@@ -58,9 +59,8 @@ async function runScraper() {
   }).finally(async () => {
     await prisma.$disconnect()
   });
-
+  console.timeEnd('runScraper');
   return products;
-
   }
 
 const wait = (ms: any) => {
@@ -92,7 +92,7 @@ const acceptCookies = async (page: any) => {
   console.log("running acceptCookies");
 
   if (!await page.$(`button.${buttonClass}`)) {
-    console.log("button not found");
+    console.log("accept button not found");
     counter++;
     if (counter < 3) {
       console.log(`cant find button, running retry ${counter}`);
@@ -104,26 +104,25 @@ const acceptCookies = async (page: any) => {
     return;
   }
   await page.click(`button.${buttonClass}`);
+  counter = 3;
 }
 
-const clickSortiment = async (page: any) => {
+const navigateSortiment = async (page: any) => {
   let counter = 0;
-  const attribute = '/sortiment/';
-  console.log("running clickSortiment");
+  const url = 'https://www.systembolaget.se/sortiment/?p=20';
+  console.log("running navigateSortiment");
 
-  if (!await page.$(`a[href="${attribute}"]`)) {
-    console.log("a not found");
-    counter++;
-    if (counter < 3) {
-      console.log(`cant find a, running retry ${counter}`);
-      await wait(1000);
-      await acceptCookies(page);
-    } else {
-      console.log('href not found');
+  while (counter < 3) {
+    try {
+      await page.goto(url, { waitUntil: 'networkidle2' });
+      console.log(`Navigated to ${url}`);
+      return;
+    } catch (error) {
+      console.error(`Failed to navigate, retrying ${counter + 1}`, error);
+      counter++;
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Use setTimeout for delay
     }
-    return;
   }
-  await page.click(`a[href="${attribute}"]`);
 }
 
 function processPriceString(input: any) {
@@ -187,15 +186,23 @@ const getProductInfo = async (page: any) => {
   const aTags = $('div.css-176nwz9 a');
   aTags.each((index: any, element: any) => {
     const priceString = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-8zpafe p.css-17znts1').text();
+    const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
     const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
+    const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
+    if (alcohol === 0) {
+      return;
+    }
+    const volume = parseInt(processVolumeString(volumeAndAlcohol));
+    const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
 
     const product = {
       brand: $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text(),
       name: $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text(),
+      apk: apk,
       url: "https://systembolaget.se" + $(element).attr('href'),
-      price: parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, '')),
-      alcohol: parseFloat(processAlcString(volumeAndAlcohol)),
-      volume: parseInt(processVolumeString(volumeAndAlcohol)),
+      price: price,
+      alcohol: alcohol,
+      volume: volume,
     }
     products.push(product);
     //console.log(product);
@@ -204,6 +211,12 @@ const getProductInfo = async (page: any) => {
 }
 
 async function addProductsToDatabase(products: any) {
+  if (!Array.isArray(products)) {
+    console.error('Error: products is not an array. Type:', typeof products);
+    return;
+  }
+  console.log("Number of products: ", products.length);
+
   for (let product of products) {
     await prisma.beverage.upsert({
       where: { url: product.url },
@@ -211,8 +224,4 @@ async function addProductsToDatabase(products: any) {
       create: product,
     });
   }
-}
-
-export async function fetchProducts() {
-  return await prisma.beverage.findMany();
 }

@@ -5,19 +5,18 @@ import ReactDOM from 'react-dom';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
-import { PrismaClient } from "@prisma/client";
+import LoadingSpinner from './components/LoadingSpinner';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasClicked, setHasClicked] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
 
-  const prisma = new PrismaClient();
-
   type ProductType = {
     id: string;
     brand: string;
     name: string;
+    apk: number;
     type: string | null;
     alcohol: number;
     volume: number;
@@ -27,7 +26,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     updatedAt: Date;
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     async function fetchProducts() {
       console.log('fetching products');
       try {
@@ -50,23 +49,29 @@ export default function Home({ searchParams }: { searchParams: any }) {
       setHasClicked(true);
       fetchProducts();
     }
-  }, [searchParams.runScraperButton]); // Dependency array includes searchParams.runScraperButton to re-run effect when it changes
-
-  async function fetchProducts() {
-    const products = await prisma.beverage.findMany();
-    return products;
-  }
+  }, [searchParams.runScraperButton]); // Dependency array includes searchParams.runScraperButton to re-run effect when it changes */
 
   useEffect(() => {
-    fetchProducts().then((products) => setProducts(products));
+    async function fetchProducts() {
+      console.log('fetching products');
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchProducts();
   }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <RunScraperButton />
-      {/* Optionally render fetched products here */}
-      {isLoading && hasClicked ? (
-        <div>Loading...</div>
+      {isLoading ? (
+        <LoadingSpinner />
       ) : (
         <ProductComponent products={products} />
       )}
