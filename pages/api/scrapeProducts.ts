@@ -93,9 +93,9 @@ async function runScraper() {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
+    console.timeEnd('runScraper run time');
   });
 
-  console.timeEnd('runScraper run time');
   //await browser.close();
   return;
 }
@@ -296,11 +296,11 @@ function processVolumeString(input: any) {
 }
 
 const getProductInfo = async (page: any, type: string) => {
+  console.log("running getProductInfo"); 
   await page.waitForSelector('div.css-176nwz9 a', { timeout: 0 });
 
   const $ = cheerio.load(await page.content());
   const products: { brand: string; name: any; apk: number; url: string; price: number; alcohol: number; volume: number; type: string }[] = [];
-  console.log("running getProductInfo");
 
     const aTags = $('div.css-176nwz9 a');
     aTags.each((index: any, element: any) => {
@@ -341,11 +341,51 @@ async function addProductsToDatabase(products: any) {
   }
   console.log("Number of products: ", products.length);
 
-  for (let product of products) {
+  const totalProducts = products.length;
+  const logInterval = Math.ceil(totalProducts / 10);
+  
+  /* for (let i = 0; i < totalProducts; i++) {
+    const product = products[i];
     await prisma.beverage.upsert({
       where: { url: product.url },
       update: product,
       create: product,
     });
-  }
+  
+    if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
+      console.log(`Updating database progress: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
+    }
+  } */
+
+    const operations: any = [];
+
+    for (let i = 0; i < totalProducts; i++) {
+      const product = products[i];
+      operations.push(
+        prisma.beverage.findUnique({
+          where: { url: product.url },
+        }).then(existingProduct => {
+          if (!existingProduct) {
+            return prisma.beverage.create({
+              data: product,
+            });
+          }
+        })
+      );
+  
+      if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
+        console.log(`Preparing database operations: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
+      }
+    }
+  
+    await prisma.$transaction(async (prisma) => {
+      for (const operation of operations) {
+        await operation;
+      }
+    }, {
+      timeout: 600000 // Set timeout to unlimited
+    });
+  
+    console.log('Database update complete.');
+
 }
