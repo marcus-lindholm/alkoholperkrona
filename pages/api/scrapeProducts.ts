@@ -59,7 +59,7 @@ async function runScraper() {
   await navigateBeer(page);
   await wait(2000);
   const beers = await getProductInfo(page, "beer");
-  addProductsToDatabase(beers).catch(e => {
+  addProductsToDatabase(beers, "beer").catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
@@ -69,7 +69,7 @@ async function runScraper() {
   await navigateLiqour(page);
   await wait(2000);
   const liqour = await getProductInfo(page, "liquor");
-  addProductsToDatabase(liqour).catch(e => {
+  addProductsToDatabase(liqour, "liqour").catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
@@ -79,7 +79,7 @@ async function runScraper() {
   await navigateWine(page);
   await wait(2000);
   const wine = await getProductInfo(page, "wine");
-  addProductsToDatabase(wine).catch(e => {
+  addProductsToDatabase(wine, "wine").catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
@@ -89,7 +89,7 @@ async function runScraper() {
   await navigateCider(page);
   await wait(2000);
   const cider = await getProductInfo(page, "cider");
-  addProductsToDatabase(cider).catch(e => {
+  addProductsToDatabase(cider, "cider").catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
@@ -145,7 +145,8 @@ const acceptCookies = async (page: any) => {
 
 const getNumberOfPages = async (page: any) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/';
+  const url = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Webblanseringar_eller_Säsong';
+  //const url = 'https://www.systembolaget.se/sortiment/ordervaror/';
   console.log("running getNumberOfPages");
   const $ = cheerio.load(await page.content());
 
@@ -185,7 +186,8 @@ const getNumberOfPages = async (page: any) => {
 
 const navigateBeer = async (page: any) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/ol/?p=' + beerPages;
+  const url = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + beerPages;
+  //const url = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?p=' + beerPages;
   console.log("running navigateBeer");
 
   while (counter < 3) {
@@ -203,7 +205,8 @@ const navigateBeer = async (page: any) => {
 
 const navigateLiqour = async (page: any) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/sprit/?p=' + liqourPages;
+  const url = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + liqourPages;
+  //const url = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?p=' + liqourPages;
   console.log("running navigateLiqour");
 
   while (counter < 3) {
@@ -221,7 +224,9 @@ const navigateLiqour = async (page: any) => {
 
 const navigateWine = async (page: any) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/vin/?p=' + winePages;
+  const url = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + winePages;
+  //const url = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?p=' + winePages;
+
   console.log("running navigateWine");
 
   while (counter < 3) {
@@ -239,7 +244,8 @@ const navigateWine = async (page: any) => {
 
 const navigateCider = async (page: any) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?p=' + ciderPages;
+  const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + ciderPages;
+  //const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?p=' + ciderPages;
   console.log("running navigateCider");
 
   while (counter < 3) {
@@ -333,7 +339,7 @@ const getProductInfo = async (page: any, type: string) => {
   return products;
 }
 
-async function addProductsToDatabase(products: any) {
+async function addProductsToDatabase(products: any, type: string) {
   if (!Array.isArray(products)) {
     console.log(products);
     console.error('Error: products is not an array. Type:', typeof products);
@@ -343,49 +349,35 @@ async function addProductsToDatabase(products: any) {
 
   const totalProducts = products.length;
   const logInterval = Math.ceil(totalProducts / 10);
+  const operations: any = [];
   
-  /* for (let i = 0; i < totalProducts; i++) {
+  for (let i = 0; i < totalProducts; i++) {
     const product = products[i];
-    await prisma.beverage.upsert({
-      where: { url: product.url },
-      update: product,
-      create: product,
-    });
+    operations.push(
+      prisma.beverage.upsert({
+        where: { url: product.url },
+        update: product,
+        create: product,
+      })
+    );
   
     if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
       console.log(`Updating database progress: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
     }
-  } */
-
-    const operations: any = [];
-
-    for (let i = 0; i < totalProducts; i++) {
-      const product = products[i];
-      operations.push(
-        prisma.beverage.findUnique({
-          where: { url: product.url },
-        }).then(existingProduct => {
-          if (!existingProduct) {
-            return prisma.beverage.create({
-              data: product,
-            });
-          }
-        })
-      );
+  }
   
-      if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
-        console.log(`Preparing database operations: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
+  await prisma.$transaction(async (prisma) => {
+    const totalOperations = operations.length;
+    for (let i = 0; i < totalOperations; i++) {
+      await operations[i];
+      if ((i + 1) % logInterval === 0 || i === totalOperations - 1) {
+        console.log(type + ` transaction progress: ${Math.ceil(((i + 1) / totalOperations) * 100)}%`);
       }
     }
-  
-    await prisma.$transaction(async (prisma) => {
-      for (const operation of operations) {
-        await operation;
-      }
-    }, {
-      timeout: 600000 // Set timeout to unlimited
-    });
-  
-    console.log('Database update complete.');
+  }, {
+    timeout: 6000000,
+  });
+
+  console.log(type + ': Database update complete.');
 
 }

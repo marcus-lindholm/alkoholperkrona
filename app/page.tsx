@@ -11,6 +11,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasClicked, setHasClicked] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   type ProductType = {
     id: string;
@@ -68,13 +69,34 @@ export default function Home({ searchParams }: { searchParams: any }) {
     fetchProducts();
   }, []);
 
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'dark' : 'light'}`}>
+      <div className="absolute top-4 left-4 flex items-center">
+        <h1 className="text-2xl font-bold mr-12">APK-listan</h1>
+      </div>
+      <div className="absolute top-4 right-4 flex items-center">
+        <label className="switch">
+          <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
+          <span className="slider round"></span>
+        </label>
+        <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
+      </div>
       {isLoading ? (
-        <LoadingSpinner />
+        <div className="flex justify-center items-center w-full h-full">
+          <LoadingSpinner />
+        </div>
       ) : (
-        <ProductComponent products={products} />
+        <div className="w-full">
+          <ProductComponent products={products} isDarkMode={isDarkMode} />
+        </div>
       )}
+      <footer className="mt-8 text-center">
+      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm</a> <span>↗️</span></p>
+      </footer>
     </main>
   );
 }

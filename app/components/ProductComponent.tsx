@@ -14,63 +14,104 @@ type ProductType = {
   updatedAt: Date;
 };
 
-const ProductComponent = ({ products }: { products: ProductType[] }) => {
+const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], isDarkMode: boolean }) => {
   const [visibleCount, setVisibleCount] = useState(20);
-
-  const sortedProducts = products.sort((a, b) => b.apk - a.apk);
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
 
   const translateType = (type: string | null) => {
+    let displayType = "";
     if (type == null) {
       return;
-    } else if (type.toLowerCase() === "beer") {
-      return "Öl";
-    } else if (type.toLowerCase() === "wine") {
-      return "Vin";
-    } else if (type.toLowerCase() === "liquor") {
-      return "Sprit";
-    } else if (type.toLowerCase() === "cider") {
-      return "Cider";
+    } else if (type.toLowerCase().includes("beer")) {
+      displayType += "Öl";
+    } else if (type.toLowerCase().includes("wine")) {
+      displayType += "Vin";
+    } else if (type.toLowerCase().includes("liquor")) {
+      displayType += "Sprit";
+    } else if (type.toLowerCase().includes("cider")) {
+      displayType += "Cider";
     }
-    return type;
+    if (type.toLowerCase().includes("ordervara")) {
+      displayType += " (Ordervara)";
+    }
+    return displayType;
   };
 
+  const filteredProducts = products.filter(product => {
+    const matchesType = filterType ? product.type && product.type.toLowerCase().includes(filterType.toLowerCase()) : true;
+    const matchesOrdervara = filterOrdervara ? true : !product.type?.toLowerCase().includes("ordervara");
+    return matchesType && matchesOrdervara;
+  });
+
+  const sortedProducts = filteredProducts.sort((a, b) => b.apk - a.apk);
+
   const loadMore = () => {
-    setVisibleCount(prevCount => prevCount + 100);
+    setVisibleCount(prevCount => prevCount + 50);
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
+    <div className={`overflow-x-auto w-full mt-10 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+      <div className="mb-4 flex flex-wrap items-center">
+        <label htmlFor="filter" className="mr-2">Filter:</label>
+        <select
+          id="filter"
+          value={filterType || ""}
+          onChange={(e) => setFilterType(e.target.value || null)}
+          className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+        >
+          <option value="">Allt</option>
+          <option value="beer">Öl</option>
+          <option value="wine">Vin</option>
+          <option value="liquor">Sprit</option>
+          <option value="cider">Cider</option>
+        </select>
+        <label htmlFor="ordervara" className="ml-4 mr-2">Visa ordervaror:</label>
+        <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+          <input
+            id="ordervara"
+            type="checkbox"
+            checked={filterOrdervara}
+            onChange={(e) => setFilterOrdervara(e.target.checked)}
+            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+          />
+          <label
+            htmlFor="ordervara"
+            className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
+          ></label>
+        </div>
+      </div>
+      <table className={`min-w-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
         <thead>
           <tr>
-            <th className="px-4 py-2 border-b">Placering</th>
-            <th className="px-4 py-2 border-b">APK (ml/kr)</th>
-            <th className="px-4 py-2 border-b">Namn</th>
-            <th className="px-4 py-2 border-b">Typ</th>
-            <th className="px-4 py-2 border-b">Pris</th>
-            <th className="px-4 py-2 border-b">Volym</th>
-            <th className="px-4 py-2 border-b">Volymprocent</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Placering</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>APK (ml/kr)</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Namn</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Typ</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Pris</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volym</th>
+            <th className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volymprocent</th>
           </tr>
         </thead>
         <tbody>
           {sortedProducts.slice(0, visibleCount).map((product, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="px-4 py-2 border-b">{index + 1}</td>
-              <td className="px-4 py-2 border-b">{product.apk}</td>
-              <td className="px-4 py-2 border-b">
+            <tr key={index} className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{index + 1}</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                 <a href={product.url} className="hover:underline"><strong>{product.brand}</strong> {product.name}</a>
               </td>
-              <td className="px-4 py-2 border-b">{translateType(product.type)}</td>
-              <td className="px-4 py-2 border-b">{product.price} kr</td>
-              <td className="px-4 py-2 border-b">{product.volume} ml</td>
-              <td className="px-4 py-2 border-b">{product.alcohol} %</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.price} kr</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.volume} ml</td>
+              <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.alcohol} %</td>
             </tr>
           ))}
         </tbody>
       </table>
       {visibleCount < sortedProducts.length && (
         <div className="text-center my-4">
-          <button onClick={loadMore} className="px-4 py-2 bg-blue-500 text-white rounded">Visa fler</button>
+          <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-blue-500 text-white' : 'bg-blue-500 text-white'}`}>Visa fler</button>
         </div>
       )}
     </div>
