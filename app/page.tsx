@@ -76,7 +76,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="absolute top-4 left-4 flex items-center">
-        <h1 className="text-2xl font-bold mr-12">APK-listan</h1>
+        <h1 className="text-2xl font-bold mr-12">APKrona.se</h1>
       </div>
       <div className="absolute top-4 right-4 flex items-center">
         <label className="switch">
@@ -96,6 +96,11 @@ export default function Home({ searchParams }: { searchParams: any }) {
       )}
       <footer className="mt-8 text-center">
       <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm</a> <span>↗️</span></p>
+      <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4">
+        Vill du stödja denna sida? Donera en slant!
+        <img src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} alt="Swish Logo" className="w-8 h-8 ml-2 object-contain" />
+      </a>
+      
       </footer>
     </main>
   );
