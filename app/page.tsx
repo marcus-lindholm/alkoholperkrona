@@ -98,7 +98,13 @@ export default function Home({ searchParams }: { searchParams: any }) {
       <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm</a> <span>↗️</span></p>
       <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4">
         Vill du stödja denna sida? Donera en slant!
-        <img src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} alt="Swish Logo" className="w-8 h-8 ml-2 object-contain" />
+        <Image 
+          src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
+          alt="Swish Logo" 
+          width={32} 
+          height={32} 
+          className="ml-2 object-contain" 
+        />
       </a>
       
       </footer>
