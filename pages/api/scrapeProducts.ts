@@ -96,7 +96,7 @@ async function runScraper() {
     console.timeEnd('runScraper run time');
   });
 
-  //await browser.close();
+  await browser.close();
   return;
 }
 
@@ -284,7 +284,6 @@ function processAlcString(input: any) {
     // Extract and return the substring between " ml" and "%"
     return input.substring(startIndex, endIndex).replace(',', '.').trim();
   }
-// Return an empty string if the conditions are not met
   return "";
 }
 
@@ -316,6 +315,7 @@ const getProductInfo = async (page: any, type: string) => {
       const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
       const brand = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text();
       const name = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text();
+      const typeInfo = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-i37je3').text();
       if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
         console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
         return;
@@ -331,7 +331,7 @@ const getProductInfo = async (page: any, type: string) => {
         price: price,
         alcohol: alcohol,
         volume: volume,
-        type: type,
+        type: type + ", " + typeInfo,
       }
       products.push(product);
       //console.log(product);

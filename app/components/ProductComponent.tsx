@@ -17,6 +17,7 @@ type ProductType = {
 const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], isDarkMode: boolean }) => {
   const [visibleCount, setVisibleCount] = useState(20);
   const [filterType, setFilterType] = useState<string | null>(null);
+  const [nestedFilter, setNestedFilter] = useState<string | null>(null);
   const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
 
   const translateType = (type: string | null) => {
@@ -40,8 +41,9 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
 
   const filteredProducts = products.filter(product => {
     const matchesType = filterType ? product.type && product.type.toLowerCase().includes(filterType.toLowerCase()) : true;
+    const matchesNestedFilter = nestedFilter ? product.type && product.type.toLowerCase().includes(nestedFilter.toLowerCase()) : true;
     const matchesOrdervara = filterOrdervara ? true : !product.type?.toLowerCase().includes("ordervara");
-    return matchesType && matchesOrdervara;
+    return matchesType && matchesNestedFilter && matchesOrdervara;
   });
 
   const sortedProducts = filteredProducts.sort((a, b) => b.apk - a.apk);
@@ -57,15 +59,63 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
         <select
           id="filter"
           value={filterType || ""}
-          onChange={(e) => setFilterType(e.target.value || null)}
+          onChange={(e) => {
+            setFilterType(e.target.value || null);
+            setNestedFilter(null); // Reset nested filter when main filter changes
+          }}
           className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
         >
           <option value="">Allt</option>
           <option value="beer">Öl</option>
           <option value="wine">Vin</option>
           <option value="liquor">Sprit</option>
-          <option value="cider">Cider</option>
+          <option value="cider">Cider & blanddrycker</option>
         </select>
+        {filterType && (
+          <select
+            id="nestedFilter"
+            value={nestedFilter || ""}
+            onChange={(e) => setNestedFilter(e.target.value || null)}
+            className={`ml-4 px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+          >
+            {filterType === "beer" && (
+              <>
+                <option value="">Alla öl</option>
+                <option value="lager">Lager</option>
+                <option value="ale">Ale</option>
+                <option value="stout">Stout</option>
+                <option value="ipa">IPA</option>
+              </>
+            )}
+            {filterType === "wine" && (
+              <>
+                <option value="">Alla viner</option>
+                <option value="rött">Rödvin</option>
+                <option value="vitt">Vitt vin</option>
+                <option value="rosé">Rosévin</option>
+                <option value="mousserande">Mousserande vin</option>
+              </>
+            )}
+            {filterType === "liquor" && (
+              <>
+                <option value="">Alla spritdrycker</option>
+                <option value="whiskey">Whiskey</option>
+                <option value="vodka">Vodka</option>
+                <option value="rom">Rom</option>
+                <option value="gin">Gin</option>
+                <option value="punsch">Punch</option>
+              </>
+            )}
+            {filterType === "cider" && (
+              <>
+                <option value="">Alla cider</option>
+                <option value="torr">Torr cider</option>
+                <option value="söt">Söt cider</option>
+                <option value="blanddryck">Blanddryck</option>
+              </>
+            )}
+          </select>
+        )}
         <label htmlFor="ordervara" className="ml-4 mr-2">Visa ordervaror:</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
@@ -99,7 +149,9 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{index + 1}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                <a href={product.url} className="hover:underline"><strong>{product.brand}</strong> {product.name}</a>
+              <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                <strong>{product.brand}</strong> {product.name}
+              </a>
               </td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.price} kr</td>
