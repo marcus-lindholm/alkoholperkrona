@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import Cookies from 'js-cookie';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
@@ -9,9 +9,11 @@ import LoadingSpinner from './components/LoadingSpinner';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [hasClicked, setHasClicked] = useState(false);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [fetchAll, setFetchAll] = useState(false);
 
   type ProductType = {
     id: string;
@@ -27,50 +29,57 @@ export default function Home({ searchParams }: { searchParams: any }) {
     updatedAt: Date;
   };
 
-  /* useEffect(() => {
-    async function fetchProducts() {
-      console.log('fetching products');
-      try {
-        const response = await fetch('http://localhost:3000/api/scrapeProducts');
-        //const response = await fetch('https://alkoholperkrona-1nml7gj5b-marcusxenons-projects.vercel.app/api/scrapeProducts');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        //setProducts(data.products);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  async function fetchProducts(page: number) {
+    const darkModePreference = Cookies.get('darkMode') === 'true';
+    setIsDarkMode(darkModePreference);
 
-    if(searchParams.runScraperButton) {
-      console.log(searchParams);
-      setHasClicked(true);
-      fetchProducts();
+    console.log('fetching products');
+    try {
+      const response = await fetch(`/api/products?page=${page}&limit=50`);
+      const data = await response.json();
+      if (page === 1) {
+        setProducts(data.products);
+      } else {
+        setProducts(prevProducts => [...prevProducts, ...data.products]);
+      }
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [searchParams.runScraperButton]); // Dependency array includes searchParams.runScraperButton to re-run effect when it changes */
+  }
 
   useEffect(() => {
-    async function fetchProducts() {
-      console.log('fetching products');
-      try {
-        const response = await fetch('/api/products');
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchProducts();
-  }, []);
+    fetchProducts(page);
+  }, [page]);
 
   const handleThemeToggle = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode(prevMode => {
+      const newMode = !prevMode;
+      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
+      return newMode;
+    });
+  };
+
+  const loadMore = () => {
+    if (page < totalPages) {
+      setPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const fetchEverything = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      setProducts(data.products);
+      setTotalPages(1);
+    } catch (error) {
+      console.error('Error fetching all products:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -95,18 +104,46 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       )}
       <footer className="mt-8 text-center">
-      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
-      <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4">
-        Vill du stödja denna sida? Donera en slant!
-        <Image 
-          src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
-          alt="Swish Logo" 
-          width={32} 
-          height={32} 
-          className="ml-2 object-contain" 
-        />
-      </a>
-      
+        <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
+        <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
+          Vill du stödja denna sida? Donera en slant!
+          <Image 
+            src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
+            alt="Swish Logo" 
+            width={32} 
+            height={32} 
+            className="ml-2 object-contain"
+          />
+        </a>
+        <label 
+          htmlFor="fetchAll"
+          className="ml-4 mr-2 text-sm"
+          title="Ladda in hela sortimentet (>25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+        >Beast mode</label>
+        <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+          <input
+            id="fetchAll"
+            type="checkbox"
+            checked={fetchAll}
+            onChange={(e) => {
+              setFetchAll(e.target.checked);
+              if (e.target.checked) {
+                fetchEverything();
+              } else {
+                setPage(1);
+                setProducts([]);
+                setIsLoading(true);
+                fetchProducts(1);
+              }
+            }}
+            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+          />
+          <label
+            htmlFor="fetchAll"
+            className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
+            title="Ladda in hela sortimentet (>25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+          ></label>
+        </div>
       </footer>
     </main>
   );

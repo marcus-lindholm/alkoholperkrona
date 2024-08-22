@@ -14,12 +14,14 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@prisma/client": "^5.17.0",
     "cheerio": "^1.0.0-rc.12",
+    "js-cookie": "^3.0.5",
     "next": "14.2.5",
     "puppeteer": "^22.13.1",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
