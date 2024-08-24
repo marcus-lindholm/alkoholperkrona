@@ -151,7 +151,7 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
         </thead>
         <tbody>
           {sortedProducts.slice(0, visibleCount).map((product, index) => (
-            <tr key={index} className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <tr key={index} className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{index + 1}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
