@@ -22,9 +22,21 @@ export default async function handler(req: any, res: any) {
     }
 }
 
-async function runScraper() {
+async function runScraper(catalogue: string = 'vanligtSortiment') {
   console.time('runScraper run time');
-
+  if (catalogue === 'ordervara') {
+    var pageURL = 'https://www.systembolaget.se/sortiment/ordervaror/';
+    var beerURL = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?p=';
+    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?p=';
+    var wineURL = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?p=';
+    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?p=';
+  } else {
+    var pageURL = 'https://www.systembolaget.se/sortiment/';
+    var beerURL = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
+    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
+    var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
+    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
+  }
   /* const browser = puppeteer.launch(
     {
       headless: false,
@@ -53,43 +65,43 @@ async function runScraper() {
   await wait(1500);
   await acceptCookies(page);
   await wait(1000);
-  await getNumberOfPages(page);
+  await getNumberOfPages(page, pageURL);
   await wait(1000);
 
-  await navigateBeer(page);
+  await navigateBeer(page, beerURL);
   await wait(2000);
-  const beers = await getProductInfo(page, "beer");
-  addProductsToDatabase(beers, "beer").catch(e => {
+  const beers = await getProductInfo(page, "beer, " + catalogue);
+  addProductsToDatabase(beers, "beer, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
   });
   await wait(1000);
 
-  await navigateLiqour(page);
+  await navigateLiqour(page, liqourURL);
   await wait(2000);
-  const liqour = await getProductInfo(page, "liquor");
-  addProductsToDatabase(liqour, "liqour").catch(e => {
+  const liqour = await getProductInfo(page, "liquor, " + catalogue);
+  addProductsToDatabase(liqour, "liqour, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
   });
   await wait(1000);
 
-  await navigateWine(page);
+  await navigateWine(page, wineURL);
   await wait(2000);
-  const wine = await getProductInfo(page, "wine");
-  addProductsToDatabase(wine, "wine").catch(e => {
+  const wine = await getProductInfo(page, "wine, " + catalogue);
+  addProductsToDatabase(wine, "wine, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
   });
   await wait(1000);
 
-  await navigateCider(page);
+  await navigateCider(page, ciderURL);
   await wait(2000);
-  const cider = await getProductInfo(page, "cider");
-  addProductsToDatabase(cider, "cider").catch(e => {
+  const cider = await getProductInfo(page, "cider, " + catalogue);
+  addProductsToDatabase(cider, "cider, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
     await prisma.$disconnect()
@@ -97,6 +109,10 @@ async function runScraper() {
   });
 
   await browser.close();
+
+  if (catalogue === 'vanligtSortiment') {
+    runScraper('ordervara');
+  }
   return;
 }
 
@@ -143,9 +159,9 @@ const acceptCookies = async (page: any) => {
   counter = 3;
 }
 
-const getNumberOfPages = async (page: any) => {
+const getNumberOfPages = async (page: any, url: string) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Webblanseringar_eller_Säsong';
+  //const url = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Webblanseringar_eller_Säsong';
   //const url = 'https://www.systembolaget.se/sortiment/ordervaror/';
   console.log("running getNumberOfPages");
   const $ = cheerio.load(await page.content());
@@ -184,9 +200,10 @@ const getNumberOfPages = async (page: any) => {
   }
 }
 
-const navigateBeer = async (page: any) => {
+const navigateBeer = async (page: any, beerURL: string) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + beerPages;
+  const url = beerURL + beerPages;
+  //const url = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + beerPages;
   //const url = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?p=' + beerPages;
   console.log("running navigateBeer");
 
@@ -203,9 +220,10 @@ const navigateBeer = async (page: any) => {
   }
 }
 
-const navigateLiqour = async (page: any) => {
+const navigateLiqour = async (page: any, liqourURL: string) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + liqourPages;
+  const url = liqourURL + liqourPages;
+  //const url = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + liqourPages;
   //const url = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?p=' + liqourPages;
   console.log("running navigateLiqour");
 
@@ -222,9 +240,10 @@ const navigateLiqour = async (page: any) => {
   }
 }
 
-const navigateWine = async (page: any) => {
+const navigateWine = async (page: any, wineURL: string) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + winePages;
+  const url = wineURL + winePages;
+  //const url = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + winePages;
   //const url = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?p=' + winePages;
 
   console.log("running navigateWine");
@@ -242,9 +261,10 @@ const navigateWine = async (page: any) => {
   }
 }
 
-const navigateCider = async (page: any) => {
+const navigateCider = async (page: any, ciderURL: string) => {
   let counter = 0;
-  const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + ciderPages;
+  const url = ciderURL + ciderPages;
+  //const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + ciderPages;
   //const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?p=' + ciderPages;
   console.log("running navigateCider");
 
