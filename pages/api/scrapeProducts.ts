@@ -15,7 +15,7 @@ export default async function handler(req: any, res: any) {
             const products = await runScraper();
             res.status(200).json({ message: 'Scraper ran successfully', products: products });
         } catch (error) {
-            res.status(500).json({ message: 'Scraper failed to run' });
+            res.status(500).json({ message: 'Scraper failed to run', error: error });
         }
     } else {
         res.status(405).json({ message: 'Method not allowed' });
