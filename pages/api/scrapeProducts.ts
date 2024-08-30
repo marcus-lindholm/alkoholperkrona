@@ -44,6 +44,7 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     }) */
   
   const browser = await puppeteer.launch({
+    //executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     headless: false,
   });
@@ -397,6 +398,8 @@ async function addProductsToDatabase(products: any, type: string) {
   }, {
     timeout: 6000000,
   });
+
+
 
   console.log(type + ': Database update complete.');
 
