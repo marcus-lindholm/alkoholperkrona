@@ -13,7 +13,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [fetchAll, setFetchAll] = useState(false);
+  const [isBeastMode, setBeastMode] = useState(false);
 
   type ProductType = {
     id: string;
@@ -100,7 +100,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       ) : (
         <div className="w-full">
-          <ProductComponent products={products} isDarkMode={isDarkMode} />
+          <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode}/>
         </div>
       )}
       <footer className="mt-8 text-center">
@@ -118,15 +118,15 @@ export default function Home({ searchParams }: { searchParams: any }) {
         <label 
           htmlFor="fetchAll"
           className="ml-4 mr-2 text-sm"
-          title="Ladda in hela sortimentet (>25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+          title="Ladda in hela sortimentet (ca 25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
         >Beast mode</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
             id="fetchAll"
             type="checkbox"
-            checked={fetchAll}
+            checked={isBeastMode}
             onChange={(e) => {
-              setFetchAll(e.target.checked);
+              setBeastMode(e.target.checked);
               if (e.target.checked) {
                 fetchEverything();
               } else {

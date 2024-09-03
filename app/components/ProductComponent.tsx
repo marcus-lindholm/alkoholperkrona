@@ -14,11 +14,12 @@ type ProductType = {
   updatedAt: Date;
 };
 
-const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], isDarkMode: boolean }) => {
+const ProductComponent = ({ products, isDarkMode, isBeastMode }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean }) => {
   const [visibleCount, setVisibleCount] = useState(20);
   const [filterType, setFilterType] = useState<string | null>(null);
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
   const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const translateType = (type: string | null) => {
     let displayType = "";
@@ -43,7 +44,8 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
     const matchesType = filterType ? product.type && product.type.toLowerCase().includes(filterType.toLowerCase()) : true;
     const matchesNestedFilter = nestedFilter ? product.type && product.type.toLowerCase().includes(nestedFilter.toLowerCase()) : true;
     const matchesOrdervara = filterOrdervara ? true : !product.type?.toLowerCase().includes("ordervara");
-    return matchesType && matchesNestedFilter && matchesOrdervara;
+    const matchesSearchQuery = isBeastMode ? product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand.toLowerCase().includes(searchQuery.toLowerCase()) || product.type?.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return matchesType && matchesNestedFilter && matchesOrdervara && matchesSearchQuery;
   });
 
   const sortedProducts = filteredProducts.sort((a, b) => b.apk - a.apk);
@@ -55,6 +57,18 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
   return (
     <div className={`overflow-x-auto w-full mt-10 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center">
+        {isBeastMode && (
+            <div className="mb-2 sm:mb-0 sm:mr-4">
+              <label htmlFor="search" className="mr-2">Sök:</label>
+              <input
+                id="search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+              />
+            </div>
+        )}
         <div className="mb-2 sm:mb-0 sm:mr-4">
           <label htmlFor="filter" className="mr-2">Filter:</label>
           <select
@@ -85,7 +99,7 @@ const ProductComponent = ({ products, isDarkMode }: { products: ProductType[], i
                 <>
                   <option value="">Alla öl</option>
                   <option value="lager">Lager</option>
-                  <option value="ale">Ale</option>
+                  <option value=" ale">Ale</option>
                   <option value="stout">Stout</option>
                   <option value="ipa">IPA</option>
                 </>
