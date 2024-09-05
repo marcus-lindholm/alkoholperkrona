@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactSlider from 'react-slider';
 
 type ProductType = {
   id: string;
@@ -20,6 +21,9 @@ const ProductComponent = ({ products, isDarkMode, isBeastMode }: { products: Pro
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
   const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [volumeRange, setVolumeRange] = useState<[number, number]>([0, 5000]);
+  const [alcoholRange, setAlcoholRange] = useState<[number, number]>([0, 100]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
 
   const translateType = (type: string | null) => {
     let displayType = "";
@@ -45,7 +49,10 @@ const ProductComponent = ({ products, isDarkMode, isBeastMode }: { products: Pro
     const matchesNestedFilter = nestedFilter ? product.type && product.type.toLowerCase().includes(nestedFilter.toLowerCase()) : true;
     const matchesOrdervara = filterOrdervara ? true : !product.type?.toLowerCase().includes("ordervara");
     const matchesSearchQuery = isBeastMode ? product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand.toLowerCase().includes(searchQuery.toLowerCase()) || product.type?.toLowerCase().includes(searchQuery.toLowerCase()) : true;
-    return matchesType && matchesNestedFilter && matchesOrdervara && matchesSearchQuery;
+    const matchesVolume = product.volume >= volumeRange[0] && product.volume <= volumeRange[1];
+    const matchesAlcohol = product.alcohol >= alcoholRange[0] && product.alcohol <= alcoholRange[1];
+    const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+    return matchesType && matchesNestedFilter && matchesOrdervara && matchesSearchQuery && matchesVolume && matchesAlcohol && matchesPrice;
   });
 
   const sortedProducts = filteredProducts.sort((a, b) => b.apk - a.apk);
@@ -150,6 +157,55 @@ const ProductComponent = ({ products, isDarkMode, isBeastMode }: { products: Pro
             ></label>
           </div>
         </div>
+        {isBeastMode && (
+          <>
+            <div className="mb-2 sm:mb-0 sm:mr-4">
+              <label htmlFor="volumeRange" className="mr-2">Volym (ml):</label>
+              <ReactSlider
+                className={`horizontal-slider ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+                thumbClassName="example-thumb"
+                trackClassName="example-track"
+                min={0}
+                max={5000}
+                value={volumeRange}
+                onChange={(value: any) => setVolumeRange(value as [number, number])}
+                ariaLabel={['Lower thumb', 'Upper thumb']}
+                ariaValuetext={(state: any) => `Thumb value ${state.valueNow}`}
+              />
+              <span>{volumeRange[0]} - {volumeRange[1]} ml</span>
+            </div>
+            <div className="mb-2 sm:mb-0 sm:mr-4">
+              <label htmlFor="alcoholRange" className="mr-2">Alkohol (%):</label>
+              <ReactSlider
+                className={`horizontal-slider ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+                thumbClassName="example-thumb"
+                trackClassName="example-track"
+                min={0}
+                max={100}
+                value={alcoholRange}
+                onChange={(value: any) => setAlcoholRange(value as [number, number])}
+                ariaLabel={['Lower thumb', 'Upper thumb']}
+                ariaValuetext={(state: any) => `Thumb value ${state.valueNow}`}
+              />
+              <span>{alcoholRange[0]} - {alcoholRange[1]} %</span>
+            </div>
+            <div className="mb-2 sm:mb-0 sm:mr-4">
+              <label htmlFor="priceRange" className="mr-2">Pris (kr):</label>
+              <ReactSlider
+                className={`horizontal-slider ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+                thumbClassName="example-thumb"
+                trackClassName="example-track"
+                min={0}
+                max={10000}
+                value={priceRange}
+                onChange={(value: any) => setPriceRange(value as [number, number])}
+                ariaLabel={['Lower thumb', 'Upper thumb']}
+                ariaValuetext={(state: any) => `Thumb value ${state.valueNow}`}
+              />
+              <span>{priceRange[0]} - {priceRange[1]} kr</span>
+            </div>
+          </>
+        )}
       </div>
       <table className={`min-w-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
         <thead>
