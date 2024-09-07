@@ -5,6 +5,7 @@ var beerPages: number;
 var liqourPages: number;
 var winePages: number;
 var ciderPages: number;
+var allScrapedProductURLs: string[] = [];
 const prisma = new PrismaClient();
 const cheerio = require('cheerio');
 
@@ -26,16 +27,16 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   console.time('runScraper run time');
   if (catalogue === 'ordervara') {
     var pageURL = 'https://www.systembolaget.se/sortiment/ordervaror/';
-    var beerURL = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?p=';
-    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?p=';
-    var wineURL = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?p=';
-    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?p=';
+    var beerURL = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?';
+    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?';
+    var wineURL = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?';
+    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?';
   } else {
-    var pageURL = 'https://www.systembolaget.se/sortiment/';
-    var beerURL = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
-    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
-    var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
-    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=';
+    var pageURL = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar';
+    var beerURL = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_S%C3%A4song&';
+    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
+    var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
+    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
   }
   /* const browser = puppeteer.launch(
     {
@@ -69,9 +70,7 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   await getNumberOfPages(page, pageURL);
   await wait(1000);
 
-  await navigateBeer(page, beerURL);
-  await wait(2000);
-  const beers = await getProductInfo(page, "beer, " + catalogue);
+  const beers = await getProductInfo(page, "beer, " + catalogue, beerPages, beerURL);
   addProductsToDatabase(beers, "beer, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
@@ -79,9 +78,7 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   });
   await wait(1000);
 
-  await navigateLiqour(page, liqourURL);
-  await wait(2000);
-  const liqour = await getProductInfo(page, "liquor, " + catalogue);
+  const liqour = await getProductInfo(page, "liquor, " + catalogue, liqourPages, liqourURL);
   addProductsToDatabase(liqour, "liqour, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
@@ -89,9 +86,7 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   });
   await wait(1000);
 
-  await navigateWine(page, wineURL);
-  await wait(2000);
-  const wine = await getProductInfo(page, "wine, " + catalogue);
+  const wine = await getProductInfo(page, "wine, " + catalogue, winePages, wineURL);
   addProductsToDatabase(wine, "wine, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
@@ -99,9 +94,7 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   });
   await wait(1000);
 
-  await navigateCider(page, ciderURL);
-  await wait(2000);
-  const cider = await getProductInfo(page, "cider, " + catalogue);
+  const cider = await getProductInfo(page, "cider, " + catalogue, ciderPages, ciderURL);
   addProductsToDatabase(cider, "cider, " + catalogue).catch(e => {
     throw e
   }).finally(async () => {
@@ -113,7 +106,11 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
 
   if (catalogue === 'vanligtSortiment') {
     runScraper('ordervara');
+  } else {
+    await deleteOldProducts();
+    console.log("Total number of scraped products: ", allScrapedProductURLs.length);
   }
+  
   return;
 }
 
@@ -162,8 +159,6 @@ const acceptCookies = async (page: any) => {
 
 const getNumberOfPages = async (page: any, url: string) => {
   let counter = 0;
-  //const url = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Webblanseringar_eller_Säsong';
-  //const url = 'https://www.systembolaget.se/sortiment/ordervaror/';
   console.log("running getNumberOfPages");
   const $ = cheerio.load(await page.content());
 
@@ -201,83 +196,19 @@ const getNumberOfPages = async (page: any, url: string) => {
   }
 }
 
-const navigateBeer = async (page: any, beerURL: string) => {
+const navigateCategory = async (page: any, url: string) => {
   let counter = 0;
-  const url = beerURL + beerPages;
-  //const url = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + beerPages;
-  //const url = 'https://www.systembolaget.se/sortiment/ol/ordervaror/?p=' + beerPages;
-  console.log("running navigateBeer");
+  console.log("running navigateCategory");
 
   while (counter < 3) {
     try {
       await page.goto(url, { waitUntil: 'networkidle2' });
-      console.log(`Navigated to ${url}`);
+      //console.log(`Navigated to ${url}`);
       return;
     } catch (error) {
       console.error(`Failed to navigate, retrying ${counter + 1}`, error);
       counter++;
       await wait(1000);
-    }
-  }
-}
-
-const navigateLiqour = async (page: any, liqourURL: string) => {
-  let counter = 0;
-  const url = liqourURL + liqourPages;
-  //const url = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + liqourPages;
-  //const url = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?p=' + liqourPages;
-  console.log("running navigateLiqour");
-
-  while (counter < 3) {
-    try {
-      await page.goto(url, { waitUntil: 'networkidle2' });
-      console.log(`Navigated to ${url}`);
-      return;
-    } catch (error) {
-      console.error(`Failed to navigate, retrying ${counter + 1}`, error);
-      counter++;
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Use setTimeout for delay
-    }
-  }
-}
-
-const navigateWine = async (page: any, wineURL: string) => {
-  let counter = 0;
-  const url = wineURL + winePages;
-  //const url = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + winePages;
-  //const url = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?p=' + winePages;
-
-  console.log("running navigateWine");
-
-  while (counter < 3) {
-    try {
-      await page.goto(url, { waitUntil: 'networkidle2' });
-      console.log(`Navigated to ${url}`);
-      return;
-    } catch (error) {
-      console.error(`Failed to navigate, retrying ${counter + 1}`, error);
-      counter++;
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Use setTimeout for delay
-    }
-  }
-}
-
-const navigateCider = async (page: any, ciderURL: string) => {
-  let counter = 0;
-  const url = ciderURL + ciderPages;
-  //const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillfälligt%20sortiment_eller_Lokalt%20%26%20Småskaligt_eller_Säsong_eller_Webblanseringar/&p=' + ciderPages;
-  //const url = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?p=' + ciderPages;
-  console.log("running navigateCider");
-
-  while (counter < 3) {
-    try {
-      await page.goto(url, { waitUntil: 'networkidle2' });
-      console.log(`Navigated to ${url}`);
-      return;
-    } catch (error) {
-      console.error(`Failed to navigate, retrying ${counter + 1}`, error);
-      counter++;
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Use setTimeout for delay
     }
   }
 }
@@ -299,7 +230,6 @@ function processPriceString(input: any) {
 function processAlcString(input: any) {
   const startIndex = input.indexOf(" ml") + 3;
   const endIndex = input.indexOf("%");
-
   // Check if both " ml" and "%" are found in the string
   if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
     // Extract and return the substring between " ml" and "%"
@@ -321,42 +251,66 @@ function processVolumeString(input: any) {
   return cleanedInput.replace(' ', '');
 }
 
-const getProductInfo = async (page: any, type: string) => {
-  console.log("running getProductInfo"); 
-  await page.waitForSelector('div.css-176nwz9 a', { timeout: 0 });
+async function waitForSelectorIndefinitely(page: any, selector: string) {
+  while (true) {
+    try {
+      await page.waitForSelector(selector, { timeout: 10000 });
+      break;
+    } catch (error) {
+      await wait(2000);
+    }
+  }
+}
 
-  const $ = cheerio.load(await page.content());
+const getProductInfo = async (page: any, type: string, pages: number, url: string) => {
+  console.log("running getProductInfo");
   const products: { brand: string; name: any; apk: number; url: string; price: number; alcohol: number; volume: number; type: string }[] = [];
+  let currentPage = 1;
+  console.log("Number of pages: ", pages);
+  while (currentPage <= pages) {
+    try {
+      await navigateCategory(page, url + "p=" + currentPage);
+      await wait(1000);
+      await waitForSelectorIndefinitely(page, 'div.css-176nwz9 a');
+      const $ = cheerio.load(await page.content());
+      console.log(`Currently on ${type} page ${currentPage} out of ${pages}`);
 
-    const aTags = $('div.css-176nwz9 a');
-    aTags.each((index: any, element: any) => {
-      const priceString = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-8zpafe p.css-17znts1').text();
-      const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
-      const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
-      const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
-      const brand = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text();
-      const name = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text();
-      const typeInfo = $(element).find('.css-1spqwqt .css-1mrpgcx .css-8zpafe .css-6df2t1 .css-uxm6qc .css-i37je3').text();
-      if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
-        console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
-        return;
-      }
-      const volume = parseInt(processVolumeString(volumeAndAlcohol));
-      const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
+      const aTags = $('div.css-176nwz9 a');
+      aTags.each((index: any, element: any) => {
+        const priceString = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-vgnpl .css-8zpafe p.css-17znts1').text();
+        const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
+        const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
+        const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
+        const brand = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text();
+        const name = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text();
+        const typeInfo = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-i37je3').text();
+        if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
+          console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
+          return;
+        }
+        const volume = parseInt(processVolumeString(volumeAndAlcohol));
+        const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
 
-      const product = {
-        brand: brand,
-        name: name,
-        apk: apk,
-        url: "https://systembolaget.se" + $(element).attr('href'),
-        price: price,
-        alcohol: alcohol,
-        volume: volume,
-        type: type + ", " + typeInfo,
-      }
-      products.push(product);
-      //console.log(product);
-    })
+        const product = {
+          brand: brand,
+          name: name,
+          apk: apk,
+          url: "https://systembolaget.se" + $(element).attr('href'),
+          price: price,
+          alcohol: alcohol,
+          volume: volume,
+          type: type + ", " + typeInfo,
+        }
+        products.push(product);
+        allScrapedProductURLs.push(product.url);
+        //console.log(product);
+      });
+
+      currentPage++;
+    } catch (error) {
+      console.error(`Failed to scrape page ${currentPage}`, error);
+    }
+  }
   return products;
 }
 
@@ -399,8 +353,47 @@ async function addProductsToDatabase(products: any, type: string) {
     timeout: 6000000,
   });
 
-
-
   console.log(type + ': Database update complete.');
 
+}
+
+async function deleteOldProducts() {
+  try {
+    console.log('Running deleteOldProducts');
+    console.log(`Number of scraped product URLs: ${allScrapedProductURLs.length}`);
+
+    // Fetch all product URLs from the database
+    const allDatabaseProducts = await prisma.beverage.findMany({
+      select: {
+        url: true,
+      },
+    });
+    const allDatabaseProductURLs = allDatabaseProducts.map(product => product.url);
+
+    // Log the number of products in the database
+    console.log(`Number of products in the database: ${allDatabaseProducts.length}`);
+
+    const setOfScrapedProductURLs = new Set(allScrapedProductURLs);
+    const urlsNotInScraped = allDatabaseProductURLs.filter(url => !setOfScrapedProductURLs.has(url));
+
+    // Log the URLs that are in the database but not in allScrapedProductURLs
+    console.log('URLs in the database but not in scraped URLs:', urlsNotInScraped);
+    // Log the count of URLs not in scraped URLs
+    console.log(`Number of URLs in the database but not in scraped URLs: ${urlsNotInScraped.length}`);
+
+    // Perform the deletion
+    /* await prisma.beverage.deleteMany({
+      where: {
+        NOT: {
+          url: {
+            in: allScrapedProductURLs,
+          },
+        },
+      },
+    }); */
+
+    console.log('Deleted old products');
+  } catch (error) {
+    console.error('Error deleting old products:', error);
+  }
 }
