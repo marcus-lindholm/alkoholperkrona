@@ -138,7 +138,7 @@ const clickHref = async (page: any) => {
 
 const acceptCookies = async (page: any) => {
   let counter = 0;
-  const buttonClass = 'css-hjlgj3';
+  const buttonClass = 'css-60ae9g';
   console.log("running acceptCookies");
 
   if (!await page.$(`button.${buttonClass}`)) {
@@ -160,38 +160,41 @@ const acceptCookies = async (page: any) => {
 const getNumberOfPages = async (page: any, url: string) => {
   let counter = 0;
   console.log("running getNumberOfPages");
-  const $ = cheerio.load(await page.content());
 
   while (counter < 3) {
     try {
       await page.goto(url, { waitUntil: 'networkidle2' });
       console.log(`Navigated to ${url}`);
       const $ = cheerio.load(await page.content());
-      const elements = $('.css-bxnnm4');
+      const elements = $('.css-1ur18ru');
 
       elements.each((index: any, element: any) => {
-        if($(element).find('.css-ziux8h').text() === "Öl") {
-          const beerProducts = parseInt($(element).find('.css-1g5cy76').text().replace(/\s/g, ''));
-          beerPages = Math.ceil(beerProducts / 30);
-        } else if($(element).find('.css-ziux8h').text() === "Vin") {
-          const wineProducts = parseInt($(element).find('.css-1g5cy76').text().replace(/\s/g, ''));
-          winePages = Math.ceil(wineProducts / 30);
-        } else if($(element).find('.css-ziux8h').text() === "Sprit") {
-          const liqourProducts = parseInt($(element).find('.css-1g5cy76').text().replace(/\s/g, ''));
-          liqourPages = Math.ceil(liqourProducts / 30);
-        } else if($(element).find('.css-ziux8h').text() === "Cider & blanddrycker") {
-          const ciderProducts = parseInt($(element).find('.css-1g5cy76').text().replace(/\s/g, ''));
-          ciderPages = Math.ceil(ciderProducts / 30);
-        } else {
-          return;
+        const category = $(element).find('.css-fer26v').text().trim();
+        const productCount = parseInt($(element).find('.css-w2p565').text().replace(/\s/g, ''));
+
+        switch (category) {
+          case "Öl":
+            beerPages = Math.ceil(productCount / 30);
+            break;
+          case "Vin":
+            winePages = Math.ceil(productCount / 30);
+            break;
+          case "Sprit":
+            liqourPages = Math.ceil(productCount / 30);
+            break;
+          case "Cider & blanddrycker":
+            ciderPages = Math.ceil(productCount / 30);
+            break;
+          default:
+            break;
         }
       });
-      
+
       return;
     } catch (error) {
       console.error(`Failed to navigate, retrying ${counter + 1}`, error);
       counter++;
-      await wait(1000);
+      wait(1000);
     }
   }
 }
@@ -271,19 +274,19 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
     try {
       await navigateCategory(page, url + "p=" + currentPage);
       await wait(1000);
-      await waitForSelectorIndefinitely(page, 'div.css-176nwz9 a');
+      await waitForSelectorIndefinitely(page, 'div.css-1fgrh1r a');
       const $ = cheerio.load(await page.content());
       console.log(`Currently on ${type} page ${currentPage} out of ${pages}`);
 
-      const aTags = $('div.css-176nwz9 a');
+      const aTags = $('div.css-1fgrh1r a');
       aTags.each((index: any, element: any) => {
-        const priceString = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-vgnpl .css-8zpafe p.css-17znts1').text();
+        const priceString = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-k008qs p.css-1k0oafj').text();
         const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
-        const volumeAndAlcohol = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-vgnpl .css-5aqtg5 p.css-bbhn7t').text();
+        const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-e42h23').text();
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
-        const brand = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-1n0krvs').text();
-        const name = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-18q0zs4 .css-123rcq0').text();
-        const typeInfo = $(element).find('.css-1spqwqt .css-1mojosc .css-8zpafe .css-6df2t1 .css-uxm6qc .css-i37je3').text();
+        const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1i86311').text();
+        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-i3atuq').text();
+        const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-apwxtg').text();
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
           return;
