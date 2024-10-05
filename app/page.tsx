@@ -6,6 +6,7 @@ import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
 import LoadingSpinner from './components/LoadingSpinner';
+import FilterComponent from './components/FilterComponent';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +15,12 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isBeastMode, setBeastMode] = useState(false);
+  const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
+
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [nestedFilter, setNestedFilter] = useState<string | null>(null);
+  const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   type ProductType = {
     id: string;
@@ -29,13 +36,21 @@ export default function Home({ searchParams }: { searchParams: any }) {
     updatedAt: Date;
   };
 
-  async function fetchProducts(page: number) {
+  async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string) {
     const darkModePreference = Cookies.get('darkMode') === 'true';
     setIsDarkMode(darkModePreference);
-
+  
     console.log('fetching products');
     try {
-      const response = await fetch(`/api/products?page=${page}&limit=50`);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        filterType: filterType || '',
+        nestedFilter: nestedFilter || '',
+        filterOrdervara: filterOrdervara.toString(),
+        searchQuery: searchQuery || '',
+      });
+  
+      const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();
       if (page === 1) {
         setProducts(data.products);
@@ -47,11 +62,18 @@ export default function Home({ searchParams }: { searchParams: any }) {
       console.error('Error fetching products:', error);
     } finally {
       setIsLoading(false);
+      setIsLoadMoreLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchProducts(page);
+    setIsLoading(true);
+    setPage(1); // Reset to the first page whenever filters change
+    fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
+  }, [filterType, nestedFilter, filterOrdervara, searchQuery]);
+
+  useEffect(() => {
+    fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery);
   }, [page]);
 
   const handleThemeToggle = () => {
@@ -64,6 +86,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
 
   const loadMore = () => {
     if (page < totalPages) {
+      setIsLoadMoreLoading(true);
       setPage(prevPage => prevPage + 1);
     }
   };
@@ -94,15 +117,46 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </label>
         <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
       </div>
-      {isLoading ? (
-        <div className="flex justify-center items-center w-full h-full">
-          <LoadingSpinner />
+      <div className="flex flex-col items-center w-full">
+        <div className="w-full flex justify-start mt-16 sm:mt-4">
+          <FilterComponent
+            isDarkMode={isDarkMode}
+            isBeastMode={isBeastMode}
+            filterType={filterType}
+            nestedFilter={nestedFilter}
+            filterOrdervara={filterOrdervara}
+            searchQuery={searchQuery}
+            setFilterType={setFilterType}
+            setNestedFilter={setNestedFilter}
+            setFilterOrdervara={setFilterOrdervara}
+            setSearchQuery={setSearchQuery}
+          />
         </div>
-      ) : (
-        <div className="w-full">
-          <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode}/>
+        <div className="w-full flex justify-center">
+          {isLoading ? (
+            <div className="flex justify-center items-center w-full h-full">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="w-full">
+              <ProductComponent products={products} isDarkMode={isDarkMode} />
+              {page < totalPages && (
+                <div className="text-center my-4">
+                  <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
+                    {isLoadMoreLoading ? (
+                      <div className="flex items-center justify-center">
+                        <LoadingSpinner />
+                      </div>
+                    ) : (
+                      'Visa fler'
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <footer className="mt-8 text-center">
         <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
         <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
@@ -128,12 +182,12 @@ export default function Home({ searchParams }: { searchParams: any }) {
             onChange={(e) => {
               setBeastMode(e.target.checked);
               if (e.target.checked) {
-                fetchEverything();
+                fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
               } else {
                 setPage(1);
                 setProducts([]);
                 setIsLoading(true);
-                fetchProducts(1);
+                fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
               }
             }}
             className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
