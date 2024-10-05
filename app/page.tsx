@@ -70,16 +70,19 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   }
 
+  // hook when filters change
   useEffect(() => {
     setIsLoading(true);
-    setPage(1); // Reset to the first page whenever filters or sorting change
+    setPage(1);
     fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
   }, [filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder]);
 
+  // hook when page changes
   useEffect(() => {
     fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
   }, [page]);
 
+  // hook when beast mode preference changes
   useEffect(() => {
     const beastModePreference = Cookies.get('beastMode') === 'true';
     setBeastMode(beastModePreference);
@@ -111,20 +114,6 @@ export default function Home({ searchParams }: { searchParams: any }) {
     if (page < totalPages) {
       setIsLoadMoreLoading(true);
       setPage(prevPage => prevPage + 1);
-    }
-  };
-
-  const fetchEverything = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/products');
-      const data = await response.json();
-      setProducts(data.products);
-      setTotalPages(1);
-    } catch (error) {
-      console.error('Error fetching all products:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -185,22 +174,22 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       </div>
       <footer className="mt-8 text-center">
-        <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
-        <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
-          Vill du stödja denna sida? Donera en slant!
-          <Image 
-            src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
-            alt="Swish Logo" 
-            width={32} 
-            height={32} 
-            className="ml-2 object-contain"
-          />
-        </a>
-        <label 
-          htmlFor="fetchAll"
-          className="ml-4 mr-2 text-sm"
-          title="Aktivera avancerade funktioner"
-        >Beast mode</label>
+      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
+      <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
+        Vill du stödja denna sida? Donera en slant!
+        <Image 
+          src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
+          alt="Swish Logo" 
+          width={32} 
+          height={32} 
+          className="ml-2 object-contain"
+        />
+      </a>
+      <label 
+        htmlFor="fetchAll"
+        className="ml-4 mr-2 text-sm"
+        title="Ladda in hela sortimentet (ca 25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+      >Beast mode</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
             id="fetchAll"
@@ -212,7 +201,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           <label
             htmlFor="fetchAll"
             className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
-            title="Aktivera avancerade funktioner"
+            title="Ladda in hela sortimentet (&gt;25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
           ></label>
         </div>
         <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som "alkoholfria" är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
