@@ -21,6 +21,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
   const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortCriteria, setSortCriteria] = useState<string>('apk');
+  const [sortOrder, setSortOrder] = useState<string>('desc');
 
   type ProductType = {
     id: string;
@@ -36,10 +38,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
     updatedAt: Date;
   };
 
-  async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string) {
+  async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
     const darkModePreference = Cookies.get('darkMode') === 'true';
     setIsDarkMode(darkModePreference);
-  
+
     console.log('fetching products');
     try {
       const params = new URLSearchParams({
@@ -48,8 +50,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
         nestedFilter: nestedFilter || '',
         filterOrdervara: filterOrdervara.toString(),
         searchQuery: searchQuery || '',
+        sortCriteria: sortCriteria,
+        sortOrder: sortOrder,
       });
-  
+
       const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();
       if (page === 1) {
@@ -68,13 +72,18 @@ export default function Home({ searchParams }: { searchParams: any }) {
 
   useEffect(() => {
     setIsLoading(true);
-    setPage(1); // Reset to the first page whenever filters change
-    fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
-  }, [filterType, nestedFilter, filterOrdervara, searchQuery]);
+    setPage(1); // Reset to the first page whenever filters or sorting change
+    fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
+  }, [filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder]);
 
   useEffect(() => {
-    fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery);
+    fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
   }, [page]);
+
+  useEffect(() => {
+    const beastModePreference = Cookies.get('beastMode') === 'true';
+    setBeastMode(beastModePreference);
+  }, []);
 
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
@@ -82,6 +91,20 @@ export default function Home({ searchParams }: { searchParams: any }) {
       Cookies.set('darkMode', newMode.toString(), { expires: 365 });
       return newMode;
     });
+  };
+
+  const handleBeastModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newBeastMode = e.target.checked;
+    setBeastMode(newBeastMode);
+    Cookies.set('beastMode', newBeastMode.toString(), { expires: 365 });
+    if (newBeastMode) {
+      fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
+    } else {
+      setPage(1);
+      setProducts([]);
+      setIsLoading(true);
+      fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
+    }
   };
 
   const loadMore = () => {
@@ -126,10 +149,14 @@ export default function Home({ searchParams }: { searchParams: any }) {
             nestedFilter={nestedFilter}
             filterOrdervara={filterOrdervara}
             searchQuery={searchQuery}
+            sortCriteria={sortCriteria}
+            sortOrder={sortOrder}
             setFilterType={setFilterType}
             setNestedFilter={setNestedFilter}
             setFilterOrdervara={setFilterOrdervara}
             setSearchQuery={setSearchQuery}
+            setSortCriteria={setSortCriteria}
+            setSortOrder={setSortOrder}
           />
         </div>
         <div className="w-full flex justify-center">
@@ -172,32 +199,23 @@ export default function Home({ searchParams }: { searchParams: any }) {
         <label 
           htmlFor="fetchAll"
           className="ml-4 mr-2 text-sm"
-          title="Ladda in hela sortimentet (ca 25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+          title="Aktivera avancerade funktioner"
         >Beast mode</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
             id="fetchAll"
             type="checkbox"
             checked={isBeastMode}
-            onChange={(e) => {
-              setBeastMode(e.target.checked);
-              if (e.target.checked) {
-                fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
-              } else {
-                setPage(1);
-                setProducts([]);
-                setIsLoading(true);
-                fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery);
-              }
-            }}
+            onChange={handleBeastModeToggle}
             className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
           />
           <label
             htmlFor="fetchAll"
             className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
-            title="Ladda in hela sortimentet (>25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+            title="Aktivera avancerade funktioner"
           ></label>
         </div>
+        <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som "alkoholfria" är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
       </footer>
     </main>
   );

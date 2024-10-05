@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery } = req.query;
+  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder } = req.query;
 
   try {
     const pageNumber = parseInt(page as string, 10) || 1;
@@ -51,14 +51,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('Filters:', filters);
 
+    const orderBy: any = {};
+    if (sortCriteria && sortOrder) {
+      orderBy[sortCriteria as string] = sortOrder as string;
+    } else {
+      orderBy.apk = 'desc'; // Default sorting
+    }
+
     const [products, totalProducts] = await Promise.all([
       prisma.beverage.findMany({
         skip,
         take: limitNumber,
         where: filters,
-        orderBy: {
-          apk: 'desc',
-        },
+        orderBy,
       }),
       prisma.beverage.count({
         where: filters,

@@ -1,46 +1,57 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 type FilterProps = {
-  isDarkMode: boolean;
-  isBeastMode: boolean;
-  filterType: string | null;
-  nestedFilter: string | null;
-  filterOrdervara: boolean;
-  searchQuery: string;
-  setFilterType: (value: string | null) => void;
-  setNestedFilter: (value: string | null) => void;
-  setFilterOrdervara: (value: boolean) => void;
-  setSearchQuery: (value: string) => void;
-};
+    isDarkMode: boolean;
+    isBeastMode: boolean;
+    filterType: string | null;
+    nestedFilter: string | null;
+    filterOrdervara: boolean;
+    searchQuery: string;
+    sortCriteria: string;
+    sortOrder: string;
+    setFilterType: (value: string | null) => void;
+    setNestedFilter: (value: string | null) => void;
+    setFilterOrdervara: (value: boolean) => void;
+    setSearchQuery: (value: string) => void;
+    setSortCriteria: (value: string) => void;
+    setSortOrder: (value: string) => void;
+  };
 
-const FilterComponent = ({
-  isDarkMode,
-  isBeastMode,
-  filterType,
-  nestedFilter,
-  filterOrdervara,
-  searchQuery,
-  setFilterType,
-  setNestedFilter,
-  setFilterOrdervara,
-  setSearchQuery,
-}: FilterProps) => {
+  const FilterComponent = ({
+    isDarkMode,
+    isBeastMode,
+    filterType,
+    nestedFilter,
+    filterOrdervara,
+    searchQuery,
+    sortCriteria,
+    sortOrder,
+    setFilterType,
+    setNestedFilter,
+    setFilterOrdervara,
+    setSearchQuery,
+    setSortCriteria,
+    setSortOrder,
+  }: FilterProps) => {
   return (
-    <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center">
+    <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-center sm:items-center justify-center sm:justify-start">
       {isBeastMode && (
-        <div className="mb-2 sm:mb-0 sm:mr-4">
-          <label htmlFor="search" className="mr-2">Sök:</label>
-          <input
+        <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-4">
+            <input
             id="search"
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
-          />
+            placeholder="Sök"
+            className={`px-8 py-2 pl-10 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+            />
+            <FontAwesomeIcon icon={faSearch} className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
         </div>
       )}
       <div className="mb-2 sm:mb-0 sm:mr-4">
-        <label htmlFor="filter" className="mr-2">Filter:</label>
+        <label htmlFor="filter" className="mr-2 ml-2 text-sm font-medium">Filter:</label>
         <select
           id="filter"
           value={filterType || ""}
@@ -105,7 +116,7 @@ const FilterComponent = ({
         </div>
       )}
       <div className="mb-2 sm:mb-0 sm:mr-4">
-        <label htmlFor="ordervara" className="mr-2">Visa ordervaror:</label>
+        <label htmlFor="ordervara" className="mr-2 ml-2 text-sm font-medium">Visa ordervaror:</label>
         <div className="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
           <input
             id="ordervara"
@@ -120,6 +131,32 @@ const FilterComponent = ({
           ></label>
         </div>
       </div>
+        <>
+            <div className="flex items-center mb-2 sm:mb-0">
+                <label className="mr-2 text-sm font-medium">Sortera på:</label>
+                <select
+                value={sortCriteria}
+                onChange={(e) => setSortCriteria(e.target.value)}
+                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'dark:bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                >
+                <option value="apk">APK</option>
+                <option value="price">Pris</option>
+                <option value="volume">Volym</option>
+                <option value="alcohol">Volymprocent</option>
+                </select>
+            </div>
+            <div className="flex items-center">
+                <label className="mr-2 ml-2 text-sm font-medium">Ordning:</label>
+                <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'dark:bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                >
+                <option value="asc">Stigande ↑</option>
+                <option value="desc">Sjunkande ↓</option>
+                </select>
+            </div>
+        </>
     </div>
   );
 };
