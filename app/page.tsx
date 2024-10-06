@@ -1,12 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
 import LoadingSpinner from './components/LoadingSpinner';
 import FilterComponent from './components/FilterComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -120,7 +122,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="absolute top-4 left-4 flex items-center">
-        <h1 className="text-2xl font-bold mr-12">APKrona.se</h1>
+        <h1 className="text-2xl font-bold mr-12">🍺 APKrona.se</h1>
       </div>
       <div className="absolute top-4 right-4 flex items-center">
         <label className="switch">
@@ -174,7 +176,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       </div>
       <footer className="mt-8 text-center">
-      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm ↗️</a></p>
+      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" /></a></p>
       <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
         Vill du stödja denna sida? Donera en slant!
         <Image 
@@ -188,7 +190,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
       <label 
         htmlFor="fetchAll"
         className="ml-4 mr-2 text-sm"
-        title="Ladda in hela sortimentet (ca 25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+        title="Aktivera avancerade funktioner"
       >Beast mode</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
@@ -201,7 +203,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           <label
             htmlFor="fetchAll"
             className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
-            title="Ladda in hela sortimentet (&gt;25000 produkter). Standard är de första 6000. Detta tar längre tid att ladda in."
+            title="Aktivera avancerade funktioner"
           ></label>
         </div>
         <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>

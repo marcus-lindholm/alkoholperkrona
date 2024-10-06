@@ -45,7 +45,7 @@ type FilterProps = {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Sök"
-            className={`px-8 py-2 pl-10 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+            className={`px-4 py-2 pl-10 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
             />
             <FontAwesomeIcon icon={faSearch} className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
         </div>
@@ -137,7 +137,7 @@ type FilterProps = {
                 <select
                 value={sortCriteria}
                 onChange={(e) => setSortCriteria(e.target.value)}
-                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'dark:bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
                 >
                 <option value="apk">APK</option>
                 <option value="price">Pris</option>
@@ -145,12 +145,11 @@ type FilterProps = {
                 <option value="alcohol">Volymprocent</option>
                 </select>
             </div>
-            <div className="flex items-center">
-                <label className="mr-2 ml-2 text-sm font-medium">Ordning:</label>
+            <div className="flex items-center ml-2">
                 <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'dark:bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
                 >
                 <option value="asc">Stigande ↑</option>
                 <option value="desc">Sjunkande ↓</option>

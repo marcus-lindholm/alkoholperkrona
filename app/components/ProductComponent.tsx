@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 
 type ProductType = {
@@ -55,7 +57,7 @@ const ProductComponent = ({ products = [], isDarkMode }: { products: ProductType
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                 <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  <strong>{product.brand}</strong> {product.name}
+                  <strong>{product.brand}</strong> {product.name} <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
                 </a>
               </td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
