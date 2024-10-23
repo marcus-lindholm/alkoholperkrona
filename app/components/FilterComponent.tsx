@@ -149,7 +149,7 @@ type FilterProps = {
                 <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 dark:border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
                 >
                 <option value="asc">Stigande ↑</option>
                 <option value="desc">Sjunkande ↓</option>

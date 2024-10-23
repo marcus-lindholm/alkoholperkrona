@@ -176,7 +176,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       </div>
       <footer className="mt-8 text-center">
-      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" /></a></p>
+      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>
       <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
         Vill du stödja denna sida? Donera en slant!
         <Image 
