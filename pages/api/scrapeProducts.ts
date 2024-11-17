@@ -390,7 +390,8 @@ async function addProductsToDatabase(products: any, type: string) {
     for (let i = 0; i < totalOperations; i++) {
       await operations[i];
       if ((i + 1) % logInterval === 0 || i === totalOperations - 1) {
-        console.log(type + ` transaction progress: ${Math.ceil(((i + 1) / totalOperations) * 100)}%`);
+        const timestamp = new Date().toISOString();
+        console.log(`[${timestamp}] ${type} transaction progress: ${Math.ceil(((i + 1) / totalOperations) * 100)}%`);
       }
     }
   }, {
