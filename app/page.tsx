@@ -149,7 +149,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
       </div>
       {lastUpdated && (
-        <div className="w-full bottom-4 left-4 flex items-left">
+        <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
           <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
         </div>
       )}
