@@ -253,11 +253,45 @@ function processVolumeString(input: any) {
   const firstNumberIndex = input.search(/\d/);
   const cleanedInput = input.substring(firstNumberIndex);
 
-  // Remove everything after " ml" including " ml"
-  const mlIndex = cleanedInput.indexOf(" ml");
-  if (mlIndex !== -1) {
-      return cleanedInput.substring(0, mlIndex).replace(' ', '');
+  // Check for multi-pack patterns
+  const multiPackPattern = /(\d+)\s*(flaskor|burkar|bottles|cans)\s*[àa]\s*(\d+)\s*ml/gi;
+  let totalVolume = 0;
+  let match;
+
+  // Create a set to track indices of multi-pack matches to avoid double counting
+  const multiPackIndices = new Set<number>();
+
+  while ((match = multiPackPattern.exec(cleanedInput)) !== null) {
+    const numberOfPacks = parseInt(match[1], 10);
+    const volumePerPack = parseInt(match[3], 10);
+    totalVolume += numberOfPacks * volumePerPack;
+    // Mark the range of the match to avoid double counting
+    for (let i = match.index; i < match.index + match[0].length; i++) {
+      multiPackIndices.add(i);
+    }
   }
+
+  // Check for single pack patterns within the same string
+  const singlePackPattern = /(\d+)\s*ml/gi;
+  while ((match = singlePackPattern.exec(cleanedInput)) !== null) {
+    // Only add the volume if it is not part of a multi-pack match
+    let isPartOfMultiPack = false;
+    for (let i = match.index; i < match.index + match[0].length; i++) {
+      if (multiPackIndices.has(i)) {
+        isPartOfMultiPack = true;
+        break;
+      }
+    }
+    if (!isPartOfMultiPack) {
+      const volume = parseInt(match[1], 10);
+      totalVolume += volume;
+    }
+  }
+
+  if (totalVolume > 0) {
+    return `${totalVolume}`;
+  }
+
   return cleanedInput.replace(' ', '');
 }
 
