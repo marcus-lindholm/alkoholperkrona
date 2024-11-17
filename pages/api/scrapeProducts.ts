@@ -45,9 +45,9 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     }) */
   
   const browser = await puppeteer.launch({
-    //executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: false,
+    headless: true,
   });
   const page = await (await browser).newPage();
 
@@ -365,7 +365,7 @@ async function deleteOldProducts() {
     console.log('Running deleteOldProducts');
     console.log(`Number of scraped product URLs: ${allScrapedProductURLs.length}`);
 
-    // Fetch all product URLs from the database
+/*     // Fetch all product URLs from the database
     const allDatabaseProducts = await prisma.beverage.findMany({
       select: {
         url: true,
@@ -382,18 +382,16 @@ async function deleteOldProducts() {
     // Log the URLs that are in the database but not in allScrapedProductURLs
     console.log('URLs in the database but not in scraped URLs:', urlsNotInScraped);
     // Log the count of URLs not in scraped URLs
-    console.log(`Number of URLs in the database but not in scraped URLs: ${urlsNotInScraped.length}`);
+    console.log(`Number of URLs in the database but not in scraped URLs: ${urlsNotInScraped.length}`); */
 
     // Perform the deletion
-    /* await prisma.beverage.deleteMany({
+    await prisma.beverage.deleteMany({
       where: {
-        NOT: {
-          url: {
-            in: allScrapedProductURLs,
-          },
+        updatedAt: {
+          lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // older than 30 days
         },
       },
-    }); */
+    });
 
     console.log('Deleted old products');
   } catch (error) {
