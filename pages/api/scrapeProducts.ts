@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import { PrismaClient } from '@prisma/client';
+import { sendEmail } from './services/emailService';
 
 var beerPages: number;
 var liqourPages: number;
@@ -13,9 +14,16 @@ export default async function handler(req: any, res: any) {
   console.log("scrapeProducts API called");
     if (req.method === 'GET') {
         try {
+          throw new Error('Test error');
             const products = await runScraper();
             res.status(200).json({ message: 'Scraper ran successfully', products: products });
         } catch (error) {
+            let errorMessage = 'An unknown error occurred';
+            if (error instanceof Error) {
+              errorMessage = error.message;
+            }
+            // Send an email notification
+            await sendEmail('Scraper Failed for APKrona.se', `The scraper failed to run with the following error: ${errorMessage}`);
             res.status(500).json({ message: 'Scraper failed to run', error: error });
         }
     } else {
