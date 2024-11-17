@@ -9,6 +9,7 @@ import ProductComponent from './components/ProductComponent';
 import LoadingSpinner from './components/LoadingSpinner';
 import FilterComponent from './components/FilterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format } from 'date-fns';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +19,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [totalPages, setTotalPages] = useState(1);
   const [isBeastMode, setBeastMode] = useState(false);
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   const [filterType, setFilterType] = useState<string | null>(null);
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
@@ -71,6 +73,21 @@ export default function Home({ searchParams }: { searchParams: any }) {
       setIsLoadMoreLoading(false);
     }
   }
+
+  useEffect(() => {
+    async function fetchLastUpdatedDate() {
+      try {
+        const response = await fetch('/api/lastUpdate');
+        const data = await response.json();
+        const formattedDate = format(new Date(data.lastUpdated), 'yyyy-MM-dd HH:mm');
+        setLastUpdated(formattedDate);
+      } catch (error) {
+        console.error('Error fetching the last updated date:', error);
+      }
+    }
+  
+    fetchLastUpdatedDate();
+  }, []);
 
   // hook when filters change
   useEffect(() => {
@@ -131,6 +148,11 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </label>
         <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
       </div>
+      {lastUpdated && (
+        <div className="w-full bottom-4 left-4 flex items-left">
+          <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
+        </div>
+      )}
       <div className="flex flex-col items-center w-full">
         <div className="w-full flex justify-start mt-16 sm:mt-4">
           <FilterComponent
@@ -206,7 +228,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
             title="Aktivera avancerade funktioner"
           ></label>
         </div>
-        <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
+        <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. Buggar förekommer. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
       </footer>
     </main>
   );
