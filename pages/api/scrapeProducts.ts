@@ -14,7 +14,6 @@ export default async function handler(req: any, res: any) {
   console.log("scrapeProducts API called");
     if (req.method === 'GET') {
         try {
-          throw new Error('Test error');
             const products = await runScraper();
             res.status(200).json({ message: 'Scraper ran successfully', products: products });
         } catch (error) {
