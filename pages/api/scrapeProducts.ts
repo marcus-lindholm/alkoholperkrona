@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
 import { PrismaClient } from '@prisma/client';
 import { sendEmail } from './services/emailService';
+import { count } from "console";
+import { counter } from "@fortawesome/fontawesome-svg-core";
+import { th } from "date-fns/locale";
 
 var beerPages: number;
 var liqourPages: number;
@@ -52,9 +55,9 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     }) */
   
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    //executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: true,
+    headless: false,
   });
   const page = await (await browser).newPage();
 
@@ -68,11 +71,12 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     waitUntil: 'domcontentloaded'
   });
   
+  let tryCounter;
   await wait(2000);
 
-  await clickHref(page);
+  await clickHref(page, tryCounter = 0);
   await wait(1500);
-  await acceptCookies(page);
+  await acceptCookies(page, tryCounter = 0);
   await wait(1000);
   await getNumberOfPages(page, pageURL);
   await wait(1000);
@@ -125,43 +129,36 @@ const wait = (ms: any) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const clickHref = async (page: any) => {
-  let counter = 0;
+const clickHref = async (page: any, counter: number) => {
   const hrefAttribute = '/';
 
   if (!await page.$(`a[href="${hrefAttribute}"]`)) {
     counter++;
     if (counter < 3) {
-      console.log(`cant find href, running retry ${counter}`);
+      console.log(`cant find href, running retry nr ${counter}`);
       await wait(1000);
-      await clickHref(page);
-    } else {
-      console.log('href not found');
+      await clickHref(page, counter);
     }
-    return;
+    throw new Error('href not found for age confirmation');
   }
   await page.click(`a[href="${hrefAttribute}"]`);
 }
 
-const acceptCookies = async (page: any) => {
-  let counter = 0;
-  const buttonClass = 'css-60ae9g';
+const acceptCookies = async (page: any, counter: number) => {
+  const buttonClass = 'css-wp6uyr';
   console.log("running acceptCookies");
 
   if (!await page.$(`button.${buttonClass}`)) {
     console.log("accept button not found");
     counter++;
     if (counter < 3) {
-      console.log(`cant find button, running retry ${counter}`);
+      console.log(`cant find button, running retry nr ${counter}`);
       await wait(1000);
-      await acceptCookies(page);
-    } else {
-      console.log('href not found');
+      await acceptCookies(page, counter);
     }
-    return;
+    throw new Error('accept cookies button not found');
   }
   await page.click(`button.${buttonClass}`);
-  counter = 3;
 }
 
 const getNumberOfPages = async (page: any, url: string) => {
@@ -176,8 +173,12 @@ const getNumberOfPages = async (page: any, url: string) => {
       const elements = $('.css-1ur18ru');
 
       elements.each((index: any, element: any) => {
-        const category = $(element).find('.css-fer26v').text().trim();
-        const productCount = parseInt($(element).find('.css-w2p565').text().replace(/\s/g, ''));
+        const category = $(element).find('.css-1nje7vx').text().trim();
+        const productCount = parseInt($(element).find('.css-1bd421j').text().replace(/\s/g, ''));
+
+        if (category === undefined || productCount === undefined || isNaN(productCount) || productCount === null) {
+          throw new Error('Failed to get number of pages for each category');
+        }
 
         switch (category) {
           case "Öl":
@@ -196,7 +197,6 @@ const getNumberOfPages = async (page: any, url: string) => {
             break;
         }
       });
-
       return;
     } catch (error) {
       console.error(`Failed to navigate, retrying ${counter + 1}`, error);
@@ -204,6 +204,7 @@ const getNumberOfPages = async (page: any, url: string) => {
       wait(1000);
     }
   }
+  throw new Error('Failed to get number of pages for each category');
 }
 
 const navigateCategory = async (page: any, url: string) => {
@@ -221,6 +222,7 @@ const navigateCategory = async (page: any, url: string) => {
       await wait(1000);
     }
   }
+  throw new Error('Failed to navigate to category');
 }
 
 function processPriceString(input: any) {
@@ -317,19 +319,24 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
       await wait(1000);
       await waitForSelectorIndefinitely(page, 'div.css-1fgrh1r a');
       const $ = cheerio.load(await page.content());
+      let countConsecutiveZeros = 0;
       console.log(`Currently on ${type} page ${currentPage} out of ${pages}`);
 
       const aTags = $('div.css-1fgrh1r a');
       aTags.each((index: any, element: any) => {
-        const priceString = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-k008qs p.css-1k0oafj').text();
+        const priceString = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-k008qs p.css-a2frwy').text();
         const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
-        const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-e42h23').text();
+        const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-rp7p3f').text();
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
-        const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1i86311').text();
-        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-i3atuq').text();
-        const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-apwxtg').text();
+        const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1njx6qf').text();
+        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-4oiqd').text();
+        const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-4oiqd8').text();
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
+          countConsecutiveZeros++;
+          if (countConsecutiveZeros > 29) {
+            throw new Error('30 consecutive products with alcohol 0 or undefined, scraper propably not working');
+          }
           return;
         }
         const volume = parseInt(processVolumeString(volumeAndAlcohol));
@@ -352,7 +359,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
 
       currentPage++;
     } catch (error) {
-      console.error(`Failed to scrape page ${currentPage}`, error);
+      throw new Error(`Failed to scrape page ${currentPage}: ${error}`);
     }
   }
   return products;
