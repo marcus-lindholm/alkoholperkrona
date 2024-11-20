@@ -41,12 +41,12 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/ordervaror/?';
     var wineURL = 'https://www.systembolaget.se/sortiment/vin/ordervaror/?';
     var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/ordervaror/?';
-  } else {
-    var pageURL = 'https://www.systembolaget.se/sortiment/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar';
-    var beerURL = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_S%C3%A4song&';
-    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
-    var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
-    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast%20sortiment_eller_Tillf%C3%A4lligt%20sortiment_eller_Lokalt%20%26%20Sm%C3%A5skaligt_eller_Webblanseringar_eller_S%C3%A4song&';
+  } else {          
+    var pageURL = 'https://www.systembolaget.se/sortiment/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar';
+    var beerURL = 'https://www.systembolaget.se/sortiment/ol/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
+    var liqourURL = 'https://www.systembolaget.se/sortiment/sprit/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
+    var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
+    var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
   }
   /* const browser = puppeteer.launch(
     {
@@ -55,9 +55,9 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     }) */
   
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    //executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: true,
+    headless: false,
   });
   const page = await (await browser).newPage();
 
