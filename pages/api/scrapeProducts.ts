@@ -55,9 +55,9 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     }) */
   
   const browser = await puppeteer.launch({
-    //executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: false,
+    headless: true,
   });
   const page = await (await browser).newPage();
 
