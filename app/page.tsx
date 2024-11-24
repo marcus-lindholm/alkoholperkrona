@@ -149,11 +149,13 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </label>
         <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
       </div>
-      {lastUpdated && (
-        <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
+      <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
+        {lastUpdated ? (
           <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
-        </div>
-      )}
+        ) : (
+          <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
+        )}
+      </div>
       <div className="flex flex-col items-center w-full">
         <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4">
           <FilterComponent
@@ -176,7 +178,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         <div className="w-full flex justify-center">
           {isLoading ? (
             <div className="flex justify-center items-center w-full h-64">
-              <LoadingSpinner />
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
             </div>
           ) : (
             <div className="w-full">
@@ -191,7 +193,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
                   <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
                     {isLoadMoreLoading ? (
                       <div className="flex items-center justify-center">
-                        <LoadingSpinner />
+                        <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-white"></div>
                       </div>
                     ) : (
                       'Visa fler'
