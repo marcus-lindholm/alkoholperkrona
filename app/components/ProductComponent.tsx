@@ -22,13 +22,13 @@ const ProductComponent = ({ products = [], isDarkMode }: { products: ProductType
     if (type == null) {
       return;
     } else if (type.toLowerCase().includes("beer")) {
-      displayType += "Öl";
+      displayType += "Öl 🍺";
     } else if (type.toLowerCase().includes("wine")) {
-      displayType += "Vin";
+      displayType += "Vin 🍷";
     } else if (type.toLowerCase().includes("liquor")) {
-      displayType += "Sprit";
+      displayType += "Sprit 🥃";
     } else if (type.toLowerCase().includes("cider")) {
-      displayType += "Cider";
+      displayType += "Cide 🍏";
     }
     if (type.toLowerCase().includes("ordervara")) {
       displayType += " (Ordervara)";

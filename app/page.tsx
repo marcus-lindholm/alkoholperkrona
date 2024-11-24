@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import Image from "next/image";
 import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
+import ProductComponentMobile from './components/ProductComponentMobile';
 import LoadingSpinner from './components/LoadingSpinner';
 import FilterComponent from './components/FilterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -137,7 +138,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   };
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'dark' : 'light'}`}>
+    <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="absolute top-4 left-4 flex items-center">
         <h1 className="text-2xl font-bold mr-12">🍺 APKrona.se</h1>
       </div>
@@ -154,7 +155,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       )}
       <div className="flex flex-col items-center w-full">
-        <div className="w-full flex justify-start mt-16 sm:mt-4">
+        <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4">
           <FilterComponent
             isDarkMode={isDarkMode}
             isBeastMode={isBeastMode}
@@ -174,12 +175,17 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
         <div className="w-full flex justify-center">
           {isLoading ? (
-            <div className="flex justify-center items-center w-full h-full">
+            <div className="flex justify-center items-center w-full h-64">
               <LoadingSpinner />
             </div>
           ) : (
             <div className="w-full">
-              <ProductComponent products={products} isDarkMode={isDarkMode} />
+              <div className="block sm:hidden">
+                <ProductComponentMobile products={products} isDarkMode={isDarkMode} />
+              </div>
+              <div className="hidden sm:block">
+                <ProductComponent products={products} isDarkMode={isDarkMode} />
+              </div>
               {page < totalPages && (
                 <div className="text-center my-4">
                   <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
@@ -198,22 +204,22 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       </div>
       <footer className="mt-8 text-center">
-      <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>
-      <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
-        Vill du stödja denna sida? Donera en slant!
-        <Image 
-          src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
-          alt="Swish Logo" 
-          width={32} 
-          height={32} 
-          className="ml-2 object-contain"
-        />
-      </a>
-      <label 
-        htmlFor="fetchAll"
-        className="ml-4 mr-2 text-sm"
-        title="Aktivera avancerade funktioner"
-      >Beast mode</label>
+        <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>
+        <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
+          Vill du stödja denna sida? Donera en slant!
+          <Image 
+            src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
+            alt="Swish Logo" 
+            width={32} 
+            height={32} 
+            className="ml-2 object-contain"
+          />
+        </a>
+        <label 
+          htmlFor="fetchAll"
+          className="ml-4 mr-2 text-sm"
+          title="Aktivera avancerade funktioner"
+        >Aktivera sökfält</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
             id="fetchAll"

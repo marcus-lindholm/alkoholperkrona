@@ -51,7 +51,7 @@ type FilterProps = {
         </div>
       )}
       <div className="mb-2 sm:mb-0 sm:mr-4">
-        <label htmlFor="filter" className="mr-2 ml-2 text-sm font-medium">Filter:</label>
+        <label htmlFor="filter" className="hidden sm:inline-block mr-2 ml-2 text-sm font-medium">Filter:</label>
         <select
           id="filter"
           value={filterType || ""}
@@ -133,7 +133,7 @@ type FilterProps = {
       </div>
         <>
             <div className="flex items-center mb-2 sm:mb-0">
-                <label className="mr-2 text-sm font-medium">Sortera på:</label>
+                <label className="hidden sm:inline-block mr-2 text-sm font-medium">Sortera på:</label>
                 <select
                 value={sortCriteria}
                 onChange={(e) => setSortCriteria(e.target.value)}
