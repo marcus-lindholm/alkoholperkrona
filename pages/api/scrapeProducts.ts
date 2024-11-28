@@ -48,11 +48,6 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
     var wineURL = 'https://www.systembolaget.se/sortiment/vin/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
     var ciderURL = 'https://www.systembolaget.se/sortiment/cider-blanddrycker/?sortiment=Fast+sortiment_eller_Tillf%C3%A4lligt+sortiment_eller_Lokalt+%26+Sm%C3%A5skaligt_eller_S%C3%A4song_eller_Webblanseringar&';
   }
-  /* const browser = puppeteer.launch(
-    {
-      headless: false,
-      
-    }) */
   
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/chromium-browser',
@@ -145,7 +140,7 @@ const clickHref = async (page: any, counter: number) => {
 }
 
 const acceptCookies = async (page: any, counter: number) => {
-  const buttonClass = 'css-wp6uyr';
+  const buttonClass = 'css-xute7l';
   console.log("running acceptCookies");
 
   if (!await page.$(`button.${buttonClass}`)) {
