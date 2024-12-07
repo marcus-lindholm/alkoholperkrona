@@ -11,6 +11,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import FilterComponent from './components/FilterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -140,9 +141,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="absolute top-4 left-4 flex items-center">
-      <a href="/">
+      <Link href="/">
         <h1 className="text-2xl font-bold mr-12">🍺 APKrona.se</h1>
-      </a>
+      </Link>
       </div>
       <div className="absolute top-4 right-4 flex items-center">
         <label className="switch">
