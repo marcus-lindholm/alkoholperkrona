@@ -141,9 +141,16 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="absolute top-4 left-4 flex items-center">
-      <Link href="/">
-        <h1 className="text-2xl font-bold mr-12">🍺 APKrona.se</h1>
-      </Link>
+        <Link href="/" className="flex items-center">
+          <Image
+            src={"/beer_emoji.png"}
+            alt="APK"
+            width={25}
+            height={25}
+            className="object-contain"
+          />
+          <h1 className="text-2xl font-bold ml-2">APKrona.se</h1>
+        </Link>
       </div>
       <div className="absolute top-4 right-4 flex items-center">
         <label className="switch">
@@ -215,8 +222,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
           <Image 
             src={isDarkMode ? "/Swish_dark.png" : "/Swish_light.png"} 
             alt="Swish Logo" 
-            width={32} 
-            height={32} 
+            width={25} 
+            height={25} 
             className="ml-2 object-contain"
           />
         </a>
