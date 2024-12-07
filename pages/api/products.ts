@@ -8,8 +8,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const pageNumber = parseInt(page as string, 10) || 1;
-    const limitNumber = pageNumber === 1 ? 20 : parseInt(limit as string, 10) || 50;
-    const skip = (pageNumber - 1) * limitNumber;
+    const initialLimit = 20;
+    const subsequentLimit = parseInt(limit as string, 10) || 50;
+    const limitNumber = pageNumber === 1 ? initialLimit : subsequentLimit;
+
+    const skip = pageNumber === 1 
+      ? 0 
+      : initialLimit + (pageNumber - 2) * subsequentLimit;
 
     const filters: any = {};
 
