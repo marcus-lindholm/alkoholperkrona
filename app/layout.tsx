@@ -19,6 +19,8 @@ export default function RootLayout({
     <html lang="en">
       <Head>
         <link rel="icon" href="/favicon.ico" />
+        <meta property="og:image" content="/favicon.ico" />
+        <meta property="og:url" content="https://www.apkrona.se" />
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8117821348663742"

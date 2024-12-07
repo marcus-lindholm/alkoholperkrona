@@ -140,7 +140,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="absolute top-4 left-4 flex items-center">
+      <a href="/">
         <h1 className="text-2xl font-bold mr-12">🍺 APKrona.se</h1>
+      </a>
       </div>
       <div className="absolute top-4 right-4 flex items-center">
         <label className="switch">
