@@ -5,6 +5,13 @@ const prisma = new PrismaClient();
 let isRunning = false;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const remoteAddress = req.socket.remoteAddress;
+
+  if (remoteAddress !== '127.0.0.1' && remoteAddress !== '::1') {
+    res.status(403).json({ message: "Forbidden: This route can only be accessed from localhost." });
+    return;
+  }
+
   if (isRunning) {
     console.log("updateRankings is already running. Exiting...");
     res.status(200).json({ message: "updateRankings is already running. Exiting..." });
