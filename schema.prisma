@@ -20,6 +20,7 @@ model Beverage {
   volume          Float
   price           Float
   url             String            @unique
+  rankingHistory String   @default("")
   createdAt       DateTime          @default(now()) @map(name: "created_at")
   updatedAt       DateTime          @updatedAt @map(name: "updated_at")
   BeverageRanking BeverageRanking[]
@@ -29,8 +30,7 @@ model BeverageRanking {
   id         String   @id @default(cuid())
   beverage   Beverage @relation(fields: [beverageId], references: [id])
   beverageId String
-  ranking    Int
-  rankingDate DateTime
+  rankingHistory String @default("")
   createdAt  DateTime @default(now()) @map(name: "created_at")
   updatedAt  DateTime @updatedAt @map(name: "updated_at")
 }
