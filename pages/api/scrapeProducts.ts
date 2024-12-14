@@ -296,6 +296,13 @@ function processVolumeString(input: any) {
   return cleanedInput.replace(' ', '');
 }
 
+function normalizeSearchQuery(str: string): string {
+  return str
+    .normalize('NFD') // Normalize to decomposed form
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritical marks
+    .replace(/'/g, ' '); // Replace apostrophes with spaces
+}
+
 async function waitForSelectorIndefinitely(page: any, selector: string) {
   while (true) {
     try {
@@ -342,6 +349,8 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
         const vpk = parseFloat((volume / price).toFixed(4));
 
+        const searchQueryNormalized = normalizeSearchQuery(name.toLowerCase()) + " " + normalizeSearchQuery(brand.toLowerCase());
+        
         const product = {
           brand: brand,
           name: name,
@@ -350,7 +359,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           price: price,
           alcohol: alcohol,
           volume: volume,
-          type: type + ", " + typeInfo,
+          type: type + ", " + typeInfo + ", " + searchQueryNormalized,
           vpk: vpk,
         }
         products.push(product);
