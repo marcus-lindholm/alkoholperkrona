@@ -23,20 +23,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log(`Fetched ${products.length} products.`);
 
-    const rankingDate = new Date().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+    const rankingDate = new Date().toISOString().split('T')[0];
 
-    for (let i = 0; i < products.length; i++) {
-      const newRankingEntry = `${rankingDate}:${i + 1}`;
+    for (let i = 0, currentRanking = 1; i < products.length; i++) {
+      const newRankingEntry = `${rankingDate}:${currentRanking}`;
       const updatedRankingHistory = products[i].rankingHistory
         ? `${products[i].rankingHistory},${newRankingEntry}`
         : newRankingEntry;
-
+    
       await prisma.beverage.update({
         where: { id: products[i].id },
         data: { rankingHistory: updatedRankingHistory },
       });
-
+    
       console.log(`Updated product ID ${products[i].id} with new ranking entry: ${newRankingEntry}`);
+    
+      if (i < products.length - 1 && products[i].apk !== products[i + 1].apk) {
+        currentRanking = i + 2;
+      }
     }
 
     console.log("Finished updateRankings.");
