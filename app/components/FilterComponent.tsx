@@ -37,19 +37,17 @@ type FilterProps = {
   }: FilterProps) => {
   return (
     <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-center sm:items-center justify-center sm:justify-start">
-      {isBeastMode && (
-        <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-4">
-            <input
-            id="search"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Sök"
-            className={`px-4 py-2 pl-10 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
-            />
-            <FontAwesomeIcon icon={faSearch} className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
-        </div>
-      )}
+      <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-4">
+          <input
+          id="search"
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Sök"
+          className={`px-3 py-1 pl-8 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+          />
+          <FontAwesomeIcon icon={faSearch} className="w-3 h-3 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+      </div>
       <div className="mb-2 sm:mb-0 sm:mr-4">
         <label htmlFor="filter" className="hidden sm:inline-block mr-2 ml-2 text-sm font-medium">Filter:</label>
         <select
@@ -59,7 +57,7 @@ type FilterProps = {
             setFilterType(e.target.value || null);
             setNestedFilter(null);
           }}
-          className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+          className={`px-3 py-1.5 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
         >
           <option value="">Allt</option>
           <option value="beer">Öl</option>
@@ -74,7 +72,7 @@ type FilterProps = {
             id="nestedFilter"
             value={nestedFilter || ""}
             onChange={(e) => setNestedFilter(e.target.value || null)}
-            className={`px-4 py-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+            className={`px-3 py-1.5 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
           >
             {filterType === "beer" && (
               <>
@@ -134,15 +132,16 @@ type FilterProps = {
         <>
             <div className="flex items-center mb-2 sm:mb-0">
                 <label className="hidden sm:inline-block mr-2 text-sm font-medium">Sortera på:</label>
-                <select
-                value={sortCriteria}
-                onChange={(e) => setSortCriteria(e.target.value)}
-                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
-                >
-                <option value="apk">APK</option>
-                <option value="price">Pris</option>
-                <option value="volume">Volym</option>
-                <option value="alcohol">Volymprocent</option>
+                  <select
+                  value={sortCriteria}
+                  onChange={(e) => setSortCriteria(e.target.value)}
+                  className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+                  >
+                  <option value="apk">APK</option>
+                  <option value="price">Pris</option>
+                  <option value="volume">Volym</option>
+                  <option value="alcohol">Volymprocent</option>
+                  <option value="vpk">Volym/kr</option>
                 </select>
             </div>
             <div className="flex items-center ml-2">

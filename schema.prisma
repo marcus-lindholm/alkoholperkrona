@@ -5,40 +5,33 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Post {
-  id        String     @default(cuid()) @id
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
-}
-
-model User {
-  id            String       @default(cuid()) @id
-  name          String?
-  email         String?   @unique
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
-  @@map(name: "users")
-}
-
 model Beverage {
-  id        String     @default(cuid()) @id
-  brand     String
-  name      String
-  apk       Float
-  type      String?
-  alcohol   Float
-  volume    Float
-  price     Float
-  url       String    @unique
-  createdAt DateTime  @default(now()) @map(name: "created_at")
-  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+  id              String            @id @default(cuid())
+  brand           String
+  name            String
+  apk             Float
+  type            String?
+  alcohol         Float
+  volume          Float
+  price           Float
+  url             String            @unique
+  rankingHistory  String            @default("")
+  vpk             Float?            @default(0)
+  createdAt       DateTime          @default(now()) @map(name: "created_at")
+  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+  BeverageRanking BeverageRanking[]
+}
+
+model BeverageRanking {
+  id         String   @id @default(cuid())
+  beverage   Beverage @relation(fields: [beverageId], references: [id])
+  beverageId String
+  rankingHistory String @default("")
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @updatedAt @map(name: "updated_at")
 }

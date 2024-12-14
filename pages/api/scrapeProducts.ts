@@ -14,6 +14,13 @@ const prisma = new PrismaClient();
 const cheerio = require('cheerio');
 
 export default async function handler(req: any, res: any) {
+  const remoteAddress = req.socket.remoteAddress;
+
+  if (remoteAddress !== '127.0.0.1' && remoteAddress !== '::1') {
+    res.status(403).json({ message: "Forbidden: This route can only be accessed from localhost." });
+    return;
+  }
+  
   console.log("scrapeProducts API called");
     if (req.method === 'GET') {
         try {
@@ -235,7 +242,11 @@ function processPriceString(input: any) {
 }
 
 function processAlcString(input: any) {
-  const startIndex = input.indexOf(" ml") + 3;
+  const volumeMatch = input.match(/(\d+)\s?ml/);
+  if (!volumeMatch) {
+    return null; // Return null if volumeMatch is not found
+  }
+  const startIndex = input.indexOf(volumeMatch[0]) + volumeMatch[0].length;
   const endIndex = input.indexOf("%");
   // Check if both " ml" and "%" are found in the string
   if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
@@ -292,6 +303,13 @@ function processVolumeString(input: any) {
   return cleanedInput.replace(' ', '');
 }
 
+function normalizeSearchQuery(str: string): string {
+  return str
+    .normalize('NFD') // Normalize to decomposed form
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritical marks
+    .replace(/'/g, ' '); // Replace apostrophes with spaces
+}
+
 async function waitForSelectorIndefinitely(page: any, selector: string) {
   while (true) {
     try {
@@ -324,7 +342,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-rp7p3f').text();
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
         const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1njx6qf').text();
-        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-4oiqd').text();
+        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1hdv0wt').text();
         const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-4oiqd8').text();
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
@@ -336,7 +354,10 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         }
         const volume = parseInt(processVolumeString(volumeAndAlcohol));
         const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
+        const vpk = parseFloat((volume / price).toFixed(4));
 
+        const searchQueryNormalized = normalizeSearchQuery(name.toLowerCase()) + " " + normalizeSearchQuery(brand.toLowerCase());
+        
         const product = {
           brand: brand,
           name: name,
@@ -345,7 +366,8 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           price: price,
           alcohol: alcohol,
           volume: volume,
-          type: type + ", " + typeInfo,
+          type: type + ", " + typeInfo + ", " + searchQueryNormalized,
+          vpk: vpk,
         }
         products.push(product);
         allScrapedProductURLs.push(product.url);

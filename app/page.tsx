@@ -40,6 +40,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
     volume: number;
     price: number;
     url: string;
+    rankingHistory: string | null;
+    vpk: number;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -193,10 +195,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
           ) : (
             <div className="w-full">
               <div className="block sm:hidden">
-                <ProductComponentMobile products={products} isDarkMode={isDarkMode} />
+                <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
               </div>
               <div className="hidden sm:block">
-                <ProductComponent products={products} isDarkMode={isDarkMode} />
+                <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
               </div>
               {page < totalPages && (
                 <div className="text-center my-4">
@@ -231,7 +233,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           htmlFor="fetchAll"
           className="ml-4 mr-2 text-sm"
           title="Aktivera avancerade funktioner"
-        >Aktivera sökfält</label>
+        >Avancerat läge</label>
         <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
           <input
             id="fetchAll"
