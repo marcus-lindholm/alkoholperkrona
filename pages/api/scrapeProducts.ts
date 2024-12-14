@@ -235,7 +235,11 @@ function processPriceString(input: any) {
 }
 
 function processAlcString(input: any) {
-  const startIndex = input.indexOf(" ml") + 3;
+  const volumeMatch = input.match(/(\d+)\s?ml/);
+  if (!volumeMatch) {
+    return null; // Return null if volumeMatch is not found
+  }
+  const startIndex = input.indexOf(volumeMatch[0]) + volumeMatch[0].length;
   const endIndex = input.indexOf("%");
   // Check if both " ml" and "%" are found in the string
   if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
@@ -324,7 +328,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-rp7p3f').text();
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
         const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1njx6qf').text();
-        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-4oiqd').text();
+        const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1hdv0wt').text();
         const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-4oiqd8').text();
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
@@ -336,6 +340,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         }
         const volume = parseInt(processVolumeString(volumeAndAlcohol));
         const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
+        const vpk = parseFloat((volume / price).toFixed(4));
 
         const product = {
           brand: brand,
@@ -346,6 +351,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           alcohol: alcohol,
           volume: volume,
           type: type + ", " + typeInfo,
+          vpk: vpk,
         }
         products.push(product);
         allScrapedProductURLs.push(product.url);
