@@ -454,7 +454,7 @@ async function deleteOldProducts() {
     await prisma.beverage.deleteMany({
       where: {
         updatedAt: {
-          lt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // older than 15 days
+          lt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // older than 15 days
         },
       },
     });
