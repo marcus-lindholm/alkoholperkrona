@@ -26,6 +26,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       orderBy: {
         apk: 'desc',
       },
+      select: {
+        id: true,
+        apk: true,
+        rankingHistory: true,
+      },
     });
 
     console.log(`Fetched ${products.length} products.`);
