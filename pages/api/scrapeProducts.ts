@@ -310,6 +310,12 @@ function normalizeSearchQuery(str: string): string {
     .replace(/'/g, ' '); // Replace apostrophes with spaces
 }
 
+function extractCountry(input: string): string {
+  const countryPattern = /^[^\d]+/;
+  const match = input.match(countryPattern);
+  return match ? match[0].trim() : '';
+}
+
 async function waitForSelectorIndefinitely(page: any, selector: string) {
   while (true) {
     try {
@@ -352,6 +358,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           }
           return;
         }
+        const country = extractCountry(volumeAndAlcohol).toLowerCase();
         const volume = parseInt(processVolumeString(volumeAndAlcohol));
         const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
         const vpk = parseFloat((volume / price).toFixed(4));
@@ -368,6 +375,8 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           volume: volume,
           type: type + ", " + typeInfo + ", " + searchQueryNormalized,
           vpk: vpk,
+          country: country,
+          lastOnSiteAt: new Date(),
         }
         products.push(product);
         allScrapedProductURLs.push(product.url);
@@ -392,10 +401,18 @@ async function addProductsToDatabase(products: any, type: string) {
 
   const totalProducts = products.length;
   const logInterval = Math.ceil(totalProducts / 10);
+  const batchSize = 15; // Adjust batch size as needed
   const operations: any = [];
-  
+
   for (let i = 0; i < totalProducts; i++) {
     const product = products[i];
+
+    // Validate product data
+    if (!product.url) {
+      console.error(`Product at index ${i} is missing a URL:`, product);
+      continue;
+    }
+
     operations.push(
       prisma.beverage.upsert({
         where: { url: product.url },
@@ -403,28 +420,67 @@ async function addProductsToDatabase(products: any, type: string) {
         create: product,
       })
     );
-  
+
+    if ((i + 1) % batchSize === 0 || i === totalProducts - 1) {
+      try {
+        await prisma.$transaction(operations);
+        operations.length = 0; // Clear operations array
+        console.log(`Processed ${i + 1} / ${totalProducts} products.`);
+      } catch (error) {
+        console.error(`Error processing batch ending at index ${i}:`, error);
+      }
+    }
+
     if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
       console.log(`Updating database progress: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
     }
   }
-  
-  await prisma.$transaction(async (prisma) => {
-    const totalOperations = operations.length;
-    for (let i = 0; i < totalOperations; i++) {
-      await operations[i];
-      if ((i + 1) % logInterval === 0 || i === totalOperations - 1) {
-        const timestamp = new Date().toISOString();
-        console.log(`[${timestamp}] ${type} transaction progress: ${Math.ceil(((i + 1) / totalOperations) * 100)}%`);
-      }
-    }
-  }, {
-    timeout: 6000000,
-  });
 
   console.log(type + ': Database update complete.');
-
 }
+
+// async function addProductsToDatabase(products: any, type: string) {
+//   if (!Array.isArray(products)) {
+//     console.log(products);
+//     console.error('Error: products is not an array. Type:', typeof products);
+//     return;
+//   }
+//   console.log("Number of products: ", products.length);
+
+//   const totalProducts = products.length;
+//   const logInterval = Math.ceil(totalProducts / 10);
+//   const operations: any = [];
+  
+//   for (let i = 0; i < totalProducts; i++) {
+//     const product = products[i];
+//     operations.push(
+//       await prisma.beverage.upsert({
+//         where: { url: product.url },
+//         update: product,
+//         create: product,
+//       })
+//     );
+  
+//     if ((i + 1) % logInterval === 0 || i === totalProducts - 1) {
+//       console.log(`Updating database progress: ${Math.ceil(((i + 1) / totalProducts) * 100)}%`);
+//     }
+//   }
+  
+//   await prisma.$transaction(async (prisma) => {
+//     const totalOperations = operations.length;
+//     for (let i = 0; i < totalOperations; i++) {
+//       await operations[i];
+//       if ((i + 1) % logInterval === 0 || i === totalOperations - 1) {
+//         const timestamp = new Date().toISOString();
+//         console.log(`[${timestamp}] ${type} transaction progress: ${Math.ceil(((i + 1) / totalOperations) * 100)}%`);
+//       }
+//     }
+//   }, {
+//     timeout: 6000000,
+//   });
+
+//   console.log(type + ': Database update complete.');
+// }
 
 async function deleteOldProducts() {
   try {

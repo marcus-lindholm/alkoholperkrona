@@ -22,8 +22,10 @@ model Beverage {
   url             String            @unique
   rankingHistory  String            @default("")
   vpk             Float?            @default(0)
+  country         String?           @default("")
   createdAt       DateTime          @default(now()) @map(name: "created_at")
   updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+  lastOnSiteAt    DateTime?         @map(name: "last_on_site_at")
   BeverageRanking BeverageRanking[]
 }
 
