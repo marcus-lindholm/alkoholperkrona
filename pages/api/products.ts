@@ -51,6 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         { name: { contains: searchQuery as string, mode: 'insensitive' } },
         { brand: { contains: searchQuery as string, mode: 'insensitive' } },
         { type: { contains: searchQuery as string, mode: 'insensitive' } },
+        { country: { contains: searchQuery as string, mode: 'insensitive' } },
       ];
     }
 
