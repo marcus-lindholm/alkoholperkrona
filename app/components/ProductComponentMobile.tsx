@@ -95,18 +95,18 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                  <div className="mb-6">
-                      <span className="font-medium opacity-85">APK</span><br/>
+                  <div className="mb-4">
+                      <span className="font-sm opacity-85">APK</span><br/>
                       <span className="text-lg">{product.apk}</span><br/>
-                      <span className="font-medium opacity-85">Volym/kr</span><br/>
+                      <span className="font-sm opacity-85">Volym/kr</span><br/>
                       <span className="text-lg">{product.vpk}</span>
                   </div>
-                  <div className="mb-2">
-                      <span className="font-medium"></span><span className="text-2xl">{priceFormatted} kr</span>
+                  <div className="mb-1">
+                      <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
               <div className='items-right text-right'>
-                <div className="mb-2 ml-12">
+                <div className="mb-2 whitespace-nowrap">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                     Till produkt <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
                   </a>
