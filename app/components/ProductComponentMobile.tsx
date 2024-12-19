@@ -43,7 +43,8 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
       {products.map((product, index) => {
 
         let latestRanking = 'N/A';
-        let rankingChange = 'new'; // Default to 'new' if there's only one entry
+        let rankingChange = 'new'; // Default to 'new' if there are less than 4 entries
+        let previousRankingBoard = 'N/A';
 
         if (product.rankingHistory != null) {
           const rankingEntries = product.rankingHistory.split(',');
@@ -54,15 +55,27 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
             latestRanking = latestRankingEntry.split(':')[1];
           }
 
-          if (previousRankingEntry) {
+          if (rankingEntries.length < 2) {
+            rankingChange = 'new';
+          } else if (previousRankingEntry) {
             const previousRanking = previousRankingEntry.split(':')[1];
             if (latestRanking < previousRanking) {
               rankingChange = 'increased';
+              previousRankingBoard = previousRanking;
             } else if (latestRanking > previousRanking) {
               rankingChange = 'decreased';
+              previousRankingBoard = previousRanking;
             } else {
               rankingChange = 'same';
             }
+          }
+        }
+        
+        // Format price to always have two decimals
+        let priceFormatted = product.price.toString();
+        if (priceFormatted.includes('.')) {
+          if (priceFormatted.split('.')[1].length === 1) {
+            priceFormatted += '0';
           }
         }
 
@@ -71,10 +84,10 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
             <div className="flex justify-between items-center mb-2">
               <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                   <div className="text-xl">
-                    {rankingChange === 'increased' && <FontAwesomeIcon icon={faArrowUp} className="text-green-500" size="xs" title="Högre placering än tidigare" />}
-                    {rankingChange === 'decreased' && <FontAwesomeIcon icon={faArrowDown} className="text-red-500" size="xs" title="Lägre placering än tidigare" />}
-                    {rankingChange === 'new' && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500" size="xs" title="Ny produkt på listan" />}
-                    <span className='ml-2'>{latestRanking}.</span>
+                    {rankingChange === 'increased' && <FontAwesomeIcon icon={faArrowUp} className="text-green-500 mr-2" size="xs" title="Högre placering än tidigare" />}
+                    {rankingChange === 'decreased' && <FontAwesomeIcon icon={faArrowDown} className="text-red-500 mr-2" size="xs" title="Lägre placering än tidigare" />}
+                    {rankingChange === 'new' && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 mr-2" size="xs" title="Ny produkt på listan" />}
+                    {latestRanking}.
                     <span className='ml-2'><strong>{product.brand}</strong><br/></span>
                     {isBeastMode && <span className="text-sm opacity-75">{product.name}</span>}
                   </div>
@@ -82,27 +95,29 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                  <div className="mb-8">
-                      <span className="font-medium">APK: </span>{product.apk}<br/>
-                      <span className="font-medium">Volym/kr: </span>{product.vpk}
+                  <div className="mb-6">
+                      <span className="font-medium opacity-85">APK</span><br/>
+                      <span className="text-lg">{product.apk}</span><br/>
+                      <span className="font-medium opacity-85">Volym/kr</span><br/>
+                      <span className="text-lg">{product.vpk}</span>
                   </div>
                   <div className="mb-2">
-                      <span className="font-medium"></span><span className="text-2xl">{product.price} kr</span>
+                      <span className="font-medium"></span><span className="text-2xl">{priceFormatted} kr</span>
                   </div>
               </div>
-              <div>
-                <div className="mb-2 ml-14">
+              <div className='items-right text-right'>
+                <div className="mb-2 ml-12">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                     Till produkt <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
                   </a>
                 </div>
-                <div className="mb-2 ml-14">
+                <div className="mb-2 ml-12">
                     <span className="font-medium"></span>{translateType(product.type)}
                 </div>
-                <div className="mb-2 ml-14">
+                <div className="mb-2 ml-12">
                     <span className="font-medium"></span>{product.volume} ml
                 </div>
-                <div className="mb-2 ml-14">
+                <div className="mb-2 ml-12">
                     <span className="font-medium"></span>{product.alcohol} %
                 </div>
               </div>

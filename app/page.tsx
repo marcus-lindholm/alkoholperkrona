@@ -187,31 +187,39 @@ export default function Home({ searchParams }: { searchParams: any }) {
             setSortOrder={setSortOrder}
           />
         </div>
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center" style={{ minHeight: '45vh' }}>
           {isLoading ? (
             <div className="flex justify-center items-center w-full h-64">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
             </div>
           ) : (
             <div className="w-full">
-              <div className="block sm:hidden">
-                <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
-              </div>
-              <div className="hidden sm:block">
-                <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
-              </div>
-              {page < totalPages && (
+              {products.length === 0 ? (
                 <div className="text-center my-4">
-                  <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
-                    {isLoadMoreLoading ? (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-white"></div>
-                      </div>
-                    ) : (
-                      'Visa fler'
-                    )}
-                  </button>
+                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Testa att söka efter namn, typ eller land.</p>
                 </div>
+              ) : (
+                <>
+                  <div className="block sm:hidden">
+                    <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
+                  </div>
+                  <div className="hidden sm:block">
+                    <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
+                  </div>
+                  {page < totalPages && (
+                    <div className="text-center my-4">
+                      <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
+                        {isLoadMoreLoading ? (
+                          <div className="flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-white"></div>
+                          </div>
+                        ) : (
+                          'Visa fler'
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

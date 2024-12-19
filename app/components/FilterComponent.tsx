@@ -1,52 +1,60 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 type FilterProps = {
-    isDarkMode: boolean;
-    isBeastMode: boolean;
-    filterType: string | null;
-    nestedFilter: string | null;
-    filterOrdervara: boolean;
-    searchQuery: string;
-    sortCriteria: string;
-    sortOrder: string;
-    setFilterType: (value: string | null) => void;
-    setNestedFilter: (value: string | null) => void;
-    setFilterOrdervara: (value: boolean) => void;
-    setSearchQuery: (value: string) => void;
-    setSortCriteria: (value: string) => void;
-    setSortOrder: (value: string) => void;
-  };
+  isDarkMode: boolean;
+  isBeastMode: boolean;
+  filterType: string | null;
+  nestedFilter: string | null;
+  filterOrdervara: boolean;
+  searchQuery: string;
+  sortCriteria: string;
+  sortOrder: string;
+  setFilterType: (value: string | null) => void;
+  setNestedFilter: (value: string | null) => void;
+  setFilterOrdervara: (value: boolean) => void;
+  setSearchQuery: (value: string) => void;
+  setSortCriteria: (value: string) => void;
+  setSortOrder: (value: string) => void;
+};
 
-  const FilterComponent = ({
-    isDarkMode,
-    isBeastMode,
-    filterType,
-    nestedFilter,
-    filterOrdervara,
-    searchQuery,
-    sortCriteria,
-    sortOrder,
-    setFilterType,
-    setNestedFilter,
-    setFilterOrdervara,
-    setSearchQuery,
-    setSortCriteria,
-    setSortOrder,
-  }: FilterProps) => {
+const FilterComponent = ({
+  isDarkMode,
+  isBeastMode,
+  filterType,
+  nestedFilter,
+  filterOrdervara,
+  searchQuery,
+  sortCriteria,
+  sortOrder,
+  setFilterType,
+  setNestedFilter,
+  setFilterOrdervara,
+  setSearchQuery,
+  setSortCriteria,
+  setSortOrder,
+}: FilterProps) => {
   return (
     <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-center sm:items-center justify-center sm:justify-start">
       <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-4">
-          <input
+        <input
           id="search"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Sök"
-          className={`px-3 py-1 pl-8 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
-          />
-          <FontAwesomeIcon icon={faSearch} className="w-3 h-3 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+          className={`px-3 py-1 pl-8 pr-8 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+        />
+        <FontAwesomeIcon icon={faSearch} className="w-3 h-3 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-600"
+          >
+            <FontAwesomeIcon icon={faTimes} className="w-4 h-4" />
+          </button>
+        )}
       </div>
       <div className="mb-2 sm:mb-0 sm:mr-4">
         <label htmlFor="filter" className="hidden sm:inline-block mr-2 ml-2 text-sm font-medium">Filter:</label>
@@ -78,7 +86,7 @@ type FilterProps = {
               <>
                 <option value="">Alla öl</option>
                 <option value="lager">Lager</option>
-                <option value=" ale">Ale</option>
+                <option value="ale">Ale</option>
                 <option value="stout">Stout</option>
                 <option value="ipa">IPA</option>
               </>
@@ -129,32 +137,30 @@ type FilterProps = {
           ></label>
         </div>
       </div>
-        <>
-            <div className="flex items-center mb-2 sm:mb-0">
-                <label className="hidden sm:inline-block mr-2 text-sm font-medium">Sortera på:</label>
-                  <select
-                  value={sortCriteria}
-                  onChange={(e) => setSortCriteria(e.target.value)}
-                  className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
-                  >
-                  <option value="apk">APK</option>
-                  <option value="price">Pris</option>
-                  <option value="volume">Volym</option>
-                  <option value="alcohol">Volymprocent</option>
-                  <option value="vpk">Volym/kr</option>
-                </select>
-            </div>
-            <div className="flex items-center ml-2">
-                <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
-                >
-                <option value="asc">Stigande ↑</option>
-                <option value="desc">Sjunkande ↓</option>
-                </select>
-            </div>
-        </>
+      <div className="flex items-center mb-2 sm:mb-0">
+        <label className="hidden sm:inline-block mr-2 text-sm font-medium">Sortera på:</label>
+        <select
+          value={sortCriteria}
+          onChange={(e) => setSortCriteria(e.target.value)}
+          className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+        >
+          <option value="apk">APK</option>
+          <option value="price">Pris</option>
+          <option value="volume">Volym</option>
+          <option value="alcohol">Volymprocent</option>
+          <option value="vpk">Volym/kr</option>
+        </select>
+      </div>
+      <div className="flex items-center ml-2">
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
+        >
+          <option value="asc">Stigande ↑</option>
+          <option value="desc">Sjunkande ↓</option>
+        </select>
+      </div>
     </div>
   );
 };

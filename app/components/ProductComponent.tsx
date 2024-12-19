@@ -60,19 +60,21 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode }: { products
         <tbody>
           {products.map((product, index) => {
             let latestRanking = 'N/A';
-            let rankingChange = 'new'; // Default to 'new' if there's only one entry
+            let rankingChange = 'new'; // Default to 'new' if there are less than 4 entries
             let previousRankingBoard = 'N/A';
-            
+          
             if (product.rankingHistory != null) {
               const rankingEntries = product.rankingHistory.split(',');
               const latestRankingEntry = rankingEntries.pop();
               const previousRankingEntry = rankingEntries.pop();
-            
+          
               if (latestRankingEntry) {
                 latestRanking = latestRankingEntry.split(':')[1];
               }
-            
-              if (previousRankingEntry) {
+          
+              if (rankingEntries.length < 2) {
+                rankingChange = 'new';
+              } else if (previousRankingEntry) {
                 const previousRanking = previousRankingEntry.split(':')[1];
                 if (latestRanking < previousRanking) {
                   rankingChange = 'increased';
