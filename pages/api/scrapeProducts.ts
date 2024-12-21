@@ -16,8 +16,8 @@ const cheerio = require('cheerio');
 export default async function handler(req: any, res: any) {
   const remoteAddress = req.socket.remoteAddress;
 
-  if (remoteAddress !== '127.0.0.1' && remoteAddress !== '::1') {
-    res.status(403).json({ message: "Forbidden: This route can only be accessed from localhost." });
+  if (process.env.NODE_ENV === 'production') {
+    res.status(403).json({ message: "Forbidden: This route cannot be accessed in production." });
     return;
   }
   
