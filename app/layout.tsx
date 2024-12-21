@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "APKrona.se - Högst APK Systembolaget",
   description: "APK-listan som visar vilka produkter som har högst mängd alkohol per krona hos Systembolaget.",
+  keywords: "APK, alkohol per krona, Systembolaget, alkohol, drycker, billig alkohol, bästa alkohol, hög APK, Systembolaget APK, alkohol prisvärd, alkohol ranking, högst mängd alkohol per krona, vilka produkter har högst mängd alkohol per krona, vilka produkter är mest prisvärda, vilka produkter är billigast, vilka produkter är bäst, vilka produkter har högst APK, vilka produkter är mest prisvärda på Systembolaget, vilka produkter är billigast på Systembolaget, vilka produkter är bäst på Systembolaget, vilka produkter har högst APK på Systembolaget",
 };
 
 export default function RootLayout({

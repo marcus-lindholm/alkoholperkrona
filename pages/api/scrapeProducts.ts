@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
   const remoteAddress = req.socket.remoteAddress;
 
   if (process.env.NODE_ENV === 'production') {
-    res.status(403).json({ message: "Forbidden: This route cannot be accessed in production." });
+    res.status(403).json({ message: "Forbidden: This route cannot be accessed." });
     return;
   }
   
