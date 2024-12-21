@@ -96,10 +96,10 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
             <div className="grid grid-cols-2 gap-4">
               <div>
                   <div className="mb-4">
-                      <span className="font-sm opacity-85">APK</span><br/>
-                      <span className="text-lg">{product.apk}</span><br/>
-                      <span className="font-sm opacity-85">Volym/kr</span><br/>
-                      <span className="text-lg">{product.vpk}</span>
+                      <span className="text-sm opacity-85">APK</span><br/>
+                      <span className="text-medium">{product.apk}</span><br/>
+                      <span className="text-sm opacity-85">Volym/kr</span><br/>
+                      <span className="text-medium">{product.vpk}</span>
                   </div>
                   <div className="mb-1">
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
@@ -112,13 +112,13 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
                   </a>
                 </div>
                 <div className="mb-2 ml-12">
-                    <span className="font-medium"></span>{translateType(product.type)}
+                    {translateType(product.type)}
                 </div>
                 <div className="mb-2 ml-12">
-                    <span className="font-medium"></span>{product.volume} ml
+                    {product.volume} ml
                 </div>
                 <div className="mb-2 ml-12">
-                    <span className="font-medium"></span>{product.alcohol} %
+                    {product.alcohol} %
                 </div>
               </div>
             </div>
