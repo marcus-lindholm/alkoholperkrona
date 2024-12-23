@@ -27,12 +27,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (nestedFilter) {
       filters.AND = filters.AND || [];
-      filters.AND.push({
-        type: {
-          contains: nestedFilter as string,
-          mode: 'insensitive',
-        },
-      });
+      
+      if (nestedFilter === 'whiskey') {
+        filters.AND.push({
+          OR: [
+            {
+              type: {
+                contains: 'whiskey',
+                mode: 'insensitive',
+              },
+            },
+            {
+              type: {
+                contains: 'whisky',
+                mode: 'insensitive',
+              },
+            },
+          ],
+        });
+      } else {
+        filters.AND.push({
+          type: {
+            contains: nestedFilter as string,
+            mode: 'insensitive',
+          },
+        });
+      }
     }
 
     if (filterOrdervara === 'false') {
