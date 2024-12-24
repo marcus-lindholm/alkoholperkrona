@@ -37,14 +37,14 @@ const FilterComponent = ({
 }: FilterProps) => {
   return (
     <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-center sm:items-center justify-center sm:justify-start">
-      <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-4">
+      <div className="flex items-center relative mb-2 sm:mb-0 sm:mr-2">
         <input
           id="search"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Sök"
-          className={`px-3 py-1 pl-8 pr-8 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
+          className={`px-3 py-1 pl-8 pr-20 sm:pr-0 border rounded ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-200'}`}
         />
         <FontAwesomeIcon icon={faSearch} className="w-3 h-3 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
         {searchQuery && (

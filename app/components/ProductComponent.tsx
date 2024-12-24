@@ -88,6 +88,14 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode }: { products
               }
             }
 
+            // Format price to always have two decimals
+            let priceFormatted = product.price.toString();
+            if (priceFormatted.includes('.')) {
+              if (priceFormatted.split('.')[1].length === 1) {
+                priceFormatted += '0';
+              }
+            }
+
             return(
               <tr key={index} className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
                 <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -116,7 +124,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode }: { products
                   </a>
                 </td>
                 <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.price} kr</td>
+                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{priceFormatted} kr</td>
                 <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.volume} ml</td>
                 <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.alcohol} %</td>
               </tr>
