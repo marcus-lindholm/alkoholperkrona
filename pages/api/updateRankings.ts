@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const rankingDate = new Date().toISOString().split('T')[0];
 
     for (let i = 0, currentRanking = 1; i < products.length; i++) {
-      const newRankingEntry = `${rankingDate}:${currentRanking}`;
+      const newRankingEntry = `${rankingDate}:${currentRanking}:${products[i].apk}`;
       const updatedRankingHistory = products[i].rankingHistory
         ? `${products[i].rankingHistory},${newRankingEntry}`
         : newRankingEntry;

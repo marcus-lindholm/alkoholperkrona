@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
+import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
 import { Tooltip } from '@nextui-org/react';
+import RankingHistoryChart from './RankingHistoryChart';
 
 type ProductType = {
   id: string;
@@ -20,6 +21,8 @@ type ProductType = {
 };
 
 const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+
   const translateType = (type: string | null) => {
     let displayType = "";
     if (type == null) {
@@ -43,6 +46,14 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
     return displayType;
   };
 
+  const parseRankingHistory = (rankingHistory: string | null) => {
+    if (!rankingHistory) return [];
+    return rankingHistory.split(',').map(entry => {
+      const [date, rank] = entry.split(':');
+      return { date, rank: parseInt(rank, 10) };
+    });
+  };
+
   return (
     <div className={`overflow-x-auto w-full mt-10 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <table className={`min-w-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -55,6 +66,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
             <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Pris</th>
             <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volym</th>
             <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volymprocent</th>
+            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}></th>
           </tr>
         </thead>
         <tbody>
@@ -96,38 +108,56 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
               }
             }
 
+            const rankingHistoryData = parseRankingHistory(product.rankingHistory);
+
             return(
-              <tr key={index} className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                  {latestRanking}
-                  {rankingChange === 'increased' && (
-                    <Tooltip content={`Föregående placering: ${previousRankingBoard}`} style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
-                      <FontAwesomeIcon icon={faArrowUp} className="text-green-500 ml-2" size="xs" />
-                    </Tooltip>
-                  )}
-                  {rankingChange === 'decreased' && (
-                    <Tooltip content={`Föregående placering: ${previousRankingBoard}`} style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
-                      <FontAwesomeIcon icon={faArrowDown} className="text-red-500 ml-2" size="xs" />
-                    </Tooltip>
-                  )}
-                  {rankingChange === 'new' && (
-                    <Tooltip content="Ny produkt på listan" style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
-                      <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 ml-2" size="xs" />
-                    </Tooltip>
-                  )}
-                </td>
-                <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
-                <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    <strong>{product.brand} <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" /></strong><br/>
-                    {showDetailedInfo && <span className='text-sm opacity-85'>{product.name}</span>}
-                  </a>
-                </td>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{priceFormatted} kr</td>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.volume} ml</td>
-                <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.alcohol} %</td>
-              </tr>
+              <React.Fragment key={index}>
+                <tr className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                    {latestRanking}
+                    {rankingChange === 'increased' && (
+                      <Tooltip content={`Föregående placering: ${previousRankingBoard}`} style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
+                        <FontAwesomeIcon icon={faArrowUp} className="text-green-500 ml-2" size="xs" />
+                      </Tooltip>
+                    )}
+                    {rankingChange === 'decreased' && (
+                      <Tooltip content={`Föregående placering: ${previousRankingBoard}`} style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
+                        <FontAwesomeIcon icon={faArrowDown} className="text-red-500 ml-2" size="xs" />
+                      </Tooltip>
+                    )}
+                    {rankingChange === 'new' && (
+                      <Tooltip content="Ny produkt på listan" style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
+                        <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 ml-2" size="xs" />
+                      </Tooltip>
+                    )}
+                  </td>
+                  <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
+                  <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                    <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <strong>{product.brand} <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" /></strong><br/>
+                      {showDetailedInfo && <span className='text-sm opacity-85'>{product.name}</span>}
+                    </a>
+                  </td>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{priceFormatted} kr</td>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.volume} ml</td>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.alcohol} %</td>
+                  <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                    {isBeastMode && (
+                      <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}>
+                        <FontAwesomeIcon icon={expandedProduct === product.id ? faChevronUp : faChevronDown} />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+                {expandedProduct === product.id && (
+                  <tr className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
+                    <td colSpan={8} className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                      <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             );
           })}
         </tbody>
