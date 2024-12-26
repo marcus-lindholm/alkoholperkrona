@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
+import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+import RankingHistoryChart from './RankingHistoryChart'; // Make sure to import your RankingHistoryChart component
 
 type ProductType = {
   id: string;
@@ -19,6 +20,8 @@ type ProductType = {
 };
 
 const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+
   const translateType = (type: string | null) => {
     let displayType = "";
     if (type == null) {
@@ -45,6 +48,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         let latestRanking = 'N/A';
         let rankingChange = 'new'; // Default to 'new' if there are less than 4 entries
         let previousRankingBoard = 'N/A';
+        let rankingHistoryData: { date: string; rank: number; }[] = [];
 
         if (product.rankingHistory != null) {
           const rankingEntries = product.rankingHistory.split(',');
@@ -69,6 +73,11 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
               rankingChange = 'same';
             }
           }
+
+          rankingHistoryData = rankingEntries.map(entry => {
+            const [date, rank] = entry.split(':');
+            return { date, rank: parseInt(rank, 10) };
+          });
         }
         
         // Format price to always have two decimals
@@ -120,10 +129,21 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                 <div className="mb-2 ml-12">
                     {product.alcohol} %
                 </div>
+                {isBeastMode && (
+                  <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}>
+                    <FontAwesomeIcon icon={expandedProduct === product.id ? faChevronUp : faChevronDown} />
+                  </button>
+                )}
               </div>
             </div>
-          </div>);
-        })}
+            {expandedProduct === product.id && (
+              <div className={`mt-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded`}>
+                <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

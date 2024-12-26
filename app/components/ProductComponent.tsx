@@ -143,9 +143,11 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
                   <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.volume} ml</td>
                   <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.alcohol} %</td>
                   <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                    <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}>
-                      <FontAwesomeIcon icon={expandedProduct === product.id ? faChevronUp : faChevronDown} />
-                    </button>
+                    {isBeastMode && (
+                      <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}>
+                        <FontAwesomeIcon icon={expandedProduct === product.id ? faChevronUp : faChevronDown} />
+                      </button>
+                    )}
                   </td>
                 </tr>
                 {expandedProduct === product.id && (
