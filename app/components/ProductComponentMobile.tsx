@@ -18,7 +18,7 @@ type ProductType = {
   updatedAt: Date;
 };
 
-const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean }) => {
+const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
   const translateType = (type: string | null) => {
     let displayType = "";
     if (type == null) {
@@ -89,7 +89,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode }: { pr
                     {rankingChange === 'new' && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 mr-2" size="xs" title="Ny produkt på listan" />}
                     {latestRanking}.
                     <span className='ml-2'><strong>{product.brand}</strong><br/></span>
-                    {isBeastMode && <span className="text-sm opacity-75">{product.name}</span>}
+                    {showDetailedInfo && <span className="text-sm opacity-75">{product.name}</span>}
                   </div>
               </a>
             </div>
