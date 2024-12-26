@@ -12,6 +12,7 @@ import FilterComponent from './components/FilterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import Navbar from './components/Navbar';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +21,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isBeastMode, setBeastMode] = useState(false);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
@@ -111,26 +113,18 @@ export default function Home({ searchParams }: { searchParams: any }) {
     setBeastMode(beastModePreference);
   }, []);
 
+  //hook when show detailed info preference changes
+  useEffect(() => {
+    const detailedInfoPreference = Cookies.get('showDetailedInfo') === 'true';
+    setShowDetailedInfo(detailedInfoPreference);
+  }, []);
+
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
       Cookies.set('darkMode', newMode.toString(), { expires: 365 });
       return newMode;
     });
-  };
-
-  const handleBeastModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newBeastMode = e.target.checked;
-    setBeastMode(newBeastMode);
-    Cookies.set('beastMode', newBeastMode.toString(), { expires: 365 });
-    if (newBeastMode) {
-      fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-    } else {
-      setPage(1);
-      setProducts([]);
-      setIsLoading(true);
-      fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-    }
   };
 
   const loadMore = () => {
@@ -142,25 +136,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
-      <div className="absolute top-4 left-4 flex items-center">
-        <Link href="/" className="flex items-center">
-          <Image
-            src={"/beer_emoji.png"}
-            alt="APK"
-            width={25}
-            height={25}
-            className="object-contain"
-          />
-          <h1 className="text-2xl font-bold ml-2">APKrona.se</h1>
-        </Link>
-      </div>
-      <div className="absolute top-4 right-4 flex items-center">
-        <label className="switch">
-          <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
-          <span className="slider round"></span>
-        </label>
-        <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
-      </div>
+      <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
         {lastUpdated ? (
           <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
@@ -197,14 +173,15 @@ export default function Home({ searchParams }: { searchParams: any }) {
               {products.length === 0 ? (
                 <div className="text-center my-4">
                   <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Testa att söka efter namn, typ eller land.</p>
+                  <p className="text-xs">Sökfunktionen är ständigt under utveckling och kommer bli bättre med tiden.</p>
                 </div>
               ) : (
                 <>
                   <div className="block sm:hidden">
-                    <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
+                    <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} showDetailedInfo={showDetailedInfo} />
                   </div>
                   <div className="hidden sm:block">
-                    <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} />
+                    <ProductComponent products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} showDetailedInfo={showDetailedInfo} />
                   </div>
                   {page < totalPages && (
                     <div className="text-center my-4">
@@ -237,25 +214,6 @@ export default function Home({ searchParams }: { searchParams: any }) {
             className="ml-2 object-contain"
           />
         </a>
-        <label 
-          htmlFor="fetchAll"
-          className="ml-4 mr-2 text-sm"
-          title="Aktivera avancerade funktioner"
-        >Avancerat läge</label>
-        <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-          <input
-            id="fetchAll"
-            type="checkbox"
-            checked={isBeastMode}
-            onChange={handleBeastModeToggle}
-            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-          />
-          <label
-            htmlFor="fetchAll"
-            className={`toggle-label block overflow-hidden h-6 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}
-            title="Aktivera avancerade funktioner"
-          ></label>
-        </div>
         <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. Buggar förekommer. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
       </footer>
     </main>

@@ -20,7 +20,7 @@ type ProductType = {
   updatedAt: Date;
 };
 
-const ProductComponent = ({ products = [], isDarkMode, isBeastMode }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean }) => {
+const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
 
   const translateType = (type: string | null) => {
@@ -135,7 +135,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode }: { products
                   <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                     <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                       <strong>{product.brand} <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" /></strong><br/>
-                      {isBeastMode && <span className='text-sm opacity-85'>{product.name}</span>}
+                      {showDetailedInfo && <span className='text-sm opacity-85'>{product.name}</span>}
                     </a>
                   </td>
                   <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{translateType(product.type)}</td>
