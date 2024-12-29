@@ -8,8 +8,8 @@ import seoKeywords from './seo';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "APKrona.se - Högst APK Systembolaget",
-  description: "APK-listan som visar vilka produkter som har högst mängd alkohol per krona hos Systembolaget.",
+  title: "APKrona.se - Jämför APK med mera för Systembolagets sortiment",
+  description: "APK-listan som visar vilka produkter som har högst mängd alkohol per krona hos Systembolaget. Bläddra och sortera på hela sortimentet för att hitta de mest prisvärda dryckerna. Uppdateras dagligen!",
   keywords: seoKeywords,
 };
 
