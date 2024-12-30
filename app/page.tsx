@@ -172,7 +172,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
             <div className="w-full">
               {products.length === 0 ? (
                 <div className="text-center my-4">
-                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Testa att söka efter namn, typ eller land.</p>
+                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Testa att söka efter namn, typ, land eller "nyhet".</p>
                   <p className="text-xs">Sökfunktionen är ständigt under utveckling och kommer bli bättre med tiden.</p>
                 </div>
               ) : (

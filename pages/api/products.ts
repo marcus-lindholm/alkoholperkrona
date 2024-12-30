@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import { subMonths } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -67,15 +68,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (searchQuery) {
-      filters.OR = [
-        { name: { contains: searchQuery as string, mode: 'insensitive' } },
-        { brand: { contains: searchQuery as string, mode: 'insensitive' } },
-        { type: { contains: searchQuery as string, mode: 'insensitive' } },
-        { country: { contains: searchQuery as string, mode: 'insensitive' } },
-      ];
+      let modifiedSearchQuery = searchQuery as string;
+
+      if (modifiedSearchQuery.toLowerCase().includes('nyhet')) {
+        filters.AND = filters.AND || [];
+        filters.AND.push({
+          createdAt: {
+            gte: subMonths(new Date(), 1),
+          },
+        });
+
+        modifiedSearchQuery = modifiedSearchQuery.replace(/nyhet/gi, '').trim();
+      }
+
+      if (modifiedSearchQuery) {
+        const searchTerms = modifiedSearchQuery.split(' ').filter(term => term);
+
+        const searchFilters = searchTerms.map(term => ({
+          OR: [
+            { name: { contains: term, mode: 'insensitive' } },
+            { brand: { contains: term, mode: 'insensitive' } },
+            { type: { contains: term, mode: 'insensitive' } },
+            { country: { contains: term, mode: 'insensitive' } },
+          ],
+        }));
+
+        filters.AND = filters.AND || [];
+        filters.AND.push(...searchFilters);
+      }
     }
 
-    console.log('Filters:', filters);
+    console.log('Filters:', JSON.stringify(filters, null, 2));
 
     const orderBy: any = {};
     if (sortCriteria && sortOrder) {
