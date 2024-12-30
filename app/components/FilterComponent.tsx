@@ -85,10 +85,14 @@ const FilterComponent = ({
             {filterType === "beer" && (
               <>
                 <option value="">Alla öl</option>
-                <option value="lager">Lager</option>
-                <option value="ale">Ale</option>
-                <option value="stout">Stout</option>
+                <option value="lager">Ljus lager</option>
+                <option value=" ale">Ale</option>
                 <option value="ipa">IPA</option>
+                <option value="syrlig öl">Syrlig öl</option>
+                <option value="porter och stout">Porter & Stout</option>
+                <option value="mörk lager">Mellanmörk & mörk lager</option>
+                <option value="veteöl">Veteöl</option>
+                <option value="annan öl">Annat öl</option>
               </>
             )}
             {filterType === "wine" && (
@@ -98,6 +102,7 @@ const FilterComponent = ({
                 <option value="vitt">Vitt vin</option>
                 <option value="rosé">Rosévin</option>
                 <option value="mousserande">Mousserande vin</option>
+                <option value="starkvin">Starkvin</option>
               </>
             )}
             {filterType === "liquor" && (
@@ -107,6 +112,16 @@ const FilterComponent = ({
                 <option value="vodka">Vodka</option>
                 <option value="rom">Rom</option>
                 <option value="gin">Gin</option>
+                <option value="tequila">Tequila</option>
+                <option value="likör">Likör</option>
+                <option value="akvavit">Akvavit</option>
+                <option value="kryddat brännvin">Kryddat brännvin</option>
+                <option value="cognac">Cognac</option>
+                <option value="grappa">Grappa</option>
+                <option value="fruktsprit">Fruktsprit</option>
+                <option value="bitter">Bitter</option>
+                <option value="calvados">Calvados</option>
+                <option value="drinkar & cocktails">Drinkar & cocktails</option>
                 <option value="punsch">Punch</option>
               </>
             )}
