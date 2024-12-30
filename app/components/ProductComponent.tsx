@@ -3,6 +3,7 @@ import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevr
 import React, { useState } from 'react';
 import { Tooltip } from '@nextui-org/react';
 import RankingHistoryChart from './RankingHistoryChart';
+import translateType from './TranslateType';
 
 type ProductType = {
   id: string;
@@ -22,29 +23,6 @@ type ProductType = {
 
 const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
-
-  const translateType = (type: string | null) => {
-    let displayType = "";
-    if (type == null) {
-      return;
-    } else if (type.toLowerCase().includes("beer")) {
-      displayType += "🍺 "
-      displayType += "Öl";
-    } else if (type.toLowerCase().includes("wine")) {
-      displayType += "🍷 "
-      displayType += "Vin";
-    } else if (type.toLowerCase().includes("liquor")) {
-      displayType += "🥃 "
-      displayType += "Sprit";
-    } else if (type.toLowerCase().includes("cider")) {
-      displayType += "🍏 "
-      displayType += "Cider";
-    }
-    if (type.toLowerCase().includes("ordervara")) {
-      displayType += " (Ordervara)";
-    }
-    return displayType;
-  };
 
   const parseRankingHistory = (rankingHistory: string | null) => {
     if (!rankingHistory) return [];

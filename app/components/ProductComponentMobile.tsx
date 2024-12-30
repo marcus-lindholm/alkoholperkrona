@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import RankingHistoryChart from './RankingHistoryChart'; // Make sure to import your RankingHistoryChart component
+import RankingHistoryChart from './RankingHistoryChart';
+import translateType from './TranslateType';
 
 type ProductType = {
   id: string;
@@ -21,25 +22,6 @@ type ProductType = {
 
 const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
-
-  const translateType = (type: string | null) => {
-    let displayType = "";
-    if (type == null) {
-      return;
-    } else if (type.toLowerCase().includes("beer")) {
-      displayType += "Öl 🍺";
-    } else if (type.toLowerCase().includes("wine")) {
-      displayType += "Vin 🍷";
-    } else if (type.toLowerCase().includes("liquor")) {
-      displayType += "Sprit 🥃";
-    } else if (type.toLowerCase().includes("cider")) {
-      displayType += "Cider 🍏";
-    }
-    if (type.toLowerCase().includes("ordervara")) {
-      displayType += " (Ordervara)";
-    }
-    return displayType;
-  };
 
   return (
     <div className={`w-full mt-10 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
@@ -120,7 +102,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                     Till produkt <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
                   </a>
                 </div>
-                <div className="mb-2 ml-12">
+                <div className="mb-2 ml-2">
                     {translateType(product.type)}
                 </div>
                 <div className="mb-2 ml-12">
