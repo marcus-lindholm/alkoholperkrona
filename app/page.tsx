@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import Navbar from './components/Navbar';
+import MobileNav from './components/MobileNav';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -201,6 +202,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
             </div>
           )}
         </div>
+      </div>
+      <div className="block sm:hidden">
+        <MobileNav isDarkMode={isDarkMode} />
       </div>
       <footer className="mt-8 text-center">
         <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>
