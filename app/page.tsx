@@ -45,6 +45,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     vpk: number;
     createdAt: Date;
     updatedAt: Date;
+    img: string;
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
@@ -202,7 +203,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
       </div>
       <div className="block sm:hidden">
-        <MobileNav isDarkMode={isDarkMode} />
+        <MobileNav isDarkMode={isDarkMode} currentPage={"home"} />
       </div>
       <footer className="mt-8 text-center mb-14 sm:mb-0">
         <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>

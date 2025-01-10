@@ -176,7 +176,7 @@ const FilterComponent = ({
           <option value="desc">Sjunkande ↓</option>
         </select>
       </div>
-      {(filterType !== null || nestedFilter !== null || filterOrdervara !== false || searchQuery !== '' || sortCriteria !== 'apk' || sortOrder !== 'asc') && (
+      {(filterType !== null || nestedFilter !== null || filterOrdervara !== false || searchQuery !== '' || sortCriteria !== 'apk' || sortOrder !== 'desc') && (
         <button
           onClick={() => {
             setFilterType(null);

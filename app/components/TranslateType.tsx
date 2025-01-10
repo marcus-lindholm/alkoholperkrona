@@ -2,7 +2,7 @@ const translateType = (type: string | null) => {
     let displayType = "";
     if (type == null) {
       return;
-    } else if (type.toLowerCase().includes("mousserande")) {
+    } else if (type.toLowerCase().includes("mousserande") || type.toLowerCase().includes("champagne")) {
       displayType += "🍾 ";
       displayType += "Mousserande";
     } else if (type.toLowerCase().includes("cocktail") && !type.toLowerCase().includes("cider")) {

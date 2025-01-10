@@ -78,7 +78,7 @@ const Settings = () => {
           </Link>
         </div>
         <div className="block sm:hidden">
-          <MobileNav isDarkMode={isDarkMode} />
+          <MobileNav isDarkMode={isDarkMode} currentPage={"settings"} />
         </div>
       </main>
     </div>
