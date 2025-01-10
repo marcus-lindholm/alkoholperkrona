@@ -12,6 +12,7 @@ datasource db {
 
 model Beverage {
   id              String            @id @default(cuid())
+  systemId        Int?              @unique
   brand           String
   name            String
   apk             Float
@@ -26,6 +27,7 @@ model Beverage {
   createdAt       DateTime          @default(now()) @map(name: "created_at")
   updatedAt       DateTime          @updatedAt @map(name: "updated_at")
   lastOnSiteAt    DateTime?         @map(name: "last_on_site_at")
+  img             String?
   BeverageRanking BeverageRanking[]
 }
 

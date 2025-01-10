@@ -316,6 +316,14 @@ function extractCountry(input: string): string {
   return match ? match[0].trim() : '';
 }
 
+function formatImgString(input: string): string {
+  if (input === undefined || input === null || input.includes('placeholder')) {
+    return '';
+  }
+  const formattedString = input.replace('_100', '_400');
+  return formattedString;
+}
+
 async function waitForSelectorIndefinitely(page: any, selector: string) {
   while (true) {
     try {
@@ -349,7 +357,9 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
         const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1njx6qf').text();
         const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1hdv0wt').text();
+        const idNumber = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-su700l').text();
         const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-4oiqd8').text();
+        const imgSrc = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-nd1suy img').attr('src');
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
           countConsecutiveZeros++;
@@ -358,16 +368,19 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           }
           return;
         }
+        const img = formatImgString(imgSrc);
         const country = extractCountry(volumeAndAlcohol).toLowerCase();
         const volume = parseInt(processVolumeString(volumeAndAlcohol));
         const apk = parseFloat(((alcohol * volume) / (100*price)).toFixed(4));
         const vpk = parseFloat((volume / price).toFixed(4));
+        const systemId = parseInt(idNumber.substring(3), 10);
 
         const searchQueryNormalized = normalizeSearchQuery(name.toLowerCase()) + " " + normalizeSearchQuery(brand.toLowerCase());
         
         const product = {
           brand: brand,
           name: name,
+          systemId: systemId,
           apk: apk,
           url: "https://systembolaget.se" + $(element).attr('href'),
           price: price,
@@ -377,6 +390,7 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
           vpk: vpk,
           country: country,
           lastOnSiteAt: new Date(),
+          img : img,
         }
         products.push(product);
         allScrapedProductURLs.push(product.url);

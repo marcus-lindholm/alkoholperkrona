@@ -98,7 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    console.log('Filters:', JSON.stringify(filters, null, 2));
+    //console.log('Filters:', JSON.stringify(filters, null, 2));
 
     const orderBy: any = {};
     if (sortCriteria && sortOrder) {

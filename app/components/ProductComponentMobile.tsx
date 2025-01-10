@@ -30,7 +30,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         let latestRanking = 'N/A';
         let rankingChange = 'new'; // Default to 'new' if there are less than 4 entries
         let previousRankingBoard = 'N/A';
-        let rankingHistoryData: { date: string; rank: number; }[] = [];
+        let rankingHistoryData: { date: string; rank: number; apk: number | null }[] = [];
 
         if (product.rankingHistory != null) {
           const rankingEntries = product.rankingHistory.split(',');
@@ -41,7 +41,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
             latestRanking = latestRankingEntry.split(':')[1];
           }
 
-          if (rankingEntries.length < 2) {
+          if (rankingEntries.length < 5) {
             rankingChange = 'new';
           } else if (previousRankingEntry) {
             const previousRanking = previousRankingEntry.split(':')[1];
@@ -57,8 +57,8 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
           }
 
           rankingHistoryData = rankingEntries.map(entry => {
-            const [date, rank] = entry.split(':');
-            return { date, rank: parseInt(rank, 10) };
+            const [date, rank, apk] = entry.split(':');
+            return { date, rank: parseInt(rank, 10), apk: apk ? parseFloat(apk) : null };
           });
         }
         

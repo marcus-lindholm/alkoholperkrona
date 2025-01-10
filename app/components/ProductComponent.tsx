@@ -27,8 +27,8 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
   const parseRankingHistory = (rankingHistory: string | null) => {
     if (!rankingHistory) return [];
     return rankingHistory.split(',').map(entry => {
-      const [date, rank] = entry.split(':');
-      return { date, rank: parseInt(rank, 10) };
+      const [date, rank, apk] = entry.split(':');
+      return { date, rank: parseInt(rank, 10), apk: apk ? parseFloat(apk) : null };
     });
   };
 
@@ -62,7 +62,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
                 latestRanking = latestRankingEntry.split(':')[1];
               }
           
-              if (rankingEntries.length < 2) {
+              if (rankingEntries.length < 5) {
                 rankingChange = 'new';
               } else if (previousRankingEntry) {
                 const previousRanking = previousRankingEntry.split(':')[1];
@@ -104,7 +104,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
                       </Tooltip>
                     )}
                     {rankingChange === 'new' && (
-                      <Tooltip content="Ny produkt på listan" style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
+                      <Tooltip content="Ny produkt på listan senaste veckan" style={{ backgroundColor: '#333', color: '#fff', fontSize: '12px', borderRadius: '8px', padding: '8px', boxShadow: '0 4px 8px #1f1f21' }}>
                         <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 ml-2" size="xs" />
                       </Tooltip>
                     )}
