@@ -12,7 +12,7 @@ datasource db {
 
 model Beverage {
   id              String            @id @default(cuid())
-  systemId        Int?              @unique
+  systemId        Int?
   brand           String
   name            String
   apk             Float
