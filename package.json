@@ -23,6 +23,9 @@
     "puppeteer": "^23.8.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^5.4.0",
+    "react-spring": "^9.7.5",
+    "react-swipeable": "^7.0.2",
     "recharts": "^2.15.0"
   },
   "devDependencies": {

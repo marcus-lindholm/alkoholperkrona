@@ -5,9 +5,21 @@ import { subMonths } from 'date-fns';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder } = req.query;
+  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, random } = req.query;
 
   try {
+    if (random === 'true') {
+      const randomProducts = await prisma.$queryRaw`
+        SELECT * FROM "Beverage"
+        WHERE "type" NOT LIKE '%ordervara%'
+        AND "img" IS NOT NULL AND "img" != ''
+        ORDER BY RANDOM()
+        LIMIT 20
+      `;
+      res.status(200).json(randomProducts);
+      return;
+    }
+
     const pageNumber = parseInt(page as string, 10) || 1;
     const initialLimit = 20;
     const subsequentLimit = parseInt(limit as string, 10) || 50;
@@ -97,8 +109,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         filters.AND.push(...searchFilters);
       }
     }
-
-    //console.log('Filters:', JSON.stringify(filters, null, 2));
 
     const orderBy: any = {};
     if (sortCriteria && sortOrder) {

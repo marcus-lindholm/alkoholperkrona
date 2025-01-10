@@ -4,15 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import Image from "next/image";
-import RunScraperButton from './components/RunScraperButton';
 import ProductComponent from './components/ProductComponent';
 import ProductComponentMobile from './components/ProductComponentMobile';
-import LoadingSpinner from './components/LoadingSpinner';
 import FilterComponent from './components/FilterComponent';
+import MobileFilterComponent from './components/MobileFilterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import Navbar from './components/Navbar';
+import MobileNav from './components/MobileNav';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +45,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     vpk: number;
     createdAt: Date;
     updatedAt: Date;
+    img: string;
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
@@ -145,7 +145,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         )}
       </div>
       <div className="flex flex-col items-center w-full">
-        <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4">
+        <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden sm:block">
           <FilterComponent
             isDarkMode={isDarkMode}
             isBeastMode={isBeastMode}
@@ -202,7 +202,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
           )}
         </div>
       </div>
-      <footer className="mt-8 text-center">
+      <div className="block sm:hidden">
+        <MobileNav isDarkMode={isDarkMode} currentPage={"home"} />
+      </div>
+      <footer className="mt-8 text-center mb-14 sm:mb-0">
         <p>Utvecklad med ❤️ av <a href="https://marcuslindholm.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Marcus Lindholm {!isLoading && <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />}</a></p>
         <a href="https://app.swish.nu/1/p/sw/?sw=0736426599&msg=Tack!&edit=msg&src=qr" className="flex items-center justify-center mt-4 mb-4">
           Vill du stödja denna sida? Donera en slant!
@@ -216,6 +219,24 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </a>
         <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget ansvar för hur webbplatsen brukas. Buggar förekommer. APKrona.se bör endast ses som en kul grej, inget annat. Kul att du hittade hit!</p>
       </footer>
+      <div className="block sm:hidden">
+        <MobileFilterComponent
+          isDarkMode={isDarkMode}
+          filterType={filterType}
+          nestedFilter={nestedFilter}
+          filterOrdervara={filterOrdervara}
+          searchQuery={searchQuery}
+          sortCriteria={sortCriteria}
+          sortOrder={sortOrder}
+          setFilterType={setFilterType}
+          setNestedFilter={setNestedFilter}
+          setFilterOrdervara={setFilterOrdervara}
+          setSearchQuery={setSearchQuery}
+          setSortCriteria={setSortCriteria}
+          setSortOrder={setSortOrder} 
+          isBeastMode={false} 
+        />
+      </div>
     </main>
   );
 }

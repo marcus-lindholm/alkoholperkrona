@@ -1,0 +1,150 @@
+import React, { useEffect, useState, useRef } from 'react';
+import Cookies from 'js-cookie';
+import { useSwipeable } from 'react-swipeable';
+import { useSpring, animated } from 'react-spring';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import translateType from '../app/components/TranslateType';
+import MobileNav from '../app/components/MobileNav';
+import Navbar from '@/app/components/Navbar';
+
+type ProductType = {
+  id: string;
+  brand: string;
+  name: string;
+  apk: number;
+  type: string | null;
+  alcohol: number;
+  volume: number;
+  price: number;
+  url: string;
+  rankingHistory: string | null;
+  vpk: number;
+  createdAt: Date;
+  updatedAt: Date;
+  img: string;
+};
+
+const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products?random=true');
+      const data = await response.json();
+      setProducts((prevProducts) => [...prevProducts, ...data]);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleThemeToggle = () => {
+    setIsDarkMode(prevMode => {
+      const newMode = !prevMode;
+      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
+      return newMode;
+    });
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const darkModeCookie = Cookies.get('darkMode');
+    setIsDarkMode(darkModeCookie === 'true');
+  }, []);
+
+  useEffect(() => {
+    if (currentIndex === products.length - 3) {
+      fetchProducts();
+    }
+  }, [currentIndex]);
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, products.length - 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+  };
+
+  const [{ y }, set] = useSpring(() => ({ y: 0 }));
+
+  useEffect(() => {
+    set({ y: -currentIndex * window.innerHeight });
+  }, [currentIndex, set]);
+
+  const swipeHandlers = useSwipeable({
+    onSwipedUp: handleNext,
+    onSwipedDown: handlePrevious,
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  });
+
+  return (
+    <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+      <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
+      <div {...swipeHandlers} className="flex-1 w-full h-full mt-16 flex flex-col items-center justify-center">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+          </div>
+        ) : (
+          <animated.div
+            ref={scrollRef}
+            style={{ transform: y.interpolate((y) => `translateY(${y}px)`) }}
+            className="w-full h-full"
+          >
+            {products.map((product, index) => (
+              <div key={product.id} className="w-full h-screen flex flex-col items-center justify-center p-4">
+                <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg mb-24 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
+                  <div className="flex justify-between items-center mb-4">
+                    <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <div className="text-2xl text-center">
+                        {product.brand}
+                        <span className="ml-2"><strong>{product.name}</strong></span>
+                      </div>
+                    </a>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    {product.img && (
+                      <a href={product.url} target="_blank" rel="noopener noreferrer">
+                        <img src={product.img} alt={product.brand} className="object-contain w-96 h-96 rounded mb-4" />
+                      </a>
+                    )}
+                    <div className="text-center mb-4">
+                      <span className="text-2xl font-bold">{product.price.toFixed(2)} kr</span>
+                    </div>
+                    <div className="text-center mb-1">
+                        <span className="text-sm opacity-85">{translateType(product.type)}</span>
+                    </div>
+                    <div className="text-center mb-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-sm opacity-85">APK: {product.apk}</span><br />
+                        <span className="text-sm opacity-85">Volym/kr: {product.vpk}</span><br />
+                      </div>
+                      <div>
+                        <span className="text-sm opacity-85">Volym: {product.volume} ml</span><br />
+                        <span className="text-sm opacity-85">Alkohol: {product.alcohol} %</span><br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </animated.div>
+        )}
+      </div>
+      <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
+    </div>
+  );
+};
+
+export default Explore;

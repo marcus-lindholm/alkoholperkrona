@@ -23,13 +23,15 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
         <h1 className="text-2xl font-bold ml-2">APKrona.se</h1>
       </Link>
       <div className="flex items-center">
-        <Link href="/settings" className="ml-4 mr-4">
-            <FontAwesomeIcon 
-                icon={faCog} 
-                size="lg" 
-                className={!isDarkMode ? 'text-gray-700' : ''} 
-            />
-        </Link>
+        <div className="hidden sm:block">
+          <Link href="/settings" className="ml-4 mr-4">
+              <FontAwesomeIcon 
+                  icon={faCog} 
+                  size="lg" 
+                  className={!isDarkMode ? 'text-gray-700' : ''} 
+              />
+          </Link>
+        </div>
         <label className="switch">
           <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
           <span className="slider round"></span>

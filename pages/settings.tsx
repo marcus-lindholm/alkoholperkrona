@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../app/components/Navbar';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
+import MobileNav from '@/app/components/MobileNav';
 
 const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -75,6 +76,9 @@ const Settings = () => {
           <Link href="/" className="inline-block px-6 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600 transition duration-300 ease-in-out">
               Tillbaka till startsidan
           </Link>
+        </div>
+        <div className="block sm:hidden">
+          <MobileNav isDarkMode={isDarkMode} currentPage={"settings"} />
         </div>
       </main>
     </div>

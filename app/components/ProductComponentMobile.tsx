@@ -18,6 +18,7 @@ type ProductType = {
   vpk: number;
   createdAt: Date;
   updatedAt: Date;
+  img: string;
 };
 
 const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
@@ -84,7 +85,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   </div>
               </a>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                   <div className="mb-4">
                       <span className="text-sm opacity-85">APK</span><br/>
@@ -96,6 +97,17 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
+              {product.img !== null && product.img !== '' ? (
+                <div className='flex items-center justify-center'>
+                  <a href={product.url} target="_blank" rel="noopener noreferrer" >
+                    <img src={product.img} alt={product.brand} className="object-contain w-24 h-24 rounded" />
+                  </a>
+                </div>
+              ) : (
+                <div className='flex items-center justify-center w-24 h-24 rounded opacity-0'>
+                  {/* Placeholder content, e.g., an icon or text */}
+                </div>
+              )}
               <div className='items-right text-right'>
                 <div className="mb-2 whitespace-nowrap">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
