@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 type FilterProps = {
   isDarkMode: boolean;
@@ -176,6 +176,21 @@ const FilterComponent = ({
           <option value="desc">Sjunkande ↓</option>
         </select>
       </div>
+      {(filterType !== null || nestedFilter !== null || filterOrdervara !== false || searchQuery !== '' || sortCriteria !== 'apk' || sortOrder !== 'asc') && (
+        <button
+          onClick={() => {
+            setFilterType(null);
+            setNestedFilter(null);
+            setFilterOrdervara(false);
+            setSearchQuery('');
+            setSortCriteria('apk');
+            setSortOrder('desc');
+          }}
+          className="ml-2 px-3 py-1.5 text-sm font-medium bg-red-700 text-white rounded hover:bg-red-800 transition duration-300 ease-in-out"
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      )}
     </div>
   );
 };
