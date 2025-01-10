@@ -6,7 +6,7 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 type NavbarProps = {
   isDarkMode: boolean;
-  handleThemeToggle: () => void;
+  handleThemeToggle?: () => void;
 };
 
 const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
@@ -22,22 +22,24 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
         />
         <h1 className="text-2xl font-bold ml-2">APKrona.se</h1>
       </Link>
-      <div className="flex items-center">
-        <div className="hidden sm:block">
-          <Link href="/settings" className="ml-4 mr-4">
+      {handleThemeToggle && (
+        <div className="flex items-center">
+          <div className="hidden sm:block">
+            <Link href="/settings" className="ml-4 mr-4">
               <FontAwesomeIcon 
-                  icon={faCog} 
-                  size="lg" 
-                  className={!isDarkMode ? 'text-gray-700' : ''} 
+                icon={faCog} 
+                size="lg" 
+                className={!isDarkMode ? 'text-gray-700' : ''} 
               />
-          </Link>
+            </Link>
+          </div>
+          <label className="switch">
+            <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
+            <span className="slider round"></span>
+          </label>
+          <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
         </div>
-        <label className="switch">
-          <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
-          <span className="slider round"></span>
-        </label>
-        <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
-      </div>
+      )}
     </div>
   );
 };

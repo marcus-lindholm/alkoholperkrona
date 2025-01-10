@@ -97,15 +97,11 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
-              {product.img !== null && product.img !== '' ? (
+              {product.img && (
                 <div className='flex items-center justify-center'>
-                  <a href={product.url} target="_blank" rel="noopener noreferrer" >
+                  <a href={product.url} target="_blank" rel="noopener noreferrer">
                     <img src={product.img} alt={product.brand} className="object-contain w-24 h-24 rounded" />
                   </a>
-                </div>
-              ) : (
-                <div className='flex items-center justify-center w-24 h-24 rounded opacity-0'>
-                  {/* Placeholder content, e.g., an icon or text */}
                 </div>
               )}
               <div className='items-right text-right'>

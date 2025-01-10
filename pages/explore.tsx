@@ -31,6 +31,24 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const preventDefault = (e: { preventDefault: () => any; }) => e.preventDefault();
+
+    const mobileNavElement = mobileNavRef.current;
+    if (mobileNavElement) {
+      mobileNavElement.addEventListener('touchmove', preventDefault, { passive: false });
+      mobileNavElement.addEventListener('scroll', preventDefault, { passive: false });
+    }
+
+    return () => {
+      if (mobileNavElement) {
+        mobileNavElement.removeEventListener('touchmove', preventDefault);
+        mobileNavElement.removeEventListener('scroll', preventDefault);
+      }
+    };
+  }, []);
 
   const fetchProducts = async () => {
     try {
@@ -42,14 +60,6 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleThemeToggle = () => {
-    setIsDarkMode(prevMode => {
-      const newMode = !prevMode;
-      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
-      return newMode;
-    });
   };
 
   useEffect(() => {
@@ -90,8 +100,8 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
 
   return (
     <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
-      <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
-      <div {...swipeHandlers} className="flex-1 w-full h-full mt-16 flex flex-col items-center justify-center">
+      <div {...swipeHandlers} className={`flex-1 w-full h-full flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+        <Navbar isDarkMode={isDarkMode} />
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
@@ -142,7 +152,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
           </animated.div>
         )}
       </div>
-      <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
+      <div ref={mobileNavRef}>
+        <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
+      </div>
     </div>
   );
 };
