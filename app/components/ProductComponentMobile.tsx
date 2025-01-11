@@ -85,7 +85,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   </div>
               </a>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-1">
               <div>
                   <div className="mb-4">
                       <span className="text-sm opacity-85">APK</span><br/>
@@ -104,10 +104,13 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                     src={product.img} 
                     alt={product.brand} 
                     className="object-contain w-24 h-24 rounded" 
+                    onError={(e) => {
+                      console.error(`Failed to load image for product: ${product.brand} (ID: ${product.id}, URL: ${product.img})`, e);
+                    }}
                   />
                 </a>
               ) : (
-                <div className='w-24 h-24 rounded bg-transparent'></div>
+                <div className='w-24 h-24 rounded bg-transparent flex items-center justify-center'></div>
               )}
               </div>
               <div className='items-right text-right'>

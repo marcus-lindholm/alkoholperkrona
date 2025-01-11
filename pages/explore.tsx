@@ -116,7 +116,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       ) : (
         <div className={`${Styles.reelsContainer}`}>
           {products.map((product) => (
-            <div key={product.id} className={`w-full flex flex-col items-center justify-center p-4 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+            <div key={product.id} className={`w-full flex flex-col items-center justify-start sm:justify-center p-4 pt-20 sm:pt-0 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
               <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
                 <div className="flex justify-between items-center mb-4">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
