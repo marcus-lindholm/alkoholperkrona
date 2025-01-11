@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Cookies from 'js-cookie';
-import { useSwipeable } from 'react-swipeable';
-import { useSpring, animated } from 'react-spring';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import translateType from '../app/components/TranslateType';
@@ -85,33 +83,15 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
-  const [{ y }, set] = useSpring(() => ({ y: 0 }));
-
-  useEffect(() => {
-    set({ y: -currentIndex * window.innerHeight });
-  }, [currentIndex, set]);
-
-  const swipeHandlers = useSwipeable({
-    onSwipedUp: handleNext,
-    onSwipedDown: handlePrevious,
-    preventScrollOnSwipe: true,
-    trackMouse: true,
-  });
-
   return (
     <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
-      <div {...swipeHandlers} className={`flex-1 w-full h-full flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
         <Navbar isDarkMode={isDarkMode} />
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
           </div>
         ) : (
-          <animated.div
-            ref={scrollRef}
-            style={{ transform: y.interpolate((y) => `translateY(${y}px)`) }}
-            className="w-full h-full"
-          >
+            <div>
             {products.map((product, index) => (
               <div key={product.id} className="w-full h-screen flex flex-col items-center justify-center p-4">
                 <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg mb-24 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
@@ -149,9 +129,8 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                 </div>
               </div>
             ))}
-          </animated.div>
+          </div>
         )}
-      </div>
       <div ref={mobileNavRef}>
         <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
       </div>

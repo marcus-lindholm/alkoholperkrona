@@ -97,25 +97,19 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
-              {product.img !== null && product.img !== '' ? (
-                <div className='flex items-center justify-center'>
-                  <a href={product.url} target="_blank" rel="noopener noreferrer">
-                    <img 
-                      src={product.img} 
-                      alt={product.brand} 
-                      className="object-contain w-24 h-24 rounded" 
-                      onError={(e) => { 
-                        console.error(`Failed to load image: ${product.img}`); // Debugging information
-                        e.currentTarget.style.display = 'none'; 
-                      }} 
-                    />
-                  </a>
-                </div>
+              <div className='flex items-center justify-center'>
+              {product.img ? (
+                <a href={product.url} target="_blank" rel="noopener noreferrer">
+                  <img 
+                    src={product.img} 
+                    alt={product.brand} 
+                    className="object-contain w-24 h-24 rounded" 
+                  />
+                </a>
               ) : (
-                <div className='flex items-center justify-center w-24 h-24 rounded opacity-0'>
-                  {/* Placeholder content, e.g., an icon or text */}
-                </div>
+                <div className='w-24 h-24 rounded bg-transparent'></div>
               )}
+              </div>
               <div className='items-right text-right'>
                 <div className="mb-2 whitespace-nowrap">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
