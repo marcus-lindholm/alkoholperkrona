@@ -6,6 +6,7 @@ import translateType from '../app/components/TranslateType';
 import MobileNav from '../app/components/MobileNav';
 import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
+import { set } from 'date-fns';
 
 type ProductType = {
   id: string;
@@ -28,8 +29,11 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [fetchCount, setFetchCount] = useState(0);
   const endOfListRef = useRef<HTMLDivElement>(null);
+  const reelsContainerRef = useRef<HTMLDivElement>(null);
+  const isFetchingRef = useRef(false);
 
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
@@ -39,34 +43,22 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     });
   };
 
-  useEffect(() => {
-    const preventDefault = (e: { preventDefault: () => any; }) => e.preventDefault();
-
-    const mobileNavElement = endOfListRef.current;
-    if (mobileNavElement) {
-      mobileNavElement.addEventListener('touchmove', preventDefault, { passive: false });
-      mobileNavElement.addEventListener('scroll', preventDefault, { passive: false });
-    }
-
-    return () => {
-      if (mobileNavElement) {
-        mobileNavElement.removeEventListener('touchmove', preventDefault);
-        mobileNavElement.removeEventListener('scroll', preventDefault);
-      }
-    };
-  }, []);
-
   const fetchProducts = async () => {
-    if (loading) return;
+    if (loading || isFetchingRef.current) return;
+    isFetchingRef.current = true;
     setLoading(true);
+    console.log('Fetching products...');
     try {
       const response = await fetch('/api/products?random=true');
       const data = await response.json();
       setProducts((prevProducts) => [...prevProducts, ...data]);
+      console.log('Fetched new products:', data);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
+      setFetchCount(prevCount => prevCount + 1);
+      isFetchingRef.current = false;
     }
   };
 
@@ -79,30 +71,33 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     setIsDarkMode(darkModeCookie === 'true');
   }, []);
 
-  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
-    const target = entries[0];
-    if (target.isIntersecting && !loading) {
-      fetchProducts();
+  const handleScroll = () => {
+    if (reelsContainerRef.current) {
+      const scrollTop = reelsContainerRef.current.scrollTop;
+      const screenHeight = window.innerHeight;
+      const currentIndex = Math.floor((scrollTop + screenHeight) / screenHeight);
+      //console.log('Scroll position:', scrollTop);
+      //console.log('Current product index:', currentIndex);
+      setCurrentProductIndex(currentIndex);
+  
+      if (currentIndex >= (20 * fetchCount) - 3) {
+        fetchProducts();
+      }
     }
-  }, [loading]);
-
+  };
+  
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(handleObserver, {
-      root: null,
-      rootMargin: '20px',
-      threshold: 1.0,
-    });
-
-    if (endOfListRef.current) {
-      observerRef.current.observe(endOfListRef.current);
+    const reelsContainer = reelsContainerRef.current;
+    if (reelsContainer) {
+      reelsContainer.addEventListener('scroll', handleScroll);
     }
-
+  
     return () => {
-      if (observerRef.current && endOfListRef.current) {
-        observerRef.current.unobserve(endOfListRef.current);
+      if (reelsContainer) {
+        reelsContainer.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [handleObserver]);
+  }, [fetchCount]);
 
   return (
     <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
@@ -114,11 +109,11 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
           <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
         </div>
       ) : (
-        <div className={`${Styles.reelsContainer}`}>
-          {products.map((product) => (
+        <div ref={reelsContainerRef} className={`${Styles.reelsContainer}`}>
+          {products.map((product, index) => (
             <div key={product.id} className={`w-full flex flex-col items-center justify-start sm:justify-center p-4 pt-20 sm:pt-0 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
               <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-start mb-4">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                     <div className="text-2xl text-center">
                       {product.brand}
