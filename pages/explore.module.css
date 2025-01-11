@@ -1,0 +1,29 @@
+.reelsContainer {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    height: 100vh;
+}
+
+.reelsContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.reel {
+    scroll-snap-align: start;
+    height: 100vh;
+}
+
+.smallScreenImg {
+    width: 16rem;
+    height: 16rem;
+}
+
+@media (max-height: 700px) {
+    .smallScreenImg {
+      width: 8rem;
+      height: 8rem;
+    }
+}
+

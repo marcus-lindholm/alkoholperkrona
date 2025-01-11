@@ -135,9 +135,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
   };
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+    <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
-      <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
+      <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
         {lastUpdated ? (
           <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
         ) : (
@@ -163,10 +163,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
             setSortOrder={setSortOrder}
           />
         </div>
-        <div className="w-full flex justify-center" style={{ minHeight: '45vh' }}>
+        <div className="w-full min-h-screen flex justify-center">
           {isLoading ? (
-            <div className="flex justify-center items-center w-full h-64">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+            <div className="flex justify-center items-center w-full h-5/6">
+              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
             </div>
           ) : (
             <div className="w-full">
@@ -188,7 +188,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
                       <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
                         {isLoadMoreLoading ? (
                           <div className="flex items-center justify-center">
-                            <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-white"></div>
+                            <div className="h-6 w-6 border-white border-4 border-dashed rounded-full animate-spin"></div>
                           </div>
                         ) : (
                           'Visa fler'
