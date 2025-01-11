@@ -52,7 +52,6 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       const response = await fetch('/api/products?random=true');
       const data = await response.json();
       setProducts((prevProducts) => [...prevProducts, ...data]);
-      console.log('Fetched new products:', data);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
