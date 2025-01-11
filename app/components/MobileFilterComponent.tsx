@@ -78,7 +78,7 @@ const MobileFilterComponent = ({
         className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${isOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`}
       ></div>
       <div
-        className={`fixed inset-x-0 bottom-0 mb-16 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'} p-4 rounded-t-lg shadow-lg z-40 transform transition-transform duration-300 ${
+        className={`fixed inset-x-0 bottom-0 pb-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'} p-4 rounded-t-lg shadow-lg z-50 transform transition-transform duration-300 ${
           isOpen ? 'translate-y-0' : 'translate-y-full'
         } h-3/4 overflow-y-auto`}
       >

@@ -85,7 +85,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   </div>
               </a>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                   <div className="mb-4">
                       <span className="text-sm opacity-85">APK</span><br/>
@@ -97,11 +97,23 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
-              {product.img && (
+              {product.img !== null && product.img !== '' ? (
                 <div className='flex items-center justify-center'>
                   <a href={product.url} target="_blank" rel="noopener noreferrer">
-                    <img src={product.img} alt={product.brand} className="object-contain w-24 h-24 rounded" />
+                    <img 
+                      src={product.img} 
+                      alt={product.brand} 
+                      className="object-contain w-24 h-24 rounded" 
+                      onError={(e) => { 
+                        console.error(`Failed to load image: ${product.img}`); // Debugging information
+                        e.currentTarget.style.display = 'none'; 
+                      }} 
+                    />
                   </a>
+                </div>
+              ) : (
+                <div className='flex items-center justify-center w-24 h-24 rounded opacity-0'>
+                  {/* Placeholder content, e.g., an icon or text */}
                 </div>
               )}
               <div className='items-right text-right'>
@@ -113,10 +125,10 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                 <div className="mb-2 ml-2">
                     {translateType(product.type)}
                 </div>
-                <div className="mb-2 ml-12">
+                <div className="mb-2 ml-2">
                     {product.volume} ml
                 </div>
-                <div className="mb-2 ml-12">
+                <div className="mb-2 ml-2">
                     {product.alcohol} %
                 </div>
                 {isBeastMode && (

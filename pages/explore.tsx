@@ -126,7 +126,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                   <div className="flex flex-col items-center">
                     {product.img && (
                       <a href={product.url} target="_blank" rel="noopener noreferrer">
-                        <img src={product.img} alt={product.brand} className="object-contain w-96 h-96 rounded mb-4" />
+                        <img src={product.img} alt={product.brand} className="object-contain w-72 h-72 rounded mb-4" />
                       </a>
                     )}
                     <div className="text-center mb-4">
