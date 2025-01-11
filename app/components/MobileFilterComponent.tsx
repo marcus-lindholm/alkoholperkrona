@@ -68,7 +68,7 @@ const MobileFilterComponent = ({
         onClick={toggleFilter}
         className={`fixed bottom-20 right-5 opacity-85 ${isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-400 text-white'} h-16 rounded-full z-50 flex items-center justify-center transition-all duration-500 ${isExpanded ? 'w-64' : 'w-16'}`}
       >
-        <FontAwesomeIcon icon={faFilter} className="w-6 h-6" />
+        <FontAwesomeIcon icon={faSearch} className="w-6 h-6" />
         {isExpanded && (
           <span className="ml-4 text-white">Sök och Filtrera här</span>
         )}

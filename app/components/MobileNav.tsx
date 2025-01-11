@@ -1,4 +1,4 @@
-import { FaHome, FaSearch, FaCog } from 'react-icons/fa';
+import { FaHome, FaSearch, FaCog, FaCompass } from 'react-icons/fa';
 import Link from 'next/link';
 
 type MobileNavProps = {
@@ -16,8 +16,8 @@ const MobileNav = ({ isDarkMode, currentPage }: MobileNavProps) => {
       </Link>
       <Link href="/explore">
         <div className={`flex flex-col items-center ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
-          <FaSearch className={`text-2xl ${currentPage === 'explore' ? (isDarkMode ? 'text-white' : 'text-black') : 'text-gray-500'}`} />
-          <span className="text-xs">Utforska</span>
+            <FaCompass className={`text-xl ${currentPage === 'explore' ? (isDarkMode ? 'text-white' : 'text-black') : 'text-gray-500'}`} />
+            <span className="text-xs mt-1">Utforska</span>
         </div>
       </Link>
       <Link href="/settings">
