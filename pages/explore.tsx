@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown, faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 import translateType from '../app/components/TranslateType';
 import MobileNav from '../app/components/MobileNav';
 import Navbar from '@/app/components/Navbar';
@@ -31,6 +31,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const [fetchCount, setFetchCount] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [hasAutoScrolled, setHasAutoScrolled] = useState(0);
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
   const endOfListRef = useRef<HTMLDivElement>(null);
   const reelsContainerRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
@@ -71,12 +74,12 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   }, []);
 
   const handleScroll = () => {
+    setUserHasScrolled(true);
+
     if (reelsContainerRef.current) {
       const scrollTop = reelsContainerRef.current.scrollTop;
       const screenHeight = window.innerHeight;
       const currentIndex = Math.floor((scrollTop + screenHeight) / screenHeight);
-      //console.log('Scroll position:', scrollTop);
-      //console.log('Current product index:', currentIndex);
       setCurrentProductIndex(currentIndex);
   
       if (currentIndex >= (20 * fetchCount) - 3) {
@@ -97,6 +100,46 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       }
     };
   }, [fetchCount]);
+
+  useEffect(() => {
+    if (!userHasScrolled) {
+      const timeout = setTimeout(() => {
+        const interval = setInterval(() => {
+          setScrollPosition(prevPosition => {
+            const screenHeight = window.innerHeight;
+            const maxScroll = reelsContainerRef.current?.scrollHeight ? reelsContainerRef.current.scrollHeight - screenHeight : 0;
+            setHasAutoScrolled(prevScrolled => {
+              if (prevScrolled >= 1) {
+                clearInterval(interval);
+                return prevScrolled;
+              }
+              return prevScrolled + 1;
+            });
+            if (prevPosition >= maxScroll) {
+              return 0; // Scroll back to the top
+            } else if (prevPosition === 0) {
+              return screenHeight; // Scroll down one product
+            } else {
+              return 0; // Scroll back up
+            }
+          });
+        }, 250); // Adjust the interval as needed
+
+        return () => clearInterval(interval);
+      }, 10000); // Wait for 5000ms before starting the interval
+
+      return () => clearTimeout(timeout);
+    }
+  }, [userHasScrolled]);
+
+  useEffect(() => {
+    if (reelsContainerRef.current) {
+      reelsContainerRef.current.scrollTo({
+        top: scrollPosition,
+        behavior: 'smooth',
+      });
+    }
+  }, [scrollPosition]);
 
   return (
     <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
@@ -143,6 +186,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="flex items-center justify-center mt-4">
+                <FontAwesomeIcon icon={faAngleDoubleDown} size="2x" className={`${Styles.scrollArrowIcon}`} />
               </div>
             </div>
           ))}

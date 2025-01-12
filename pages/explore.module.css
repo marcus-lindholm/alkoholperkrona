@@ -20,6 +20,23 @@
     height: 16rem;
 }
 
+@keyframes slide {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(5px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+  .scrollArrowIcon {
+    color: gray;
+    animation: slide 4s infinite;
+  }
+
 @media (max-height: 700px) {
     .smallScreenImg {
       width: 8rem;
