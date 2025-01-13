@@ -203,7 +203,7 @@ const MobileFilterComponent = ({
             </div>
             </div>
           <div className="w-full">
-            <label htmlFor="sortCriteria" className="block text-sm font-medium mb-1">Sortera på:</label>
+            <label htmlFor="sortCriteria" className="block text-sm font-medium mb-1">Sortera efter:</label>
             <select
               id="sortCriteria"
               value={sortCriteria}

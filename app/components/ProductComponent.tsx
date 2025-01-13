@@ -21,7 +21,18 @@ type ProductType = {
   updatedAt: Date;
 };
 
-const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
+type ProductComponentProps = {
+  products: ProductType[];
+  isDarkMode: boolean;
+  isBeastMode: boolean;
+  showDetailedInfo: boolean;
+  sortCriteria: string;
+  sortOrder: string;
+  setSortCriteria: (criteria: string) => void;
+  setSortOrder: (order: string) => void;
+};
+
+const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo, sortCriteria, sortOrder, setSortCriteria, setSortOrder }: ProductComponentProps) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
 
   const parseRankingHistory = (rankingHistory: string | null) => {
@@ -32,19 +43,36 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
     });
   };
 
+  const handleSort = (criteria: string) => {
+    if (sortCriteria === criteria) {
+      setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortCriteria(criteria);
+      setSortOrder('desc');
+    }
+  };
+
   return (
     <div className={`overflow-x-auto w-full mt-10 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <table className={`min-w-full border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
         <thead>
           <tr>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>#</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>APK (ml/kr)</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Namn</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Typ</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Pris</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volym</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Volymprocent</th>
-            <th className={`px-4 py-2 border-b text-left ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}></th>
+            <th className={`px-4 py-2 border-b text-left transition duration-200 ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>#</th>
+            <th className={`px-4 py-2 border-b text-left cursor-pointer transition duration-200 ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'}`} onClick={() => handleSort('apk')}>
+              APK (ml/kr) {sortCriteria === 'apk' && (sortOrder === 'asc' ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />)}
+            </th>
+            <th className={`px-4 py-2 border-b text-left transition duration-200 ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Namn</th>
+            <th className={`px-4 py-2 border-b text-left transition duration-200 ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>Typ</th>
+            <th className={`px-4 py-2 border-b text-left cursor-pointer transition duration-200 ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'}`} onClick={() => handleSort('price')}>
+              Pris {sortCriteria === 'price' && (sortOrder === 'asc' ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />)}
+            </th>
+            <th className={`px-4 py-2 border-b text-left cursor-pointer transition duration-200 ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'}`} onClick={() => handleSort('volume')}>
+              Volym {sortCriteria === 'volume' && (sortOrder === 'asc' ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />)}
+            </th>
+            <th className={`px-4 py-2 border-b text-left cursor-pointer transition duration-200 ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-100'}`} onClick={() => handleSort('alcohol')}>
+              Volymprocent {sortCriteria === 'alcohol' && (sortOrder === 'asc' ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />)}
+            </th>
+            <th className={`px-4 py-2 border-b text-left transition duration-200 ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}></th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +118,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
 
             return(
               <React.Fragment key={index}>
-                <tr className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
+                <tr className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
                   <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                     {latestRanking}
                     {rankingChange === 'increased' && (

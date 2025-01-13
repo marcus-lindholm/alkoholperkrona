@@ -3,11 +3,13 @@ import Navbar from '../app/components/Navbar';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
 import MobileNav from '@/app/components/MobileNav';
+import FooterComponent from '@/app/components/FooterComponent';
 
 const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isBeastMode, setBeastMode] = useState(false);
   const [showDetailedInfo, setShowDetailedInfo] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const darkModePreference = Cookies.get('darkMode') === 'true';
@@ -18,6 +20,8 @@ const Settings = () => {
 
     const detailedInfoPreference = Cookies.get('showDetailedInfo') === 'true';
     setShowDetailedInfo(detailedInfoPreference);
+
+    setIsLoading(false); // Set loading to false after preferences are loaded
   }, []);
 
   const handleThemeToggle = () => {
@@ -80,6 +84,7 @@ const Settings = () => {
         <div className="block sm:hidden">
           <MobileNav isDarkMode={isDarkMode} currentPage={"settings"} />
         </div>
+        {!isLoading && <FooterComponent isDarkMode={isDarkMode} isLoading={isLoading} />}
       </main>
     </div>
   );

@@ -9,14 +9,10 @@ type FilterProps = {
   nestedFilter: string | null;
   filterOrdervara: boolean;
   searchQuery: string;
-  sortCriteria: string;
-  sortOrder: string;
   setFilterType: (value: string | null) => void;
   setNestedFilter: (value: string | null) => void;
   setFilterOrdervara: (value: boolean) => void;
   setSearchQuery: (value: string) => void;
-  setSortCriteria: (value: string) => void;
-  setSortOrder: (value: string) => void;
 };
 
 const FilterComponent = ({
@@ -26,14 +22,10 @@ const FilterComponent = ({
   nestedFilter,
   filterOrdervara,
   searchQuery,
-  sortCriteria,
-  sortOrder,
   setFilterType,
   setNestedFilter,
   setFilterOrdervara,
   setSearchQuery,
-  setSortCriteria,
-  setSortOrder,
 }: FilterProps) => {
   return (
     <div className="mb-4 flex flex-col sm:flex-row sm:flex-wrap items-center sm:items-center justify-center sm:justify-start">
@@ -152,39 +144,13 @@ const FilterComponent = ({
           ></label>
         </div>
       </div>
-      <div className="flex items-center mb-2 sm:mb-0">
-        <label className="hidden sm:inline-block mr-2 text-sm font-medium">Sortera på:</label>
-        <select
-          value={sortCriteria}
-          onChange={(e) => setSortCriteria(e.target.value)}
-          className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
-        >
-          <option value="apk">APK</option>
-          <option value="price">Pris</option>
-          <option value="volume">Volym</option>
-          <option value="alcohol">Volymprocent</option>
-          <option value="vpk">Volym/kr</option>
-        </select>
-      </div>
-      <div className="flex items-center ml-2">
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          className={`block w-full sm:w-auto px-3 py-2 sm:text-sm border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-300' : 'bg-white text-black border-gray-200'}`}
-        >
-          <option value="asc">Stigande ↑</option>
-          <option value="desc">Sjunkande ↓</option>
-        </select>
-      </div>
-      {(filterType !== null || nestedFilter !== null || filterOrdervara !== false || searchQuery !== '' || sortCriteria !== 'apk' || sortOrder !== 'desc') && (
+      {(filterType !== null || nestedFilter !== null || filterOrdervara !== false || searchQuery !== '') && (
         <button
           onClick={() => {
             setFilterType(null);
             setNestedFilter(null);
             setFilterOrdervara(false);
             setSearchQuery('');
-            setSortCriteria('apk');
-            setSortOrder('desc');
           }}
           className="ml-2 px-3 py-1.5 text-sm font-medium bg-red-700 text-white rounded hover:bg-red-800 transition duration-300 ease-in-out"
         >

@@ -30,12 +30,12 @@
     100% {
       transform: translateY(0);
     }
-  }
+}
   
-  .scrollArrowIcon {
+.scrollArrowIcon {
     color: gray;
     animation: slide 4s infinite;
-  }
+}
 
 @media (max-height: 700px) {
     .smallScreenImg {
