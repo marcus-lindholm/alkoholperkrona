@@ -3,6 +3,7 @@ import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevr
 import React, { useState } from 'react';
 import RankingHistoryChart from './RankingHistoryChart';
 import translateType from './TranslateType';
+import ProductImage from './ProductImage';
 
 type ProductType = {
   id: string;
@@ -85,7 +86,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   </div>
               </a>
             </div>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-3 gap-1">
               <div>
                   <div className="mb-4">
                       <span className="text-sm opacity-85">APK</span><br/>
@@ -97,22 +98,18 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                       <span className="text-2xl font-bold">{priceFormatted} kr</span>
                   </div>
               </div>
-              {/* <div className='flex items-center justify-center'>
+              <div className='flex items-center justify-center'>
               {product.img ? (
-                <a href={product.url} target="_blank" rel="noopener noreferrer">
-                  <img 
-                    src={product.img} 
-                    alt={product.brand} 
-                    className="object-contain w-24 h-24 rounded" 
-                    onError={(e) => {
-                      console.error(`Failed to load image for product: ${product.brand} (ID: ${product.id}, URL: ${product.img})`, e);
-                    }}
-                  />
-                </a>
+                <ProductImage 
+                  url={product.url} 
+                  img={product.img} 
+                  brand={product.brand} 
+                  id={product.id} 
+                />
               ) : (
                 <div className='w-24 h-24 rounded bg-transparent flex items-center justify-center'></div>
               )}
-              </div> */}
+              </div>
               <div className='items-right text-right'>
                 <div className="mb-2 whitespace-nowrap">
                   <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
