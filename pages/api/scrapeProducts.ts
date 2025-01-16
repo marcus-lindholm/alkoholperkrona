@@ -57,9 +57,9 @@ async function runScraper(catalogue: string = 'vanligtSortiment') {
   }
   
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    //executablePath: '/usr/bin/chromium-browser',
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: true,
+    headless: false,
   });
   const page = await (await browser).newPage();
 
@@ -353,13 +353,13 @@ const getProductInfo = async (page: any, type: string, pages: number, url: strin
       aTags.each((index: any, element: any) => {
         const priceString = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-k008qs p.css-a2frwy').text();
         const price = parseFloat(processPriceString(priceString).replace(/[^0-9.]/g, ''));
-        const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-rp7p3f').text();
+        const volumeAndAlcohol = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-gg4vpm .css-1dtnjt5 p.css-zwokwd').text();
         const alcohol = parseFloat(processAlcString(volumeAndAlcohol));
         const brand = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1njx6qf').text();
         const name = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-1hdv0wt').text();
         const idNumber = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-rqa69l .css-su700l').text();
         const typeInfo = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1x8f7yz .css-j7qwjs .css-4oiqd8').text();
-        const imgSrc = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-nd1suy img').attr('src');
+        const imgSrc = $(element).find('.css-2114pf .css-1n1rld4 .css-k008qs .css-1k87ene img').attr('src');
         if (alcohol === 0 || alcohol == null || isNaN(alcohol)) {
           console.log("Alcohol is 0 or undefined, skipping product " + brand + " " + name);
           countConsecutiveZeros++;
