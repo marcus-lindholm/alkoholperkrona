@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 import MobileNav from '@/app/components/MobileNav';
 import FooterComponent from '@/app/components/FooterComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -52,7 +54,7 @@ const Settings = () => {
       />
       <main className={`flex min-h-screen flex-col items-center justify-start p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
         <h1 className="text-3xl font-bold mb-4 mt-12 sm:mt-0">Inställningar</h1>
-        <div className="w-full max-w-md">
+        <div className="w-full h-screen max-w-md">
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-between border-b border-gray-500 border-opacity-50 pb-4">
             <label htmlFor="detailedInfo" className="mr-2">Visa detaljerad information om produkter</label>
             <label className="switch">
@@ -77,8 +79,8 @@ const Settings = () => {
               <span className="slider round"></span>
             </label>
           </div>
-          <Link href="/" className="inline-block px-6 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600 transition duration-300 ease-in-out">
-              Tillbaka till startsidan
+          <Link href="/" className="inline-block px-6 py-2 mt-4 text-white bg-sky-500 rounded hover:bg-sky-600 transition duration-300 ease-in-out">
+            <FontAwesomeIcon icon={faArrowLeft} /> Tillbaka till startsidan
           </Link>
         </div>
         <div className="block sm:hidden">
