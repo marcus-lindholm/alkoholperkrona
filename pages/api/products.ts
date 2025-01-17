@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (filterType) {
       filters.type = {
-        contains: filterType as string,
+        startsWith: `${filterType},`,
         mode: 'insensitive',
       };
     }
