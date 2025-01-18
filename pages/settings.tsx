@@ -6,6 +6,7 @@ import MobileNav from '@/app/components/MobileNav';
 import FooterComponent from '@/app/components/FooterComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import Head from 'next/head';
 
 const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -48,6 +49,9 @@ const Settings = () => {
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
+      <Head>
+        <title>APKrona.se - Inställningar</title>
+      </Head>
       <Navbar
         isDarkMode={isDarkMode}
         handleThemeToggle={handleThemeToggle}

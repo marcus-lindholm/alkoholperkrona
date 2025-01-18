@@ -7,6 +7,7 @@ import MobileNav from '../app/components/MobileNav';
 import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
 import { set } from 'date-fns';
+import Head from 'next/head';
 
 type ProductType = {
   id: string;
@@ -143,6 +144,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
 
   return (
     <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+      <Head>
+        <title>APKrona.se - Utforska</title>
+      </Head>
       <div className="fixed top-0 w-full z-50">
         <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       </div>
