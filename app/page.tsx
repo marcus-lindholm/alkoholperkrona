@@ -52,6 +52,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
     const darkModePreference = Cookies.get('darkMode') === 'true';
     setIsDarkMode(darkModePreference);
+    const glutenFreePreference = Cookies.get('isGlutenFree') === 'true';
 
     console.log('fetching products');
     try {
@@ -63,6 +64,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         searchQuery: searchQuery || '',
         sortCriteria: sortCriteria,
         sortOrder: sortOrder,
+        isGlutenFree: glutenFreePreference.toString(),
       });
 
       const response = await fetch(`/api/products?${params.toString()}`);

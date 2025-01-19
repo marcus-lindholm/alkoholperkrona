@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown, faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 import translateType from '../app/components/TranslateType';
 import MobileNav from '../app/components/MobileNav';
 import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
-import { set } from 'date-fns';
 import Head from 'next/head';
 
 type ProductType = {
@@ -30,6 +29,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const [fetchCount, setFetchCount] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -47,13 +47,18 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     });
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (glutenFree: boolean) => {
     if (loading || isFetchingRef.current) return;
     isFetchingRef.current = true;
     setLoading(true);
     console.log('Fetching products...');
     try {
-      const response = await fetch('/api/products?random=true');
+      const params = new URLSearchParams({
+        random: 'true',
+        isGlutenFree: glutenFree.toString(),
+      });
+
+      const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();
       setProducts((prevProducts) => [...prevProducts, ...data]);
     } catch (error) {
@@ -66,12 +71,14 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
     const darkModeCookie = Cookies.get('darkMode');
     setIsDarkMode(darkModeCookie === 'true');
+
+    const glutenFreeCookie = Cookies.get('isGlutenFree');
+    const glutenFreePreference = glutenFreeCookie === 'true';
+    setIsGlutenFree(glutenFreePreference);
+
+    fetchProducts(glutenFreePreference);
   }, []);
 
   const handleScroll = () => {
@@ -84,7 +91,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       setCurrentProductIndex(currentIndex);
   
       if (currentIndex >= (20 * fetchCount) - 3) {
-        fetchProducts();
+        fetchProducts(isGlutenFree);
       }
     }
   };
@@ -100,7 +107,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
         reelsContainer.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [fetchCount]);
+  }, [fetchCount, isGlutenFree]);
 
   useEffect(() => {
     if (!userHasScrolled) {

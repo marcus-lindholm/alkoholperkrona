@@ -12,6 +12,7 @@ const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isBeastMode, setBeastMode] = useState(false);
   const [showDetailedInfo, setShowDetailedInfo] = useState(false);
+  const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +24,9 @@ const Settings = () => {
 
     const detailedInfoPreference = Cookies.get('showDetailedInfo') === 'true';
     setShowDetailedInfo(detailedInfoPreference);
+
+    const glutenFreePreference = Cookies.get('isGlutenFree') === 'true';
+    setIsGlutenFree(glutenFreePreference);
 
     setIsLoading(false); // Set loading to false after preferences are loaded
   }, []);
@@ -46,6 +50,12 @@ const Settings = () => {
     setShowDetailedInfo(newShowDetailedInfo);
     Cookies.set('showDetailedInfo', newShowDetailedInfo.toString(), { expires: 365 });
   };
+
+  const handleGlutenFreeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newIsGlutenFree = e.target.checked;
+  setIsGlutenFree(newIsGlutenFree);
+  Cookies.set('isGlutenFree', newIsGlutenFree.toString(), { expires: 365 });
+};
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
@@ -79,6 +89,18 @@ const Settings = () => {
                 type="checkbox"
                 checked={isBeastMode}
                 onChange={handleBeastModeToggle}
+              />
+              <span className="slider round"></span>
+            </label>
+          </div>
+          <div className="mb-4 flex flex-col sm:flex-row items-center justify-between border-b border-gray-500 border-opacity-50 pb-4">
+            <label htmlFor="isGlutenFree" className="mr-2">Visa endast glutenfria produkter</label>
+            <label className="switch">
+              <input
+                id="isGlutenFree"
+                type="checkbox"
+                checked={isGlutenFree}
+                onChange={handleGlutenFreeToggle}
               />
               <span className="slider round"></span>
             </label>

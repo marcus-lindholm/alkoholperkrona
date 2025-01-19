@@ -5,17 +5,22 @@ import { subMonths } from 'date-fns';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, random } = req.query;
+  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, random, isGlutenFree } = req.query;
 
   try {
     if (random === 'true') {
-      const randomProducts = await prisma.$queryRaw`
+      const glutenFreeCondition = isGlutenFree === 'true' 
+        ? `AND ("type" NOT LIKE '%beer%' OR "name" ILIKE '%gluten%' OR "brand" ILIKE '%gluten%')`
+        : '';
+    
+      const randomProducts = await prisma.$queryRawUnsafe(`
         SELECT * FROM "Beverage"
         WHERE "type" NOT LIKE '%ordervara%'
         AND "img" IS NOT NULL AND "img" != ''
+        ${glutenFreeCondition}
         ORDER BY RANDOM()
         LIMIT 20
-      `;
+      `);
       res.status(200).json(randomProducts);
       return;
     }
@@ -108,6 +113,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         filters.AND = filters.AND || [];
         filters.AND.push(...searchFilters);
       }
+    }
+
+    if (isGlutenFree === 'true') {
+      filters.AND = filters.AND || [];
+      filters.AND.push({
+        OR: [
+          {
+            type: {
+              not: {
+                startsWith: 'beer,',
+              },
+            },
+          },
+          {
+            name: {
+              contains: 'gluten',
+              mode: 'insensitive',
+            },
+          },
+          {
+            brand: {
+              contains: 'gluten',
+              mode: 'insensitive',
+            },
+          },
+        ],
+      });
     }
 
     const orderBy: any = {};
