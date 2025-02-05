@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../app/components/Navbar';
-import Cookies from 'js-cookie';
 import Link from 'next/link';
 import MobileNav from '@/app/components/MobileNav';
 import FooterComponent from '@/app/components/FooterComponent';
@@ -16,16 +15,16 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const darkModePreference = Cookies.get('darkMode') === 'true';
+    const darkModePreference = localStorage.getItem('darkMode') === 'true';
     setIsDarkMode(darkModePreference);
 
-    const beastModePreference = Cookies.get('beastMode') === 'true';
+    const beastModePreference = localStorage.getItem('beastMode') === 'true';
     setBeastMode(beastModePreference);
 
-    const detailedInfoPreference = Cookies.get('showDetailedInfo') === 'true';
+    const detailedInfoPreference = localStorage.getItem('showDetailedInfo') === 'true';
     setShowDetailedInfo(detailedInfoPreference);
 
-    const glutenFreePreference = Cookies.get('isGlutenFree') === 'true';
+    const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
     setIsGlutenFree(glutenFreePreference);
 
     setIsLoading(false); // Set loading to false after preferences are loaded
@@ -34,7 +33,7 @@ const Settings = () => {
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
-      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
+      localStorage.setItem('darkMode', newMode.toString());
       return newMode;
     });
   };
@@ -42,20 +41,20 @@ const Settings = () => {
   const handleBeastModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newBeastMode = e.target.checked;
     setBeastMode(newBeastMode);
-    Cookies.set('beastMode', newBeastMode.toString(), { expires: 365 });
+    localStorage.setItem('beastMode', newBeastMode.toString());
   };
 
   const handleDetailedInfoToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newShowDetailedInfo = e.target.checked;
     setShowDetailedInfo(newShowDetailedInfo);
-    Cookies.set('showDetailedInfo', newShowDetailedInfo.toString(), { expires: 365 });
+    localStorage.setItem('showDetailedInfo', newShowDetailedInfo.toString());
   };
 
   const handleGlutenFreeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const newIsGlutenFree = e.target.checked;
-  setIsGlutenFree(newIsGlutenFree);
-  Cookies.set('isGlutenFree', newIsGlutenFree.toString(), { expires: 365 });
-};
+    const newIsGlutenFree = e.target.checked;
+    setIsGlutenFree(newIsGlutenFree);
+    localStorage.setItem('isGlutenFree', newIsGlutenFree.toString());
+  };
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
@@ -105,9 +104,11 @@ const Settings = () => {
               <span className="slider round"></span>
             </label>
           </div>
-          <Link href="/" className="inline-block px-6 py-2 mt-4 text-white bg-sky-500 rounded hover:bg-sky-600 transition duration-300 ease-in-out">
-            <FontAwesomeIcon icon={faArrowLeft} /> Tillbaka till startsidan
-          </Link>
+          {!isLoading && (
+            <Link href="/" className="inline-block px-6 py-2 mt-4 text-white bg-sky-500 rounded hover:bg-sky-600 transition duration-300 ease-in-out">
+              <FontAwesomeIcon icon={faArrowLeft} /> Tillbaka till startsidan
+            </Link>
+          )}
         </div>
         <div className="block sm:hidden">
           <MobileNav isDarkMode={isDarkMode} currentPage={"settings"} />

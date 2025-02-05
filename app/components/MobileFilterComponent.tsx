@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes, faFilter, faTrash } from '@fortawesome/free-solid-svg-icons';
-import Cookies from 'js-cookie';
 
 type MobileFilterProps = {
   isDarkMode: boolean;
@@ -44,17 +43,17 @@ const MobileFilterComponent = ({
   };
 
   useEffect(() => {
-    const hasExpandedBefore = Cookies.get('hasExpandedBefore');
+    const hasExpandedBefore = localStorage.getItem('hasExpandedBefore');
     if (!hasExpandedBefore) {
       const expandTimer = setTimeout(() => {
         setIsExpanded(true);
       }, 5000);
-
+  
       const retractTimer = setTimeout(() => {
         setIsExpanded(false);
-        Cookies.set('hasExpandedBefore', 'true', { expires: 365 });
+        localStorage.setItem('hasExpandedBefore', 'true');
       }, 15000);
-
+  
       return () => {
         clearTimeout(expandTimer);
         clearTimeout(retractTimer);

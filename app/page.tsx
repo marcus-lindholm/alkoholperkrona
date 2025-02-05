@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import Cookies from 'js-cookie';
 import Image from "next/image";
 import ProductComponent from './components/ProductComponent';
 import ProductComponentMobile from './components/ProductComponentMobile';
@@ -50,9 +49,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
-    const darkModePreference = Cookies.get('darkMode') === 'true';
+    const darkModePreference = localStorage.getItem('darkMode') === 'true';
     setIsDarkMode(darkModePreference);
-    const glutenFreePreference = Cookies.get('isGlutenFree') === 'true';
+    const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
 
     console.log('fetching products');
     try {
@@ -112,20 +111,20 @@ export default function Home({ searchParams }: { searchParams: any }) {
 
   // hook when beast mode preference changes
   useEffect(() => {
-    const beastModePreference = Cookies.get('beastMode') === 'true';
+    const beastModePreference = localStorage.getItem('beastMode') === 'true';
     setBeastMode(beastModePreference);
   }, []);
 
   //hook when show detailed info preference changes
   useEffect(() => {
-    const detailedInfoPreference = Cookies.get('showDetailedInfo') === 'true';
+    const detailedInfoPreference = localStorage.getItem('showDetailedInfo') === 'true';
     setShowDetailedInfo(detailedInfoPreference);
   }, []);
 
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
-      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
+      localStorage.setItem('darkMode', newMode.toString());
       return newMode;
     });
   };

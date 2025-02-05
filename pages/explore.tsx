@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 import translateType from '../app/components/TranslateType';
@@ -42,7 +41,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
-      Cookies.set('darkMode', newMode.toString(), { expires: 365 });
+      localStorage.setItem('darkMode', newMode.toString());
       return newMode;
     });
   };
@@ -71,13 +70,12 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   };
 
   useEffect(() => {
-    const darkModeCookie = Cookies.get('darkMode');
-    setIsDarkMode(darkModeCookie === 'true');
-
-    const glutenFreeCookie = Cookies.get('isGlutenFree');
-    const glutenFreePreference = glutenFreeCookie === 'true';
+    const darkModePreference = localStorage.getItem('darkMode') === 'true';
+    setIsDarkMode(darkModePreference);
+  
+    const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
     setIsGlutenFree(glutenFreePreference);
-
+  
     fetchProducts(glutenFreePreference);
   }, []);
 
