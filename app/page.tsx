@@ -165,6 +165,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
         )}
       </div>
       <div className="w-full flex justify-center relative">
+      {!isLoading && (
         <div className="block lg:hidden absolute right-2 top-4">
           <button
             onClick={() => {
@@ -178,6 +179,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
             <span>{displaySortCriteria(sortCriteria)}</span>
           </button>
         </div>
+      )}
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden lg:block">
