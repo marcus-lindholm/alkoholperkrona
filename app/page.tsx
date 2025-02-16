@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
+import { faArrowUpShortWide, faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -136,6 +137,23 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   };
 
+  const displaySortCriteria = (criteria: string) => {
+    switch (criteria) {
+      case 'apk':
+        return 'APK';
+      case 'price':
+        return 'Pris';
+      case 'alcohol':
+        return 'Alkoholhalt';
+      case 'volume':
+        return 'Volym';
+      case 'vpk':
+        return 'Volym/kr';
+      default:
+        return criteria.toUpperCase();
+    }
+  };
+
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
@@ -145,6 +163,21 @@ export default function Home({ searchParams }: { searchParams: any }) {
         ) : (
           <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
         )}
+      </div>
+      <div className="w-full flex justify-center relative">
+        <div className="block lg:hidden absolute right-2 top-4">
+          <button
+            onClick={() => {
+              document.getElementById('mobile-filter-toggle-button')?.click();
+            }}
+            className={`flex items-center space-x-1 text-sm ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}
+          >
+            <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
+            <span>{displaySortCriteria(sortCriteria)}</span>
+          </button>
+        </div>
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden lg:block">
@@ -228,7 +261,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           setSearchQuery={setSearchQuery}
           setSortCriteria={setSortCriteria}
           setSortOrder={setSortOrder} 
-          isBeastMode={false} 
+          isBeastMode={false}
         />
       </div>
     </main>

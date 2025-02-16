@@ -65,12 +65,15 @@ const MobileFilterComponent = ({
     <>
       <button
         onClick={toggleFilter}
-        className={`fixed bottom-20 right-5 opacity-85 ${isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-400 text-white'} h-16 rounded-full z-50 flex items-center justify-center transition-all duration-500 ${isExpanded ? 'w-64' : 'w-16'}`}
+        id="mobile-filter-toggle-button"
+        className={`fixed bottom-20 right-5 opacity-85 ${
+          isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-400 text-white'
+        } h-16 rounded-full z-50 flex items-center justify-center transition-all duration-500 ${
+          isExpanded ? 'w-64' : 'w-16'
+        }`}
       >
         <FontAwesomeIcon icon={faSearch} className="w-6 h-6" />
-        {isExpanded && (
-          <span className="ml-4 text-white">Sök och Filtrera här</span>
-        )}
+        {isExpanded && <span className="ml-4 text-white">Sök och Filtrera här</span>}
       </button>
       <div 
         onClick={toggleFilter}
@@ -212,7 +215,7 @@ const MobileFilterComponent = ({
               <option value="apk">APK</option>
               <option value="price">Pris</option>
               <option value="volume">Volym</option>
-              <option value="alcohol">Volymprocent</option>
+              <option value="alcohol">Alkoholhalt</option>
               <option value="vpk">Volym/kr</option>
             </select>
           </div>
