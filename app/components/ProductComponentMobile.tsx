@@ -26,7 +26,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
 
   return (
-    <div className={`w-full mt-12 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`w-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       {products.map((product, index) => {
 
         let latestRanking = 'N/A';

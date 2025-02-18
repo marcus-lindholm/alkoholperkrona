@@ -148,7 +148,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
           <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
         )}
       </div>
-      <div className="w-full flex justify-center relative">
+      <div className="w-full flex justify-center relative mb-14">
       {!isLoading && (
         <>
           <button
