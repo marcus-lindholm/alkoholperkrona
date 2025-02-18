@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Image from "next/image";
 import ProductComponent from './components/ProductComponent';
 import ProductComponentMobile from './components/ProductComponentMobile';
@@ -12,7 +12,8 @@ import { format } from 'date-fns';
 import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
-import { faArrowUpShortWide, faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { displaySortCriteria, displayFilterType, displayNestedFilterType } from './components/TranslateType';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -137,23 +138,6 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   };
 
-  const displaySortCriteria = (criteria: string) => {
-    switch (criteria) {
-      case 'apk':
-        return 'APK';
-      case 'price':
-        return 'Pris';
-      case 'alcohol':
-        return 'Alkoholhalt';
-      case 'volume':
-        return 'Volym';
-      case 'vpk':
-        return 'Volym/kr';
-      default:
-        return criteria.toUpperCase();
-    }
-  };
-
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
@@ -166,19 +150,84 @@ export default function Home({ searchParams }: { searchParams: any }) {
       </div>
       <div className="w-full flex justify-center relative">
       {!isLoading && (
-        <div className="block lg:hidden absolute right-2 top-4">
+        <>
           <button
-            onClick={() => {
-              document.getElementById('mobile-filter-toggle-button')?.click();
-            }}
-            className={`flex items-center space-x-1 text-sm ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}
-          >
-            <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
-            <span>{displaySortCriteria(sortCriteria)}</span>
+                onClick={() => {
+                  document.getElementById('mobile-filter-toggle-button')?.click();
+                }}
+                className={`flex items-center space-x-1 text-sm ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}
+              >
+            <div className="block lg:hidden absolute left-2 top-4 max-w-[72vw] break-words">
+              {!isLoading && (
+                <span
+                  className={`flex items-center space-x-1 text-sm ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}
+                >
+                  <FontAwesomeIcon icon={faSliders} />
+                  
+                  {searchQuery && (
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                      } flex items-center space-x-1`}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                      <span>{searchQuery.length > 5 ? `${searchQuery.substring(0, 5)}...` : searchQuery}</span>
+                    </span>
+                  )}
+
+                  {/* Filter chip */}
+                  {filterType && !nestedFilter && (
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                      }`}
+                    >
+                      {displayFilterType(filterType)}
+                    </span>
+                  )}
+
+                  {/* Nested filter chip */}
+                  {nestedFilter && (
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                      }`}
+                    >
+                      {displayNestedFilterType(nestedFilter)}
+                    </span>
+                  )}
+
+                  {/* Ordervaror chip */}
+                  {filterOrdervara ? (
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                      }`}
+                    >
+                      Ordervaror
+                    </span>
+                  ) : (
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        isDarkMode ? 'bg-sky-900 text-white' : 'bg-gray-300 text-gray-800'
+                      }`}
+                    >
+                      Ej Ordervaror
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className="block lg:hidden absolute right-2 top-5">
+                <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
+                <span> {displaySortCriteria(sortCriteria)}</span>
+            </div>
           </button>
-        </div>
+        </>
       )}
       </div>
       <div className="flex flex-col items-center w-full">
@@ -204,8 +253,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
           ) : (
             <div className="w-full">
               {products.length === 0 ? (
-                <div className="text-center my-4">
-                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Testa att söka efter namn, typ, land eller &quot;nyhet&quot;.</p>
+                <div className="text-center my-4 pt-14">
+                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Du kan söka efter namn, varumärken, typ, land eller &quot;nyhet&quot;</p>
                   <p className="text-xs">Sökfunktionen är ständigt under utveckling och kommer bli bättre med tiden.</p>
                 </div>
               ) : (
