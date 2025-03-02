@@ -15,7 +15,9 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const darkModePreference = localStorage.getItem('darkMode') === 'true';
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const localDarkMode = localStorage.getItem('darkMode');
+    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
 
     const beastModePreference = localStorage.getItem('beastMode') === 'true';

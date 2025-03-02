@@ -51,7 +51,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
-    const darkModePreference = localStorage.getItem('darkMode') === 'true';
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const localDarkMode = localStorage.getItem('darkMode');
+    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
 

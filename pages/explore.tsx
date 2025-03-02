@@ -70,7 +70,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   };
 
   useEffect(() => {
-    const darkModePreference = localStorage.getItem('darkMode') === 'true';
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const localDarkMode = localStorage.getItem('darkMode');
+    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
   
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
