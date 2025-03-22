@@ -140,6 +140,27 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   };
 
+  // Display random fact while loading
+  const facts = [
+    "Sprit har använts som medicin i tusentals år.",
+    "Vin är en av de äldsta alkoholhaltiga dryckerna och har funnits i över 8 000 år.",
+    "Öl var en gång en del av den dagliga kosten i medeltida Europa.",
+    "Champagne uppfanns av misstag av munkar i Frankrike.",
+    "Tequila tillverkas endast i vissa regioner i Mexiko.",
+    "Absint var förbjudet i många länder på grund av dess påstådda hallucinogena effekter.",
+    "Whisky betyder 'livets vatten' på gaeliska.",
+    "Rom var en gång en viktig handelsvara i Karibien.",
+    "Cider är en av de mest populära dryckerna i Storbritannien.",
+    "Alkoholfri öl har blivit alltmer populärt de senaste åren."
+  ];
+
+  const [randomFact, setRandomFact] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Generate the random fact on the client side
+    setRandomFact(facts[Math.floor(Math.random() * facts.length)]);
+  }, []);
+
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
@@ -249,9 +270,16 @@ export default function Home({ searchParams }: { searchParams: any }) {
         </div>
         <div className="w-full min-h-screen flex justify-center">
           {isLoading ? (
-            <div className="flex justify-center items-center w-full h-5/6">
+            <div className="flex flex-col justify-center items-center w-full h-5/6">
               <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
-            </div>
+              <p
+                className={`mt-4 text-sm text-gray-500 transition-opacity duration-500 ease-in-out ${
+                  randomFact ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                {randomFact}
+              </p>
+          </div>
           ) : (
             <div className="w-full">
               {products.length === 0 ? (
