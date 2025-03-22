@@ -273,7 +273,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
             <div className="flex flex-col justify-center items-center w-full h-5/6">
               <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
               <p
-                className={`mt-4 text-sm text-gray-500 transition-opacity duration-500 ease-in-out ${
+                className={`mt-4 text-sm text-gray-500 text-center transition-opacity duration-500 ease-in-out ${
                   randomFact ? 'opacity-100' : 'opacity-0'
                 }`}
               >
