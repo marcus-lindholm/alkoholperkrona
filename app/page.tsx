@@ -155,11 +155,18 @@ export default function Home({ searchParams }: { searchParams: any }) {
   ];
 
   const [randomFact, setRandomFact] = useState<string | null>(null);
+  const [showRandomFact, setShowRandomFact] = useState(true);
 
   useEffect(() => {
-    // Generate the random fact on the client side
+    // Generate the random fact on the first render
     setRandomFact(facts[Math.floor(Math.random() * facts.length)]);
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setShowRandomFact(false);
+    }
+  }, [isLoading]);
 
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
@@ -272,14 +279,16 @@ export default function Home({ searchParams }: { searchParams: any }) {
           {isLoading ? (
             <div className="flex flex-col justify-center items-center w-full h-5/6">
               <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
-              <p
-                className={`mt-4 text-sm text-gray-500 text-center transition-opacity duration-1000 ease-in-out ${
-                  randomFact ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                {randomFact}
-              </p>
-          </div>
+              {showRandomFact && randomFact && (
+                <p
+                  className={`mt-4 text-sm text-gray-500 text-center transition-opacity duration-1000 ease-in-out ${
+                    randomFact ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  {randomFact}
+                </p>
+              )}
+            </div>
           ) : (
             <div className="w-full">
               {products.length === 0 ? (
