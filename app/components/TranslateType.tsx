@@ -134,3 +134,36 @@ const translateType = (type: string | null) => {
         return nested;
     }
   }
+
+export const alcoholFacts = [
+  "Sprit har använts som medicin i tusentals år.",
+  "Vin är en av de äldsta alkoholhaltiga dryckerna och har funnits i över 8 000 år.",
+  "Öl var en gång en del av den dagliga kosten i medeltida Europa.",
+  "Champagne uppfanns av misstag av munkar i Frankrike.",
+  "Tequila tillverkas endast i vissa regioner i Mexiko.",
+  "Absint var förbjudet i många länder på grund av dess påstådda hallucinogena effekter.",
+  "Whisky betyder 'livets vatten' på gaeliska.",
+  "Rom var en gång en viktig handelsvara i Karibien.",
+  "Cider är en av de mest populära dryckerna i Storbritannien.",
+  "Alkoholfri öl har blivit alltmer populärt de senaste åren.",
+  "Det finns över 400 olika sorter av belgisk öl.",
+  "Gin serveras traditionellt med tonic och en skiva citron eller lime.",
+  "Sake är en traditionell japansk alkoholdryck gjord på ris.",
+  "Grappa är en italiensk sprit gjord av rester från vinframställning.",
+  "Calvados är en äpplebaserad spritdryck från Normandie i Frankrike.",
+  "Punsch är en svensk dryck med anor från 1700-talet.",
+  "Sherry får bara produceras i distriktet Jerez i Andalusien, Spanien.",
+  "Belgien är känt för sina trappistöl som bryggs i kloster.",
+  "Portvin härstammar från Douro-dalen i norra Portugal.",
+  "Kombuchaliknande drycker bryggdes redan för tusentals år sedan.",
+  "Öl kan spåras tillbaka till antika Mesopotamien för över 5 000 år sedan.",
+  "Likör är en söt spritdryck smaksatt med frukt, örter eller kryddor.",
+  "Vermouth är ett starkvin som kryddas med örter och kryddor.",
+  "Bitters används ofta som en digestif efter en måltid.",
+  "Mead, på svenska mjöd, är en av världens äldsta fermenterade drycker.",
+  "Korn, ris, majs och vete är vanliga spannmål vid sprittillverkning.",
+  "Den tyska renhetslagen (Reinheitsgebot) för öl stiftades 1516.",
+  "Prosecco framställs i Venetoregionen i Italien.",
+  "Sake bryggs genom att konvertera stärkelse till socker med hjälp av koji.",
+  "Olika jästtyper påverkar ölens smakprofil och karaktär."
+];

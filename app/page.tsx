@@ -13,7 +13,7 @@ import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
 import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
-import { displaySortCriteria, displayFilterType, displayNestedFilterType } from './components/TranslateType';
+import { displaySortCriteria, displayFilterType, displayNestedFilterType, alcoholFacts } from './components/TranslateType';
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -140,26 +140,11 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   };
 
-  // Display random fact while loading
-  const facts = [
-    "Sprit har använts som medicin i tusentals år.",
-    "Vin är en av de äldsta alkoholhaltiga dryckerna och har funnits i över 8 000 år.",
-    "Öl var en gång en del av den dagliga kosten i medeltida Europa.",
-    "Champagne uppfanns av misstag av munkar i Frankrike.",
-    "Tequila tillverkas endast i vissa regioner i Mexiko.",
-    "Absint var förbjudet i många länder på grund av dess påstådda hallucinogena effekter.",
-    "Whisky betyder 'livets vatten' på gaeliska.",
-    "Rom var en gång en viktig handelsvara i Karibien.",
-    "Cider är en av de mest populära dryckerna i Storbritannien.",
-    "Alkoholfri öl har blivit alltmer populärt de senaste åren."
-  ];
-
   const [randomFact, setRandomFact] = useState<string | null>(null);
   const [showRandomFact, setShowRandomFact] = useState(true);
 
   useEffect(() => {
-    // Generate the random fact on the first render
-    setRandomFact(facts[Math.floor(Math.random() * facts.length)]);
+    setRandomFact(alcoholFacts[Math.floor(Math.random() * alcoholFacts.length)]);
   }, []);
 
   useEffect(() => {
@@ -280,11 +265,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
             <div className="flex flex-col justify-center items-center w-full h-5/6">
               <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
               {showRandomFact && randomFact && (
-                <p
-                  className={`mt-4 text-sm text-gray-500 text-center transition-opacity duration-1000 ease-in-out ${
-                    randomFact ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
+                <p className="mt-4 text-sm text-gray-500 text-center fade-in">
                   {randomFact}
                 </p>
               )}
