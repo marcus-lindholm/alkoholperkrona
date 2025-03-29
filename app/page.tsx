@@ -165,10 +165,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       {fetchError ? (
         <p className="text-center mt-8 text-red-500">
-          Hoppsan! Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. Välkommen tillbaka nästa månad.
+          <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. Välkommen tillbaka nästa månad.
         </p>
       ) : (
-        <div>
+        <div className="items-left w-full flex flex-col">
           <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
             {lastUpdated ? (
               <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
