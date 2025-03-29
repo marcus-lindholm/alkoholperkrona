@@ -25,6 +25,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [showDetailedInfo, setShowDetailedInfo] = useState(false);
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [fetchError, setFetchError] = useState(false);
 
   const [filterType, setFilterType] = useState<string | null>(null);
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
@@ -71,6 +72,12 @@ export default function Home({ searchParams }: { searchParams: any }) {
       });
 
       const response = await fetch(`/api/products?${params.toString()}`);
+      if (!response.ok) {
+        if (response.status === 500) {
+          setFetchError(true);
+        }
+        return;
+      }
       const data = await response.json();
       if (page === 1) {
         setProducts(data.products);
@@ -156,185 +163,193 @@ export default function Home({ searchParams }: { searchParams: any }) {
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
-      <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
-        {lastUpdated ? (
-          <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
-        ) : (
-          <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
-        )}
-      </div>
-      <div className="w-full flex justify-center relative sm:mb-0 mb-14">
-      {!isLoading && (
-        <>
-          <button
-                onClick={() => {
-                  document.getElementById('mobile-filter-toggle-button')?.click();
-                }}
-                className={`flex items-center space-x-1 text-sm ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}
-              >
-            <div className="block lg:hidden absolute left-2 top-4 max-w-[72vw] break-words">
-              {!isLoading && (
-                <span
-                  className={`flex items-center space-x-1 text-sm ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faSliders} />
-                  
-                  {searchQuery && (
+      {fetchError ? (
+        <p className="text-center mt-8 text-red-500">
+          Hoppsan! Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. Välkommen tillbaka nästa månad.
+        </p>
+      ) : (
+        <div>
+          <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
+            {lastUpdated ? (
+              <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
+            ) : (
+              <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
+            )}
+          </div>
+          <div className="w-full flex justify-center relative sm:mb-0 mb-14">
+          {!isLoading && (
+            <>
+              <button
+                    onClick={() => {
+                      document.getElementById('mobile-filter-toggle-button')?.click();
+                    }}
+                    className={`flex items-center space-x-1 text-sm ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}
+                  >
+                <div className="block lg:hidden absolute left-2 top-4 max-w-[72vw] break-words">
+                  {!isLoading && (
                     <span
-                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                      } flex items-center space-x-1`}
+                      className={`flex items-center space-x-1 text-sm ${
+                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                      }`}
                     >
-                      <FontAwesomeIcon icon={faSearch} />
-                      <span>{searchQuery.length > 5 ? `${searchQuery.substring(0, 5)}...` : searchQuery}</span>
-                    </span>
-                  )}
+                      <FontAwesomeIcon icon={faSliders} />
+                      
+                      {searchQuery && (
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                          } flex items-center space-x-1`}
+                        >
+                          <FontAwesomeIcon icon={faSearch} />
+                          <span>{searchQuery.length > 5 ? `${searchQuery.substring(0, 5)}...` : searchQuery}</span>
+                        </span>
+                      )}
 
-                  {/* Filter chip */}
-                  {filterType && !nestedFilter && (
-                    <span
-                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                      }`}
-                    >
-                      {displayFilterType(filterType)}
-                    </span>
-                  )}
+                      {/* Filter chip */}
+                      {filterType && !nestedFilter && (
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                          }`}
+                        >
+                          {displayFilterType(filterType)}
+                        </span>
+                      )}
 
-                  {/* Nested filter chip */}
-                  {nestedFilter && (
-                    <span
-                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                      }`}
-                    >
-                      {displayNestedFilterType(nestedFilter)}
-                    </span>
-                  )}
+                      {/* Nested filter chip */}
+                      {nestedFilter && (
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                          }`}
+                        >
+                          {displayNestedFilterType(nestedFilter)}
+                        </span>
+                      )}
 
-                  {/* Ordervaror chip */}
-                  {filterOrdervara ? (
-                    <span
-                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                        isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                      }`}
-                    >
-                      Ordervaror
-                    </span>
-                  ) : (
-                    <span
-                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                        isDarkMode ? 'bg-sky-900 text-white' : 'bg-gray-300 text-gray-800'
-                      }`}
-                    >
-                      Ej Ordervaror
+                      {/* Ordervaror chip */}
+                      {filterOrdervara ? (
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
+                          }`}
+                        >
+                          Ordervaror
+                        </span>
+                      ) : (
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                            isDarkMode ? 'bg-sky-900 text-white' : 'bg-gray-300 text-gray-800'
+                          }`}
+                        >
+                          Ej Ordervaror
+                        </span>
+                      )}
                     </span>
                   )}
-                </span>
-              )}
+                </div>
+                <div className="block lg:hidden absolute right-2 top-5">
+                    <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
+                    <span> {displaySortCriteria(sortCriteria)}</span>
+                </div>
+              </button>
+            </>
+          )}
+          </div>
+          <div className="flex flex-col items-center w-full">
+            <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden lg:block">
+              <FilterComponent
+                isDarkMode={isDarkMode}
+                isBeastMode={isBeastMode}
+                filterType={filterType}
+                nestedFilter={nestedFilter}
+                filterOrdervara={filterOrdervara}
+                searchQuery={searchQuery}
+                setFilterType={setFilterType}
+                setNestedFilter={setNestedFilter}
+                setFilterOrdervara={setFilterOrdervara}
+                setSearchQuery={setSearchQuery}
+              />
             </div>
-            <div className="block lg:hidden absolute right-2 top-5">
-                <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
-                <span> {displaySortCriteria(sortCriteria)}</span>
-            </div>
-          </button>
-        </>
-      )}
-      </div>
-      <div className="flex flex-col items-center w-full">
-        <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden lg:block">
-          <FilterComponent
-            isDarkMode={isDarkMode}
-            isBeastMode={isBeastMode}
-            filterType={filterType}
-            nestedFilter={nestedFilter}
-            filterOrdervara={filterOrdervara}
-            searchQuery={searchQuery}
-            setFilterType={setFilterType}
-            setNestedFilter={setNestedFilter}
-            setFilterOrdervara={setFilterOrdervara}
-            setSearchQuery={setSearchQuery}
-          />
-        </div>
-        <div className="w-full min-h-screen flex justify-center">
-          {isLoading ? (
-            <div className="flex flex-col justify-center items-center w-full h-5/6">
-              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
-              {showRandomFact && randomFact && (
-                <p className="mt-4 text-sm text-gray-500 text-center fade-in">
-                  {randomFact}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="w-full">
-              {products.length === 0 ? (
-                <div className="text-center my-4 pt-14">
-                  <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Du kan söka efter namn, varumärken, typ, land eller &quot;nyhet&quot;</p>
-                  <p className="text-xs">Sökfunktionen är ständigt under utveckling och kommer bli bättre med tiden.</p>
+            <div className="w-full min-h-screen flex justify-center">
+              {isLoading ? (
+                <div className="flex flex-col justify-center items-center w-full h-5/6">
+                  <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+                  {showRandomFact && randomFact && (
+                    <p className="mt-4 text-sm text-gray-500 text-center fade-in">
+                      {randomFact}
+                    </p>
+                  )}
                 </div>
               ) : (
-                <>
-                  <div className="block lg:hidden">
-                    <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} showDetailedInfo={showDetailedInfo} />
-                  </div>
-                  <div className="hidden lg:block">
-                    <ProductComponent
-                      products={products} 
-                      isDarkMode={isDarkMode} 
-                      isBeastMode={isBeastMode} 
-                      showDetailedInfo={showDetailedInfo} 
-                      sortCriteria={sortCriteria}
-                      sortOrder={sortOrder}
-                      setSortCriteria={setSortCriteria}
-                      setSortOrder={setSortOrder}
-                    />
-                  </div>
-                  {page < totalPages && (
-                    <div className="text-center my-4">
-                      <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
-                        {isLoadMoreLoading ? (
-                          <div className="flex items-center justify-center">
-                            <div className="h-6 w-6 border-white border-4 border-dashed rounded-full animate-spin"></div>
-                          </div>
-                        ) : (
-                          'Visa fler'
-                        )}
-                      </button>
+                <div className="w-full">
+                  {products.length === 0 ? (
+                    <div className="text-center my-4 pt-14">
+                      <p className="text-medium">Tyvärr kunde vi inte hitta några produkter med den sökningen :( <br />Du kan söka efter namn, varumärken, typ, land eller &quot;nyhet&quot;</p>
+                      <p className="text-xs">Sökfunktionen är ständigt under utveckling och kommer bli bättre med tiden.</p>
                     </div>
+                  ) : (
+                    <>
+                      <div className="block lg:hidden">
+                        <ProductComponentMobile products={products} isDarkMode={isDarkMode} isBeastMode={isBeastMode} showDetailedInfo={showDetailedInfo} />
+                      </div>
+                      <div className="hidden lg:block">
+                        <ProductComponent
+                          products={products} 
+                          isDarkMode={isDarkMode} 
+                          isBeastMode={isBeastMode} 
+                          showDetailedInfo={showDetailedInfo} 
+                          sortCriteria={sortCriteria}
+                          sortOrder={sortOrder}
+                          setSortCriteria={setSortCriteria}
+                          setSortOrder={setSortOrder}
+                        />
+                      </div>
+                      {page < totalPages && (
+                        <div className="text-center my-4">
+                          <button onClick={loadMore} className={`px-4 py-2 rounded ${isDarkMode ? 'bg-sky-600 text-white hover:bg-sky-500' : 'bg-sky-400 text-white hover:bg-sky-500'} transition duration-300 ease-in-out`}>
+                            {isLoadMoreLoading ? (
+                              <div className="flex items-center justify-center">
+                                <div className="h-6 w-6 border-white border-4 border-dashed rounded-full animate-spin"></div>
+                              </div>
+                            ) : (
+                              'Visa fler'
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
+                </div>
               )}
             </div>
-          )}
+          </div>
+          <div className="block sm:hidden">
+            <MobileNav isDarkMode={isDarkMode} currentPage={"home"} />
+          </div>
+          <div className="block lg:hidden">
+            <MobileFilterComponent
+              isDarkMode={isDarkMode}
+              filterType={filterType}
+              nestedFilter={nestedFilter}
+              filterOrdervara={filterOrdervara}
+              searchQuery={searchQuery}
+              sortCriteria={sortCriteria}
+              sortOrder={sortOrder}
+              setFilterType={setFilterType}
+              setNestedFilter={setNestedFilter}
+              setFilterOrdervara={setFilterOrdervara}
+              setSearchQuery={setSearchQuery}
+              setSortCriteria={setSortCriteria}
+              setSortOrder={setSortOrder} 
+              isBeastMode={false}
+            />
+          </div>
         </div>
-      </div>
-      <div className="block sm:hidden">
-        <MobileNav isDarkMode={isDarkMode} currentPage={"home"} />
-      </div>
+      )}
       <FooterComponent isDarkMode={isDarkMode} isLoading={isLoading} />
-      <div className="block lg:hidden">
-        <MobileFilterComponent
-          isDarkMode={isDarkMode}
-          filterType={filterType}
-          nestedFilter={nestedFilter}
-          filterOrdervara={filterOrdervara}
-          searchQuery={searchQuery}
-          sortCriteria={sortCriteria}
-          sortOrder={sortOrder}
-          setFilterType={setFilterType}
-          setNestedFilter={setNestedFilter}
-          setFilterOrdervara={setFilterOrdervara}
-          setSearchQuery={setSearchQuery}
-          setSortCriteria={setSortCriteria}
-          setSortOrder={setSortOrder} 
-          isBeastMode={false}
-        />
-      </div>
     </main>
   );
 }
