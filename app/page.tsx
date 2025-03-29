@@ -164,8 +164,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       {fetchError ? (
-        <p className="text-center mt-8 text-red-500">
-          <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. Välkommen tillbaka nästa månad.
+        <p className="text-center mt-8 text-white-400">
+          <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. <strong>Välkommen tillbaka nästa månad.</strong>
         </p>
       ) : (
         <div className="items-left w-full flex flex-col">
