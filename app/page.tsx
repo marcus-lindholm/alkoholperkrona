@@ -149,6 +149,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
 
   const [randomFact, setRandomFact] = useState<string | null>(null);
   const [showRandomFact, setShowRandomFact] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   useEffect(() => {
     setRandomFact(alcoholFacts[Math.floor(Math.random() * alcoholFacts.length)]);
@@ -160,13 +161,53 @@ export default function Home({ searchParams }: { searchParams: any }) {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    function getNextMonthStart() {
+      const now = new Date();
+      let month = now.getMonth() + 1; // Next month
+      let year = now.getFullYear();
+      if (month > 11) { // December -> January next year
+        month = 0;
+        year += 1;
+      }
+      return new Date(year, month, 1, 0, 0, 0);
+    }
+  
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const target = getNextMonthStart().getTime();
+      const distance = target - now;
+  
+      if (distance <= 0) {
+        setTimeRemaining("0 dagar 0 timmar 0 minuter 0 sekunder");
+        return;
+      }
+  
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+      setTimeRemaining(`${days} dygn ${hours} h : ${minutes} min : ${seconds} s`);
+    }
+  
+    updateCountdown(); // Set initial countdown
+    const intervalId = setInterval(updateCountdown, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       {fetchError ? (
-        <p className="text-center mt-16 text-white-400">
-          <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. <strong>Välkommen tillbaka nästa månad.</strong>
-        </p>
+        <div className='text-center mt-16'>
+          <p className="text-white-400">
+            <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. 😮‍💨 Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. <strong>Välkommen tillbaka nästa månad.</strong>
+          </p>
+          <h1 className="text-center mt-16 text-white-400 text-2xl font-bold">
+            Öppnar igen om: <br></br> {timeRemaining}
+          </h1>
+        </div>
       ) : (
         <div className="items-left w-full flex flex-col">
           <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
