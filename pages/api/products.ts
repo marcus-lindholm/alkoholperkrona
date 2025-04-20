@@ -61,12 +61,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (nestedFilter) {
       filters.AND = filters.AND || [];
-      filters.AND.push({
-        type: {
-          contains: nestedFilter as string,
-          mode: 'insensitive',
-        },
-      });
+      if (nestedFilter === 'whiskey') {
+        filters.AND.push({
+          OR: [
+            { type: { contains: 'whiskey', mode: 'insensitive' } },
+            { type: { contains: 'whisky', mode: 'insensitive' } },
+          ],
+        });
+      } else {
+        filters.AND.push({
+          type: {
+            contains: nestedFilter as string,
+            mode: 'insensitive',
+          },
+        });
+      }
     }
 
     if (filterOrdervara === 'false') {
@@ -81,16 +90,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (searchQuery) {
-      const searchTerms = (searchQuery as string).split(' ').filter(Boolean);
-      const searchFilters = searchTerms.map((term) => ({
-        OR: [
-          { name: { contains: term, mode: 'insensitive' } },
-          { brand: { contains: term, mode: 'insensitive' } },
-          { type: { contains: term, mode: 'insensitive' } },
-        ],
-      }));
-      filters.AND = filters.AND || [];
-      filters.AND.push(...searchFilters);
+      let modifiedSearchQuery = searchQuery as string;
+
+      // Handle "nyhet" keyword
+      if (modifiedSearchQuery.toLowerCase().includes('nyhet')) {
+        filters.AND = filters.AND || [];
+        filters.AND.push({
+          createdAt: {
+            gte: subMonths(new Date(), 1),
+          },
+        });
+
+        modifiedSearchQuery = modifiedSearchQuery.replace(/nyhet/gi, '').trim();
+      }
+
+      if (modifiedSearchQuery) {
+        const searchTerms = modifiedSearchQuery.split(' ').filter(term => term);
+
+        const searchFilters = searchTerms.map(term => ({
+          OR: [
+            { name: { contains: term, mode: 'insensitive' } },
+            { brand: { contains: term, mode: 'insensitive' } },
+            { type: { contains: term, mode: 'insensitive' } },
+            { country: { contains: term, mode: 'insensitive' } },
+          ],
+        }));
+
+        filters.AND = filters.AND || [];
+        filters.AND.push(...searchFilters);
+      }
     }
 
     if (isGlutenFree === 'true') {
@@ -171,8 +199,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).json({ products, totalPages });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ error: 'Failed to fetch products' });
+    if (error instanceof Error) {
+      console.error('Error fetching products:', error.message);
+      res.status(500).json({ error: 'Failed to fetch products', message: error.message });
+    } else {
+      console.error('Unknown error fetching products');
+      res.status(500).json({ error: 'Failed to fetch products', message: 'Unknown error occurred' });
+    }
   } finally {
     await prisma.$disconnect();
   }
