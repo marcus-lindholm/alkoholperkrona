@@ -44,11 +44,11 @@ export default function Home({ searchParams }: { searchParams: any }) {
     volume: number;
     price: number;
     url: string;
-    rankingHistory: string | null;
     vpk: number;
     createdAt: Date;
     updatedAt: Date;
     img: string;
+    BeverageRanking: { date: Date; ranking: number }[]; // Updated to match the new structure
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
@@ -57,6 +57,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
+    const beastModePreference = localStorage.getItem('beastMode') === 'true';
 
     console.log('fetching products');
     try {
@@ -69,8 +70,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
         sortCriteria: sortCriteria,
         sortOrder: sortOrder,
         isGlutenFree: glutenFreePreference.toString(),
+        beastMode: beastModePreference.toString(),
       });
-
+      
       const response = await fetch(`/api/products?${params.toString()}`);
       if (!response.ok) {
         if (response.status === 500) {
@@ -217,7 +219,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
               <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
             )}
           </div>
-          <div className="w-full flex justify-center relative sm:mb-0 mb-14">
+          <div className="w-full flex justify-center relative lg:mb-0 mb-14">
           {!isLoading && (
             <>
               <button

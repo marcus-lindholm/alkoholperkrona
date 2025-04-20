@@ -83,7 +83,7 @@ const Settings = () => {
             </label>
           </div>
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-between border-b border-gray-500 border-opacity-50 pb-4">
-            <label htmlFor="beastMode" className="mr-2">Aktivera betafunktioner (Under utveckling)</label>
+            <label htmlFor="beastMode" className="mr-2">Visa historisk data om produkter</label>
             <label className="switch">
               <input
                 id="beastMode"

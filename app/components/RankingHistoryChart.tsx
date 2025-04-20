@@ -8,14 +8,17 @@ type RankingHistoryChartProps = {
 
 const RankingHistoryChart = ({ data, isDarkMode }: RankingHistoryChartProps) => {
   const preprocessData = (data: { date: string; rank: number; apk: number | null }[]) => {
+    // Sort data by date in ascending order
+    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
     const filteredData = [];
     let consecutiveCount = 0;
     let lastRank = null;
     let lastApk = null;
 
-    for (let i = 0; i < data.length; i++) {
-      const entry = data[i];
-      const isLastEntry = i === data.length - 1;
+    for (let i = 0; i < sortedData.length; i++) {
+      const entry = sortedData[i];
+      const isLastEntry = i === sortedData.length - 1;
 
       if (entry.rank === lastRank && entry.apk === lastApk) {
         consecutiveCount++;

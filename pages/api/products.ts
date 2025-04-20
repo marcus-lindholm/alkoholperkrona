@@ -1,39 +1,55 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { subMonths } from 'date-fns';
+import { subDays, subMonths } from 'date-fns';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { page, limit, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, random, isGlutenFree } = req.query;
+  const {
+    page,
+    limit,
+    filterType,
+    nestedFilter,
+    filterOrdervara,
+    searchQuery,
+    sortCriteria,
+    sortOrder,
+    random,
+    isGlutenFree,
+    beastMode, // This is passed as a string
+  } = req.query;
 
   try {
+    // Convert beastMode to a boolean
+    const isBeastMode = beastMode === 'true';
+
+    // Handle random product fetching
     if (random === 'true') {
-      const glutenFreeCondition = isGlutenFree === 'true' 
-        ? `AND ("type" NOT LIKE '%beer%' OR "name" ILIKE '%gluten%' OR "brand" ILIKE '%gluten%')`
-        : '';
-    
+      const glutenFreeCondition =
+        isGlutenFree === 'true'
+          ? `AND ("type" NOT LIKE '%beer%' OR "name" ILIKE '%gluten%' OR "brand" ILIKE '%gluten%')`
+          : '';
+
       const randomProducts = await prisma.$queryRawUnsafe(`
-        SELECT * FROM "Beverage"
+        SELECT id, brand, name, apk, type, alcohol, volume, price, url, img
+        FROM "Beverage"
         WHERE "type" NOT LIKE '%ordervara%'
         AND "img" IS NOT NULL AND "img" != ''
         ${glutenFreeCondition}
         ORDER BY RANDOM()
         LIMIT 20
       `);
+      res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
       res.status(200).json(randomProducts);
       return;
     }
 
+    // Pagination and limits
     const pageNumber = parseInt(page as string, 10) || 1;
-    const initialLimit = 20;
-    const subsequentLimit = parseInt(limit as string, 10) || 50;
-    const limitNumber = pageNumber === 1 ? initialLimit : subsequentLimit;
+    const limitNumber = parseInt(limit as string, 10) || 20;
+    const skip = (pageNumber - 1) * limitNumber;
 
-    const skip = pageNumber === 1 
-      ? 0 
-      : initialLimit + (pageNumber - 2) * subsequentLimit;
-
+    // Filters
     const filters: any = {};
 
     if (filterType) {
@@ -45,32 +61,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (nestedFilter) {
       filters.AND = filters.AND || [];
-      
-      if (nestedFilter === 'whiskey') {
-        filters.AND.push({
-          OR: [
-            {
-              type: {
-                contains: 'whiskey',
-                mode: 'insensitive',
-              },
-            },
-            {
-              type: {
-                contains: 'whisky',
-                mode: 'insensitive',
-              },
-            },
-          ],
-        });
-      } else {
-        filters.AND.push({
-          type: {
-            contains: nestedFilter as string,
-            mode: 'insensitive',
-          },
-        });
-      }
+      filters.AND.push({
+        type: {
+          contains: nestedFilter as string,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (filterOrdervara === 'false') {
@@ -85,34 +81,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (searchQuery) {
-      let modifiedSearchQuery = searchQuery as string;
-
-      if (modifiedSearchQuery.toLowerCase().includes('nyhet')) {
-        filters.AND = filters.AND || [];
-        filters.AND.push({
-          createdAt: {
-            gte: subMonths(new Date(), 1),
-          },
-        });
-
-        modifiedSearchQuery = modifiedSearchQuery.replace(/nyhet/gi, '').trim();
-      }
-
-      if (modifiedSearchQuery) {
-        const searchTerms = modifiedSearchQuery.split(' ').filter(term => term);
-
-        const searchFilters = searchTerms.map(term => ({
-          OR: [
-            { name: { contains: term, mode: 'insensitive' } },
-            { brand: { contains: term, mode: 'insensitive' } },
-            { type: { contains: term, mode: 'insensitive' } },
-            { country: { contains: term, mode: 'insensitive' } },
-          ],
-        }));
-
-        filters.AND = filters.AND || [];
-        filters.AND.push(...searchFilters);
-      }
+      const searchTerms = (searchQuery as string).split(' ').filter(Boolean);
+      const searchFilters = searchTerms.map((term) => ({
+        OR: [
+          { name: { contains: term, mode: 'insensitive' } },
+          { brand: { contains: term, mode: 'insensitive' } },
+          { type: { contains: term, mode: 'insensitive' } },
+        ],
+      }));
+      filters.AND = filters.AND || [];
+      filters.AND.push(...searchFilters);
     }
 
     if (isGlutenFree === 'true') {
@@ -142,6 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    // Sorting
     const orderBy: any = {};
     if (sortCriteria && sortOrder) {
       orderBy[sortCriteria as string] = sortOrder as string;
@@ -149,12 +128,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       orderBy.apk = 'desc'; // Default sorting
     }
 
+    // Determine ranking history date range
+    const rankingDateLimit = isBeastMode ? subMonths(new Date(), 1) : subDays(new Date(), 2);
+
+    // Fetch products
     const [products, totalProducts] = await Promise.all([
       prisma.beverage.findMany({
         skip,
         take: limitNumber,
         where: filters,
         orderBy,
+        select: {
+          id: true,
+          brand: true,
+          name: true,
+          apk: true,
+          type: true,
+          alcohol: true,
+          volume: true,
+          price: true,
+          url: true,
+          img: true,
+          BeverageRanking: {
+            where: {
+              date: {
+                gte: rankingDateLimit, // Fetch rankings based on beastMode
+              },
+            },
+            orderBy: {
+              date: 'desc', // Order by the most recent date
+            },
+          },
+        },
       }),
       prisma.beverage.count({
         where: filters,
@@ -163,15 +168,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const totalPages = Math.ceil(totalProducts / limitNumber);
 
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).json({ products, totalPages });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error fetching products:', error.message);
-      res.status(500).json({ error: 'Failed to fetch products', message: error.message });
-    } else {
-      console.error('Unknown error fetching products');
-      res.status(500).json({ error: 'Failed to fetch products', message: 'Unknown error occurred' });
-    }
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Failed to fetch products' });
   } finally {
     await prisma.$disconnect();
   }

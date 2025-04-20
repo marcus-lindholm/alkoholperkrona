@@ -29,27 +29,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       select: {
         id: true,
         apk: true,
-        rankingHistory: true,
       },
     });
 
     console.log(`Fetched ${products.length} products.`);
 
-    const rankingDate = new Date().toISOString().split('T')[0];
+    const rankingDate = new Date();
 
     for (let i = 0, currentRanking = 1; i < products.length; i++) {
-      const newRankingEntry = `${rankingDate}:${currentRanking}:${products[i].apk}`;
-      const updatedRankingHistory = products[i].rankingHistory
-        ? `${products[i].rankingHistory},${newRankingEntry}`
-        : newRankingEntry;
-    
-      await prisma.beverage.update({
-        where: { id: products[i].id },
-        data: { rankingHistory: updatedRankingHistory },
+      // Create a new entry in the BeverageRanking table
+      await prisma.beverageRanking.create({
+        data: {
+          beverageId: products[i].id,
+          date: rankingDate,
+          ranking: currentRanking,
+        },
       });
-    
-      console.log(`Updated product ID ${products[i].id} with new ranking entry: ${newRankingEntry}`);
-    
+
+      console.log(`Updated product ID ${products[i].id} with new ranking: ${currentRanking}`);
+
+      // Update the ranking only if the APK value changes
       if (i < products.length - 1 && products[i].apk !== products[i + 1].apk) {
         currentRanking = i + 2;
       }
