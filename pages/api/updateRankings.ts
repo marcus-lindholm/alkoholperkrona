@@ -44,6 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const lastRanking = await prisma.beverageRanking.findFirst({
         where: { beverageId: product.id },
         orderBy: { date: 'desc' },
+        select: {
+          apk: true, // Include the apk field
+        },
       });
 
       // Skip creating a new entry if the apk hasn't changed
