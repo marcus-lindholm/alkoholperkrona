@@ -27,34 +27,45 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
   return (
     <div className={`w-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       {products.map((product, index) => {
-        let latestRanking = 'N/A';
-        let rankingChange = 'new'; // Default to 'new' if there are less than 4 entries
-        let previousRankingBoard = 'N/A';
+          let latestRanking = 'N/A';
+          let rankingChange = '';
+          let previousRankingBoard = 'N/A';
 
-        if (product.BeverageRanking.length > 0) {
-          const sortedRankings = [...product.BeverageRanking].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          const latestRankingEntry = sortedRankings[0];
-          const previousRankingEntry = sortedRankings[1];
+          if (product.BeverageRanking.length > 0) {
+            const sortedRankings = [...product.BeverageRanking].sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+            const latestRankingEntry = sortedRankings[0];
+            const previousRankingEntry = sortedRankings[1];
 
-          if (latestRankingEntry) {
-            latestRanking = latestRankingEntry.ranking.toString();
-          }
+            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
-          if (sortedRankings.length < 5) {
-            rankingChange = 'new';
-          } else if (previousRankingEntry) {
-            const previousRanking = previousRankingEntry.ranking;
-            if (Number(latestRanking) < previousRanking) {
-              rankingChange = 'increased';
-              previousRankingBoard = previousRanking.toString();
-            } else if (Number(latestRanking) > previousRanking) {
-              rankingChange = 'decreased';
-              previousRankingBoard = previousRanking.toString();
-            } else {
-              rankingChange = 'same';
+            if (latestRankingEntry) {
+              latestRanking = latestRankingEntry.ranking.toString();
+
+              // Check if the latest entry is from today
+              if (
+                latestRankingEntry &&
+                latestRankingEntry.date &&
+                new Date(latestRankingEntry.date).toISOString().split('T')[0] === today &&
+                previousRankingEntry
+              ) {
+                const previousRanking = previousRankingEntry.ranking;
+
+                if (Number(latestRanking) < previousRanking) {
+                  rankingChange = 'increased';
+                  previousRankingBoard = previousRanking.toString();
+                } else if (Number(latestRanking) > previousRanking) {
+                  rankingChange = 'decreased';
+                  previousRankingBoard = previousRanking.toString();
+                } else {
+                  rankingChange = 'same';
+                }
+              }
             }
           }
-        }
+        // Check if the product is new (created within the last week)
+        const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
         const rankingHistoryData = product.BeverageRanking.map(entry => ({
           date: entry.date.toString(),
@@ -69,7 +80,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                 <div className="text-xl">
                   {rankingChange === 'increased' && <FontAwesomeIcon icon={faArrowUp} className="text-green-500 mr-2" size="xs" title="Högre placering än tidigare" />}
                   {rankingChange === 'decreased' && <FontAwesomeIcon icon={faArrowDown} className="text-red-500 mr-2" size="xs" title="Lägre placering än tidigare" />}
-                  {rankingChange === 'new' && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 mr-2" size="xs" title="Ny produkt på listan" />}
+                  {isNewProduct && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 mr-2" size="xs" title="Ny produkt på listan" />}
                   {latestRanking}.
                   <span className='ml-2'><strong>{product.brand}</strong><br/></span>
                   {showDetailedInfo && <span className="text-sm opacity-75">{product.name}</span>}

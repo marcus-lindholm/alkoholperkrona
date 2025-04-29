@@ -36,4 +36,6 @@ model BeverageRanking {
   beverageId String
   date       DateTime
   ranking    Int
+  apk        Float
+  price      Float
 }

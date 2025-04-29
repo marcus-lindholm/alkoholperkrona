@@ -29,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       select: {
         id: true,
         apk: true,
+        price: true,
       },
     });
 
@@ -37,16 +38,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const rankingDate = new Date();
 
     for (let i = 0, currentRanking = 1; i < products.length; i++) {
+      const product = products[i];
+
+      // Check the last entry for this product in the BeverageRanking table
+      const lastRanking = await prisma.beverageRanking.findFirst({
+        where: { beverageId: product.id },
+        orderBy: { date: 'desc' },
+      });
+
+      // Skip creating a new entry if the apk hasn't changed
+      if (lastRanking && lastRanking.apk === product.apk) {
+        console.log(`Skipping product ID ${product.id} as apk has not changed.`);
+        continue;
+      }
+
       // Create a new entry in the BeverageRanking table
       await prisma.beverageRanking.create({
         data: {
-          beverageId: products[i].id,
+          beverageId: product.id,
           date: rankingDate,
           ranking: currentRanking,
+          apk: product.apk,
+          price: product.price,
         },
       });
 
-      console.log(`Updated product ID ${products[i].id} with new ranking: ${currentRanking}`);
+      console.log(`Updated product ID ${product.id} with new ranking: ${currentRanking}, apk: ${product.apk}, price: ${product.price}`);
 
       // Update the ranking only if the APK value changes
       if (i < products.length - 1 && products[i].apk !== products[i + 1].apk) {
