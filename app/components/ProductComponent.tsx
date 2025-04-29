@@ -19,7 +19,7 @@ type ProductType = {
   createdAt: Date;
   updatedAt: Date;
   img: string;
-  BeverageRanking: { date: Date; ranking: number; apk: number }[];
+  BeverageRanking: { date: Date; ranking: number }[];
 };
 
 type ProductComponentProps = {

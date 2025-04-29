@@ -48,7 +48,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     createdAt: Date;
     updatedAt: Date;
     img: string;
-    BeverageRanking: { date: Date; ranking: number }[]; // Updated to match the new structure
+    BeverageRanking: { date: Date; ranking: number; apk?: number }[];
   };
 
   async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
