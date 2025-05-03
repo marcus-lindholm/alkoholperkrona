@@ -52,15 +52,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { date: 'desc' },
       });
 
-      // Skip if the APK hasn't changed
-      if (lastRanking && lastRanking.apk === product.apk) {
-        console.log(
-          `Skipping product ID ${product.id}, rank ${currentRanking}, apk ${product.apk} as apk has not changed.`
-        );
-        continue;
+      if (lastRanking) {
+        // If the APK didn't change
+        if (lastRanking.apk === product.apk) {
+          // Update ranking if it's different; otherwise skip
+          if (lastRanking.ranking === currentRanking) {
+            console.log(
+              `Skipping product ID ${product.id}, rank ${currentRanking}, apk ${product.apk} as both apk and rank have not changed.`
+            );
+            continue;
+          } else {
+            // Update the existing entry with the new rank
+            await prisma.beverageRanking.update({
+              where: { id: lastRanking.id },
+              data: {
+                ranking: currentRanking,
+              },
+            });
+            console.log(
+              `Updated existing record for product ID ${product.id} with new ranking: ${currentRanking}, apk: ${product.apk}`
+            );
+            continue;
+          }
+        }
       }
 
-      // Otherwise, insert a new ranking entry
+      // If there's no last ranking or the APK has changed, create a new entry
       await prisma.beverageRanking.create({
         data: {
           beverageId: product.id,
@@ -70,9 +87,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           price: product.price,
         },
       });
-
       console.log(
-        `Updated product ID ${product.id} with new ranking: ${currentRanking}, apk: ${product.apk}, price: ${product.price}`
+        `Created new ranking record for product ID ${product.id}: ranking ${currentRanking}, apk ${product.apk}, price ${product.price}`
       );
     }
 
