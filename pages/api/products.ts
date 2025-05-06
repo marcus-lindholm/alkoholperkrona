@@ -157,7 +157,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Determine ranking history date range
-    const rankingDateLimit = isBeastMode ? subMonths(new Date(), 1) : subDays(new Date(), 2);
+    // const rankingDateLimit = isBeastMode ? subMonths(new Date(), 1) : subDays(new Date(), 2);
 
     // Fetch products
     const [products, totalProducts] = await Promise.all([
@@ -177,14 +177,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           price: true,
           url: true,
           img: true,
+          // Remove the date filter entirely:
           BeverageRanking: {
-            where: {
-              date: {
-                gte: rankingDateLimit, // Fetch rankings based on beastMode
-              },
-            },
             orderBy: {
-              date: 'desc', // Order by the most recent date
+              date: 'desc', // Order by most recent date
             },
           },
         },
