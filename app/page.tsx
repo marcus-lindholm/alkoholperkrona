@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
+import FilterChips from './components/FilterChips';
 import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { displaySortCriteria, displayFilterType, displayNestedFilterType, alcoholFacts } from './components/TranslateType';
 
@@ -219,87 +220,51 @@ export default function Home({ searchParams }: { searchParams: any }) {
               <span className="text-xs text-gray-400 invisible">Senast uppdaterad: 0000-00-00 00:00</span>
             )}
           </div>
+          {/* Filter chips section */}
           <div className="w-full flex justify-center relative lg:mb-0 mb-14">
-          {!isLoading && (
-            <>
-              <button
-                    onClick={() => {
-                      document.getElementById('mobile-filter-toggle-button')?.click();
-                    }}
-                    className={`flex items-center space-x-1 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                    }`}
-                  >
-                <div className="block lg:hidden absolute left-2 top-4 max-w-[72vw] break-words">
-                  {!isLoading && (
-                    <span
-                      className={`flex items-center space-x-1 text-sm ${
-                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}
-                    >
-                      <FontAwesomeIcon icon={faSliders} />
-                      
-                      {searchQuery && (
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                          } flex items-center space-x-1`}
-                        >
-                          <FontAwesomeIcon icon={faSearch} />
-                          <span>{searchQuery.length > 5 ? `${searchQuery.substring(0, 5)}...` : searchQuery}</span>
-                        </span>
-                      )}
-
-                      {/* Filter chip */}
-                      {filterType && !nestedFilter && (
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                          }`}
-                        >
-                          {displayFilterType(filterType)}
-                        </span>
-                      )}
-
-                      {/* Nested filter chip */}
-                      {nestedFilter && (
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                          }`}
-                        >
-                          {displayNestedFilterType(nestedFilter)}
-                        </span>
-                      )}
-
-                      {/* Ordervaror chip */}
-                      {filterOrdervara ? (
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                            isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-                          }`}
-                        >
-                          Ordervaror
-                        </span>
-                      ) : (
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                            isDarkMode ? 'bg-sky-900 text-white' : 'bg-gray-300 text-gray-800'
-                          }`}
-                        >
-                          Ej Ordervaror
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </div>
-                <div className="block lg:hidden absolute right-2 top-5">
+            {!isLoading && (
+              <>
+                {/* Mobile Filter Chips */}
+                <button
+                  onClick={() => {
+                    document.getElementById('mobile-filter-toggle-button')?.click();
+                  }}
+                  className="flex items-center space-x-1 text-sm"
+                >
+                  <div className="block lg:hidden absolute left-2 top-4 max-w-[72vw] break-words">
+                    {!isLoading && (
+                      <FilterChips
+                        isDarkMode={isDarkMode}
+                        searchQuery={searchQuery}
+                        filterType={filterType}
+                        nestedFilter={nestedFilter}
+                        filterOrdervara={filterOrdervara}
+                        sortCriteria={sortCriteria}
+                        sortOrder={sortOrder}
+                        isMobile={true}
+                      />
+                    )}
+                  </div>
+                  <div className="block lg:hidden absolute right-2 top-5">
                     <FontAwesomeIcon icon={sortOrder === 'asc' ? faArrowUpShortWide : faArrowDownShortWide} />
                     <span> {displaySortCriteria(sortCriteria)}</span>
+                  </div>
+                </button>
+                
+                {/* Desktop Filter Chips */}
+                <div className="hidden lg:block absolute left-0 mt-2 top-16 max-w-[80vw] z-10">
+                  <FilterChips
+                    isDarkMode={isDarkMode}
+                    searchQuery={searchQuery}
+                    filterType={filterType}
+                    nestedFilter={nestedFilter}
+                    filterOrdervara={filterOrdervara}
+                    sortCriteria={sortCriteria}
+                    sortOrder={sortOrder}
+                  />
                 </div>
-              </button>
-            </>
-          )}
+              </>
+            )}
           </div>
           <div className="flex flex-col items-center w-full">
             <div className="w-full flex sm:justify-start justify-center mt-6 sm:mt-4 hidden lg:block">
