@@ -67,6 +67,8 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         // Check if the product is new (created within the last week)
         const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
+        const priceFormatted = Number.isInteger(product.price) ? product.price.toString() : product.price.toFixed(2);
+
         const rankingHistoryData = product.BeverageRanking.map(entry => ({
           date: entry.date.toString(),
           rank: entry.ranking,
@@ -96,7 +98,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   <span className="text-medium">{product.vpk}</span>
                 </div>
                 <div className="mb-1">
-                  <span className="text-2xl font-bold">{product.price.toFixed(2)} kr</span>
+                  <span className="text-2xl font-bold">{priceFormatted} kr</span>
                 </div>
               </div>
               <div className='items-right text-right'>

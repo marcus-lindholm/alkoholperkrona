@@ -111,7 +111,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
         // Check if the product is new (created within the last week)
         const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-        const priceFormatted = product.price.toFixed(2);
+        const priceFormatted = Number.isInteger(product.price) ? product.price.toString() : product.price.toFixed(2);
 
         const rankingHistoryData = product.BeverageRanking.map(entry => ({
           date: entry.date.toString(),

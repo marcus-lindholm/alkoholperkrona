@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     sortOrder,
     random,
     isGlutenFree,
-    beastMode, // This is passed as a string
+    beastMode,
   } = req.query;
 
   try {
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const randomProducts = await prisma.$queryRawUnsafe(`
         SELECT id, brand, name, apk, type, alcohol, volume, price, url, img
         FROM "Beverage"
-        WHERE "type" NOT LIKE '%ordervara%'
+        WHERE "type" NOT LIKE '%Ordervaror%'
         AND "img" IS NOT NULL AND "img" != ''
         ${glutenFreeCondition}
         ORDER BY RANDOM()
@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       filters.AND.push({
         type: {
           not: {
-            contains: 'ordervara',
+            contains: 'Ordervaror',
           },
         },
       });

@@ -34,17 +34,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`Fetched ${products.length} products.`);
 
     const rankingDate = new Date();
-    let currentRanking = 0; // Start at 0 so first distinct APK gets rank 1
-    let lastProcessedAPK: number | null = null; 
+    let currentRank = 1; // Start with rank 1
+    let sameApkCount = 0; // Count products with the same APK
+    let lastProcessedAPK: number | null = null;
 
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
 
-      // If we hit a new APK value, increment the rank
-      if (lastProcessedAPK === null || product.apk !== lastProcessedAPK) {
-        currentRanking++;
-        lastProcessedAPK = product.apk;
+      // If this is a new APK value
+      if (lastProcessedAPK !== null && product.apk !== lastProcessedAPK) {
+        // Next rank should skip ahead by the number of products with the same previous APK
+        currentRank = i + 1; // Position in the array + 1 gives the correct next rank
+        sameApkCount = 0;
+      } else if (lastProcessedAPK === product.apk) {
+        // Same APK as previous, increment counter but keep rank the same
+        sameApkCount++;
       }
+
+      lastProcessedAPK = product.apk;
 
       // Check the last stored ranking for this product
       const lastRanking = await prisma.beverageRanking.findFirst({
@@ -56,9 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // If the APK didn't change
         if (lastRanking.apk === product.apk) {
           // Update ranking if it's different; otherwise skip
-          if (lastRanking.ranking === currentRanking) {
+          if (lastRanking.ranking === currentRank) {
             console.log(
-              `Skipping product ID ${product.id}, rank ${currentRanking}, apk ${product.apk} as both apk and rank have not changed.`
+              `Skipping product ID ${product.id}, rank ${currentRank}, apk ${product.apk} as both apk and rank have not changed.`
             );
             continue;
           } else {
@@ -66,11 +73,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await prisma.beverageRanking.update({
               where: { id: lastRanking.id },
               data: {
-                ranking: currentRanking,
+                ranking: currentRank,
               },
             });
             console.log(
-              `Updated existing record for product ID ${product.id} with new ranking: ${currentRanking}, apk: ${product.apk}`
+              `Updated existing record for product ID ${product.id} with new ranking: ${currentRank}, apk: ${product.apk}`
             );
             continue;
           }
@@ -82,13 +89,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: {
           beverageId: product.id,
           date: rankingDate,
-          ranking: currentRanking,
+          ranking: currentRank,
           apk: product.apk,
           price: product.price,
         },
       });
       console.log(
-        `Created new ranking record for product ID ${product.id}: ranking ${currentRanking}, apk ${product.apk}, price ${product.price}`
+        `Created new ranking record for product ID ${product.id}: ranking ${currentRank}, apk ${product.apk}, price ${product.price}`
       );
     }
 
