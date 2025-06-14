@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faCompass, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faCompass, faHome, faMagicWandSparkles } from '@fortawesome/free-solid-svg-icons';
 import { usePathname } from 'next/navigation';
 
 type NavbarProps = {
@@ -15,12 +15,14 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
   const [hoverItem, setHoverItem] = useState<string | null>(null);
   
   const isActive = (path: string) => {
-    return pathname === path;
+    if (!pathname) return false;
+    return pathname === path || (path === '/ai' && pathname.startsWith('/ai'));
   };
 
   const navItems = [
     { path: '/', icon: faHome, label: 'Home' },
     { path: '/explore', icon: faCompass, label: 'Explore' },
+    { path: '/ai', icon: faMagicWandSparkles, label: 'AI' },
     { path: '/settings', icon: faCog, label: 'Settings' }
   ];
 
@@ -67,7 +69,7 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
                   navItems.findIndex(item => 
                     hoverItem 
                       ? item.path === hoverItem 
-                      : item.path === pathname
+                      : isActive(item.path) ? item.path : null
                   ) * 53 + 27
                 }px`,
                 transform: 'translateX(-50%)'
