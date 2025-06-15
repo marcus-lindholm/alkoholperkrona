@@ -59,44 +59,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { date: 'desc' },
       });
 
-      if (lastRanking) {
-        // If the APK didn't change
-        if (lastRanking.apk === product.apk) {
-          // Update ranking if it's different; otherwise skip
-          if (lastRanking.ranking === currentRank) {
-            console.log(
-              `Skipping product ID ${product.id}, rank ${currentRank}, apk ${product.apk} as both apk and rank have not changed.`
-            );
-            continue;
-          } else {
-            // Update the existing entry with the new rank
-            await prisma.beverageRanking.update({
-              where: { id: lastRanking.id },
-              data: {
-                ranking: currentRank,
-              },
-            });
-            console.log(
-              `Updated existing record for product ID ${product.id} with new ranking: ${currentRank}, apk: ${product.apk}`
-            );
-            continue;
-          }
+      // This is where we check if APK has changed - always create a new entry if APK is different
+      if (lastRanking && lastRanking.apk === product.apk) {
+        // APK hasn't changed - only update if rank changed
+        if (lastRanking.ranking === currentRank) {
+          console.log(
+            `Skipping product ID ${product.id}, rank ${currentRank}, apk ${product.apk} as both apk and rank have not changed.`
+          );
+          continue;
+        } else {
+          // Update the existing entry with the new rank
+          await prisma.beverageRanking.update({
+            where: { id: lastRanking.id },
+            data: {
+              ranking: currentRank,
+            },
+          });
+          console.log(
+            `Updated existing record for product ID ${product.id} with new ranking: ${currentRank}, apk: ${product.apk}`
+          );
+          continue;
         }
+      } else {
+        // Either no previous ranking or APK has changed - create new entry
+        await prisma.beverageRanking.create({
+          data: {
+            beverageId: product.id,
+            date: rankingDate,
+            ranking: currentRank,
+            apk: product.apk,
+            price: product.price,
+          },
+        });
+        
+        // Log whether it's a new product or APK changed
+        const logMessage = lastRanking 
+          ? `Created new ranking record for product ID ${product.id} due to APK change: old APK ${lastRanking.apk} -> new APK ${product.apk}, new ranking ${currentRank}` 
+          : `Created first ranking record for product ID ${product.id}: ranking ${currentRank}, apk ${product.apk}, price ${product.price}`;
+        
+        console.log(logMessage);
       }
-
-      // If there's no last ranking or the APK has changed, create a new entry
-      await prisma.beverageRanking.create({
-        data: {
-          beverageId: product.id,
-          date: rankingDate,
-          ranking: currentRank,
-          apk: product.apk,
-          price: product.price,
-        },
-      });
-      console.log(
-        `Created new ranking record for product ID ${product.id}: ranking ${currentRank}, apk ${product.apk}, price ${product.price}`
-      );
     }
 
     console.log("Finished updateRankings.");

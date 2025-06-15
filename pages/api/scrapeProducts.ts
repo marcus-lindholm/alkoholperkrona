@@ -203,8 +203,35 @@ async function deleteOldProducts() {
     console.log('Running deleteOldProducts');
     console.log(`Number of fetched product URLs: ${allFetchedProducts.length}`);
 
-    // Perform the deletion
-    await prisma.beverage.deleteMany({
+    // First, find the IDs of products that will be deleted
+    const productsToDelete = await prisma.beverage.findMany({
+      where: {
+        lastOnSiteAt: {
+          lt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // older than 6 days
+        },
+      },
+      select: {
+        id: true
+      }
+    });
+
+    const productIds = productsToDelete.map(product => product.id);
+    console.log(`Found ${productIds.length} products to delete`);
+
+    // Delete associated rankings first
+    if (productIds.length > 0) {
+      const deletedRankings = await prisma.beverageRanking.deleteMany({
+        where: {
+          beverageId: {
+            in: productIds
+          }
+        }
+      });
+      console.log(`Deleted ${deletedRankings.count} associated ranking records`);
+    }
+
+    // Then delete the products
+    const deletedProducts = await prisma.beverage.deleteMany({
       where: {
         lastOnSiteAt: {
           lt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // older than 6 days
@@ -212,7 +239,7 @@ async function deleteOldProducts() {
       },
     });
 
-    console.log('Deleted old products');
+    console.log(`Deleted ${deletedProducts.count} old products`);
   } catch (error) {
     console.error('Error deleting old products:', error);
   }

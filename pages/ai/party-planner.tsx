@@ -168,8 +168,16 @@ export default function PartyPlanner() {
                 <input
                   type="number"
                   value={guests}
-                  onChange={(e) => setGuests(parseInt(e.target.value) || 1)}
-                  min="1"
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    // Allow empty string to clear the field completely
+                    if (inputValue === '') {
+                      setGuests(0);
+                    } else {
+                      setGuests(parseInt(inputValue) || 1);
+                    }
+                  }}
+                  min="0"
                   max="100"
                   className={`w-full p-3 rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-300'} border`}
                   required
