@@ -154,7 +154,7 @@ const FilterComponent = ({
           }}
           className="ml-2 px-3 py-1.5 text-sm font-medium bg-red-700 text-white rounded hover:bg-red-800 transition duration-300 ease-in-out"
         >
-          <FontAwesomeIcon icon={faTrash} />
+          Återställ <FontAwesomeIcon icon={faTrash} className="w-3 h-3 inline-block ml-1" />
         </button>
       )}
     </div>

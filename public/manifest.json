@@ -1,0 +1,20 @@
+{
+  "name": "APKrona.se - Jämför APK på Systembolaget",
+  "short_name": "APKrona",
+  "description": "Sveriges bästa APK-jämförare för Systembolaget. Hitta mest alkohol per krona och spara pengar på dina inköp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "lang": "sv",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle", "finance"]
+}

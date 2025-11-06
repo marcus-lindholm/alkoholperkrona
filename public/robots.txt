@@ -1,0 +1,12 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin or API routes that shouldn't be indexed
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.apkrona.se/sitemap.xml
+
+# Crawl-delay for politeness (optional)
+Crawl-delay: 1

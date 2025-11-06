@@ -150,66 +150,74 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   }, [scrollPosition]);
 
   return (
-    <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+    <>
       <Head>
-        <title>APKrona.se - Utforska</title>
+        <title>Utforska APK - Systembolagets Bästa Erbjudanden | APKrona.se</title>
+        <meta name="description" content="Upptäck nya produkter med hög APK på Systembolaget. Swipea dig igenom de mest prisvärda dryckerna och hitta nya favoriter. Uppdateras dagligen!" />
+        <meta name="keywords" content="systembolaget apk, upptäck alkohol, swipe alkohol, bästa apk, prisvärd alkohol, systembolaget erbjudanden" />
+        <meta property="og:title" content="Utforska APK - Systembolagets Bästa Erbjudanden" />
+        <meta property="og:description" content="Upptäck nya produkter med hög APK på Systembolaget. Swipea dig igenom de mest prisvärda dryckerna." />
+        <meta property="og:url" content="https://www.apkrona.se/explore" />
+        <link rel="canonical" href="https://www.apkrona.se/explore" />
       </Head>
-      <div className="fixed top-0 w-full z-50">
-        <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
-      </div>
-      {loading && products.length === 0 ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+      <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+        <div className="fixed top-0 w-full z-50">
+          <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
         </div>
-      ) : (
-        <div ref={reelsContainerRef} className={`${Styles.reelsContainer}`}>
-          {products.map((product, index) => (
-            <div key={product.id} className={`w-full flex flex-col items-center justify-start sm:justify-center p-4 pt-20 sm:pt-0 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
-              <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
-                <div className="flex justify-between items-start mb-4">
-                  <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    <div className="text-2xl text-center">
-                      {product.brand}
-                      <span className="ml-2"><strong>{product.name}</strong></span>
-                    </div>
-                  </a>
-                </div>
-                <div className="flex flex-col items-center">
-                  {product.img && (
-                    <a href={product.url} target="_blank" rel="noopener noreferrer">
-                      <img src={product.img} alt={product.brand} className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`} />
+        {loading && products.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+          </div>
+        ) : (
+          <div ref={reelsContainerRef} className={`${Styles.reelsContainer}`}>
+            {products.map((product, index) => (
+              <div key={product.id} className={`w-full flex flex-col items-center justify-start sm:justify-center p-4 pt-20 sm:pt-0 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+                <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
+                  <div className="flex justify-between items-start mb-4">
+                    <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <div className="text-2xl text-center">
+                        {product.brand}
+                        <span className="ml-2"><strong>{product.name}</strong></span>
+                      </div>
                     </a>
-                  )}
-                  <div className="text-center mb-4">
-                    <span className="text-2xl font-bold">{product.price.toFixed(2)} kr</span>
                   </div>
-                  <div className="text-center mb-1">
-                    <span className="text-sm opacity-85">{translateType(product.type)}</span>
-                  </div>
-                  <div className="text-center mb-4 grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm opacity-85">APK: {product.apk}</span><br />
-                      <span className="text-sm opacity-85">Volym/kr: {product.vpk}</span><br />
+                  <div className="flex flex-col items-center">
+                    {product.img && (
+                      <a href={product.url} target="_blank" rel="noopener noreferrer">
+                        <img src={product.img} alt={product.brand} className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`} />
+                      </a>
+                    )}
+                    <div className="text-center mb-4">
+                      <span className="text-2xl font-bold">{product.price.toFixed(2)} kr</span>
                     </div>
-                    <div>
-                      <span className="text-sm opacity-85">Volym: {product.volume} ml</span><br />
-                      <span className="text-sm opacity-85">Alkohol: {product.alcohol} %</span><br />
+                    <div className="text-center mb-1">
+                      <span className="text-sm opacity-85">{translateType(product.type)}</span>
+                    </div>
+                    <div className="text-center mb-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-sm opacity-85">APK: {product.apk}</span><br />
+                        <span className="text-sm opacity-85">Volym/kr: {product.vpk}</span><br />
+                      </div>
+                      <div>
+                        <span className="text-sm opacity-85">Volym: {product.volume} ml</span><br />
+                        <span className="text-sm opacity-85">Alkohol: {product.alcohol} %</span><br />
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="flex items-center justify-center mt-4">
+                  <FontAwesomeIcon icon={faAngleDoubleDown} size="2x" className={`${Styles.scrollArrowIcon}`} />
+                </div>
               </div>
-              <div className="flex items-center justify-center mt-4">
-                <FontAwesomeIcon icon={faAngleDoubleDown} size="2x" className={`${Styles.scrollArrowIcon}`} />
-              </div>
-            </div>
-          ))}
-          <div ref={endOfListRef} className="h-1"></div>
+            ))}
+            <div ref={endOfListRef} className="h-1"></div>
+          </div>
+        )}
+        <div className="block sm:hidden">
+          <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
         </div>
-      )}
-      <div className="block sm:hidden">
-        <MobileNav isDarkMode={isDarkMode} currentPage={"explore"} />
       </div>
-    </div>
+    </>
   );
 };
 

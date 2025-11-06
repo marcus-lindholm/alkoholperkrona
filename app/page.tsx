@@ -13,6 +13,7 @@ import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
 import FilterChips from './components/FilterChips';
+import SeoContent from './components/SeoContent';
 import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { displaySortCriteria, displayFilterType, displayNestedFilterType, alcoholFacts } from './components/TranslateType';
 
@@ -355,8 +356,19 @@ export default function Home({ searchParams }: { searchParams: any }) {
               isBeastMode={false}
             />
           </div>
-        </div>
+        </div>      )}
+      
+      {/* SEO Content Section - only visible when not loading and no filters applied */}
+      {!isLoading && !filterType && !nestedFilter && !searchQuery && (
+        <SeoContent 
+          isDarkMode={isDarkMode}
+          onCategoryClick={(filterType, nestedFilter) => {
+            setFilterType(filterType);
+            setNestedFilter(nestedFilter);
+          }}
+        />
       )}
+      
       <FooterComponent isDarkMode={isDarkMode} isLoading={isLoading} />
     </main>
   );

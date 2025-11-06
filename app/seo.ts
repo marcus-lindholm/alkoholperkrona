@@ -1,15 +1,36 @@
 const seoKeywords = [
-    "APK", "alkohol per krona", "Systembolaget", "alkohol", "drycker", "billig alkohol", 
-    "bästa alkohol", "hög APK", "alkohol prisvärd", "alkohol ranking", 
-    "högst mängd alkohol per krona", "prisvärd alkohol", "billigaste alkohol", 
-    "bästa alkohol på Systembolaget", "mest alkohol för pengarna", 
-    "Systembolaget bästa köp", "Systembolaget billigaste alkohol", "Systembolaget hög APK", 
-    "Systembolaget mest prisvärd", "Systembolaget alkohol ranking", "Systembolaget alkohol prisvärd", 
-    "Systembolaget alkohol billig", "Systembolaget alkohol bäst", "Systembolaget alkohol billigast",
-    "billig sprit", "bästa sprit", "prisvärd sprit", "sprit ranking", "mest sprit för pengarna",
-    "Systembolaget sprit", "Systembolaget bästa sprit", "Systembolaget billig sprit",
-    "Systembolaget prisvärd sprit", "Systembolaget sprit ranking", "Systembolaget sprit bäst",
-    "Systembolaget sprit billigast", "alkohol deals", "alkohol offers", "cheap alcohol",
-    "best alcohol deals", "alcohol value for money", "top alcohol deals"
+    // Primary keywords
+    "APK", "alkohol per krona", "Systembolaget", "APK ranking", "APK lista",
+    
+    // Long-tail keywords - highly targeted
+    "bästa apk systembolaget", "högst apk systembolaget 2025", "billigaste alkoholen systembolaget",
+    "mest alkohol per krona", "prisvärd alkohol systembolaget", "systembolaget apk lista",
+    "apk jämförelse systembolaget", "systembolaget värde för pengarna", "studentalkohol billigt",
+    
+    // Product-specific keywords
+    "billig sprit systembolaget", "billig vodka systembolaget", "billigt vin systembolaget",
+    "billig whisky systembolaget", "prisvärd rom systembolaget", "bästa köp systembolaget",
+    
+    // Use-case keywords
+    "fest billig alkohol", "studentfest alkohol", "förtjusning systembolaget",
+    "snapslista systembolaget", "partydrycker billigt", "bästa värde sprit",
+    
+    // Comparison keywords
+    "jämför alkoholpriser", "alkohol prisjämförelse", "systembolaget prisjämförelse",
+    "billigaste sprit per liter", "högst alkoholhalt per krona",
+    
+    // Location-based
+    "systembolaget sverige", "systembolaget priser", "systembolaget sortiment",
+    
+    // Trending/seasonal
+    "nyår alkohol billigt", "midsommar alkohol", "jul alkohol systembolaget",
+    
+    // Brand-related
+    "apkrona", "apk beräkning", "alkohol kalkylator", "systembolaget tips",
+    
+    // Semantic variations
+    "spara pengar alkohol", "studentbudget alkohol", "ekonomisk alkohol",
+    "mest valuta för pengarna alkohol", "systembolaget guiden", "alkohol rankning"
 ];
+
 export default seoKeywords;
