@@ -80,7 +80,7 @@ export default function SeoContent({ isDarkMode, onCategoryClick }: SeoContentPr
             Vill du maximera din budget? Här är våra bästa tips:
           </p>
           <ul className="space-y-2">
-            <li>🥃 <strong>Sprit</strong> har generellt högst APK jämfört med vin och öl</li>
+            <li>🥃 <strong>Öl</strong> har generellt högst APK jämfört med vin och sprit</li>
             <li>📦 <strong>Större flaskor</strong> ger ofta bättre värde per liter</li>
             <li>🏷️ <strong>Egna märken</strong> kan vara överraskande prisvärda</li>
             <li>🔄 <strong>Kolla regelbundet</strong> - nya produkter tillkommer ständigt</li>
