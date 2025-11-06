@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 import translateType from '../app/components/TranslateType';
@@ -6,6 +6,7 @@ import MobileNav from '../app/components/MobileNav';
 import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
 import Head from 'next/head';
+import Image from 'next/image';
 
 type ProductType = {
   id: string;
@@ -37,7 +38,6 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const endOfListRef = useRef<HTMLDivElement>(null);
   const reelsContainerRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
-
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
@@ -46,7 +46,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     });
   };
 
-  const fetchProducts = async (glutenFree: boolean) => {
+  const fetchProducts = useCallback(async (glutenFree: boolean) => {
     if (loading || isFetchingRef.current) return;
     isFetchingRef.current = true;
     setLoading(true);
@@ -67,21 +67,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       setFetchCount(prevCount => prevCount + 1);
       isFetchingRef.current = false;
     }
-  };
+  }, [loading]);
 
-  useEffect(() => {
-    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const localDarkMode = localStorage.getItem('darkMode');
-    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
-    setIsDarkMode(darkModePreference);
-  
-    const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
-    setIsGlutenFree(glutenFreePreference);
-  
-    fetchProducts(glutenFreePreference);
-  }, []);
-
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     setUserHasScrolled(true);
 
     if (reelsContainerRef.current) {
@@ -94,8 +82,19 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
         fetchProducts(isGlutenFree);
       }
     }
-  };
+  }, [fetchCount, isGlutenFree, fetchProducts]);
+
+  useEffect(() => {
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const localDarkMode = localStorage.getItem('darkMode');
+    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
+    setIsDarkMode(darkModePreference);
   
+    const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
+    setIsGlutenFree(glutenFreePreference);
+    fetchProducts(glutenFreePreference);
+  }, [fetchProducts]);
+
   useEffect(() => {
     const reelsContainer = reelsContainerRef.current;
     if (reelsContainer) {
@@ -107,7 +106,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
         reelsContainer.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [fetchCount, isGlutenFree]);
+  }, [handleScroll]);
 
   useEffect(() => {
     if (!userHasScrolled) {
@@ -180,11 +179,16 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                         <span className="ml-2"><strong>{product.name}</strong></span>
                       </div>
                     </a>
-                  </div>
-                  <div className="flex flex-col items-center">
+                  </div>                  <div className="flex flex-col items-center">
                     {product.img && (
                       <a href={product.url} target="_blank" rel="noopener noreferrer">
-                        <img src={product.img} alt={product.brand} className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`} />
+                        <Image 
+                          src={product.img} 
+                          alt={product.brand} 
+                          width={300}
+                          height={300}
+                          className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`} 
+                        />
                       </a>
                     )}
                     <div className="text-center mb-4">

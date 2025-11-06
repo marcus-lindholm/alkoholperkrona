@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { sendEmail } from './services/emailService';
+import { sendEmail } from '../../lib/emailService';
 import axios from 'axios';
 
 const prisma = new PrismaClient();

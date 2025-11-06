@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { faArrowUpRightFromSquare, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Image from "next/image";
 import ProductComponent from './components/ProductComponent';
@@ -50,10 +50,9 @@ export default function Home({ searchParams }: { searchParams: any }) {
     createdAt: Date;
     updatedAt: Date;
     img: string;
-    BeverageRanking: { date: Date; ranking: number; apk?: number }[];
-  };
+    BeverageRanking: { date: Date; ranking: number; apk?: number }[];  };
 
-  async function fetchProducts(page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) {
+  const fetchProducts = useCallback(async (page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) => {
     const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const localDarkMode = localStorage.getItem('darkMode');
     const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
@@ -95,7 +94,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
       setIsLoading(false);
       setIsLoadMoreLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     async function fetchLastUpdatedDate() {
@@ -111,18 +110,17 @@ export default function Home({ searchParams }: { searchParams: any }) {
   
     fetchLastUpdatedDate();
   }, []);
-
   // hook when filters change
   useEffect(() => {
     setIsLoading(true);
     setPage(1);
     fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-  }, [filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder]);
+  }, [filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, fetchProducts]);
 
   // hook when page changes
   useEffect(() => {
     fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-  }, [page]);
+  }, [page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, fetchProducts]);
 
   // hook when beast mode preference changes
   useEffect(() => {
