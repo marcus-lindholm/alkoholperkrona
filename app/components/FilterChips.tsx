@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSliders, faArrowUpShortWide, faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faSliders, faArrowUpShortWide, faArrowDownShortWide, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { displayFilterType, displayNestedFilterType, displaySortCriteria } from './TranslateType';
 
 interface FilterChipsProps {
@@ -12,6 +12,10 @@ interface FilterChipsProps {
   sortCriteria: string;
   sortOrder: string;
   isMobile?: boolean;
+  onClearSearch?: () => void;
+  onClearFilter?: () => void;
+  onClearNestedFilter?: () => void;
+  onToggleOrdervara?: () => void;
 }
 
 const FilterChips: React.FC<FilterChipsProps> = ({
@@ -22,7 +26,11 @@ const FilterChips: React.FC<FilterChipsProps> = ({
   filterOrdervara,
   sortCriteria,
   sortOrder,
-  isMobile = false
+  isMobile = false,
+  onClearSearch,
+  onClearFilter,
+  onClearNestedFilter,
+  onToggleOrdervara
 }) => {
   return (
     <div className={`${isMobile ? 'flex flex-wrap items-center gap-1 max-w-[72vw]' : 'flex flex-wrap items-center gap-2'}`}>
@@ -44,13 +52,33 @@ const FilterChips: React.FC<FilterChipsProps> = ({
         <span
           className={`${isMobile ? 'ml-2 px-2 py-1 text-xs' : 'px-2.5 py-0.5 text-xs'} rounded-full ${
             isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-          } flex items-center ${isMobile ? 'space-x-1' : 'space-x-1.5'}`}
+          } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
           <FontAwesomeIcon icon={faSearch} />
           <span>{isMobile && searchQuery.length > 5 
             ? `${searchQuery.substring(0, 5)}...` 
             : searchQuery}
           </span>
+          {onClearSearch && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onClearSearch();
+              }}
+              className={`ml-1 hover:opacity-70 transition-opacity cursor-pointer ${isMobile ? 'text-[10px]' : ''}`}
+              aria-label="Clear search"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  onClearSearch();
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </span>
+          )}
         </span>
       )}
 
@@ -59,9 +87,29 @@ const FilterChips: React.FC<FilterChipsProps> = ({
         <span
           className={`${isMobile ? 'ml-2 px-2 py-1 text-xs' : 'px-2.5 py-0.5 text-xs'} rounded-full ${
             isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-          }`}
+          } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
-          {displayFilterType(filterType)}
+          <span>{displayFilterType(filterType)}</span>
+          {onClearFilter && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onClearFilter();
+              }}
+              className={`ml-1 hover:opacity-70 transition-opacity cursor-pointer ${isMobile ? 'text-[10px]' : ''}`}
+              aria-label="Clear filter"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  onClearFilter();
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </span>
+          )}
         </span>
       )}
 
@@ -70,9 +118,29 @@ const FilterChips: React.FC<FilterChipsProps> = ({
         <span
           className={`${isMobile ? 'ml-2 px-2 py-1 text-xs' : 'px-2.5 py-0.5 text-xs'} rounded-full ${
             isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-          }`}
+          } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
-          {displayNestedFilterType(nestedFilter)}
+          <span>{displayNestedFilterType(nestedFilter)}</span>
+          {onClearNestedFilter && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onClearNestedFilter();
+              }}
+              className={`ml-1 hover:opacity-70 transition-opacity cursor-pointer ${isMobile ? 'text-[10px]' : ''}`}
+              aria-label="Clear nested filter"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  onClearNestedFilter();
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </span>
+          )}
         </span>
       )}
 
@@ -81,17 +149,57 @@ const FilterChips: React.FC<FilterChipsProps> = ({
         <span
           className={`${isMobile ? 'ml-2 px-2 py-1 text-xs' : 'px-2.5 py-0.5 text-xs'} rounded-full ${
             isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
-          }`}
+          } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
-          Ordervaror
+          <span>Ordervaror</span>
+          {onToggleOrdervara && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleOrdervara();
+              }}
+              className={`ml-1 hover:opacity-70 transition-opacity cursor-pointer ${isMobile ? 'text-[10px]' : ''}`}
+              aria-label="Remove ordervaror filter"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  onToggleOrdervara();
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </span>
+          )}
         </span>
       ) : (
         <span
           className={`${isMobile ? 'ml-2 px-2 py-1 text-xs' : 'px-2.5 py-0.5 text-xs'} rounded-full ${
             isDarkMode ? 'bg-sky-900 text-white' : 'bg-gray-300 text-gray-800'
-          }`}
+          } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
-          Ej Ordervaror
+          <span>Ej Ordervaror</span>
+          {onToggleOrdervara && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleOrdervara();
+              }}
+              className={`ml-1 hover:opacity-70 transition-opacity cursor-pointer ${isMobile ? 'text-[10px]' : ''}`}
+              aria-label="Add ordervaror filter"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  onToggleOrdervara();
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </span>
+          )}
         </span>
       )}
     </div>

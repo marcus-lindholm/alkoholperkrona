@@ -241,6 +241,13 @@ export default function Home({ searchParams }: { searchParams: any }) {
                         sortCriteria={sortCriteria}
                         sortOrder={sortOrder}
                         isMobile={true}
+                        onClearSearch={() => setSearchQuery('')}
+                        onClearFilter={() => {
+                          setFilterType(null);
+                          setNestedFilter(null);
+                        }}
+                        onClearNestedFilter={() => setNestedFilter(null)}
+                        onToggleOrdervara={() => setFilterOrdervara(!filterOrdervara)}
                       />
                     )}
                   </div>
@@ -260,6 +267,13 @@ export default function Home({ searchParams }: { searchParams: any }) {
                     filterOrdervara={filterOrdervara}
                     sortCriteria={sortCriteria}
                     sortOrder={sortOrder}
+                    onClearSearch={() => setSearchQuery('')}
+                    onClearFilter={() => {
+                      setFilterType(null);
+                      setNestedFilter(null);
+                    }}
+                    onClearNestedFilter={() => setNestedFilter(null)}
+                    onToggleOrdervara={() => setFilterOrdervara(!filterOrdervara)}
                   />
                 </div>
               </>
