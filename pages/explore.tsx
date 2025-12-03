@@ -38,6 +38,8 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const endOfListRef = useRef<HTMLDivElement>(null);
   const reelsContainerRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
+  const hasInitializedRef = useRef(false);
+  
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
@@ -67,7 +69,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       setFetchCount(prevCount => prevCount + 1);
       isFetchingRef.current = false;
     }
-  }, [loading]);
+  }, []); // Remove loading dependency since we use isFetchingRef
 
   const handleScroll = useCallback(() => {
     setUserHasScrolled(true);
@@ -85,6 +87,9 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   }, [fetchCount, isGlutenFree, fetchProducts]);
 
   useEffect(() => {
+    if (hasInitializedRef.current) return; // Prevent multiple initializations
+    hasInitializedRef.current = true;
+    
     const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const localDarkMode = localStorage.getItem('darkMode');
     const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
@@ -93,7 +98,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
     setIsGlutenFree(glutenFreePreference);
     fetchProducts(glutenFreePreference);
-  }, [fetchProducts]);
+  }, []); // Empty dependency array - only run once on mount
 
   useEffect(() => {
     const reelsContainer = reelsContainerRef.current;
