@@ -183,11 +183,13 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                     {product.img && (
                       <a href={product.url} target="_blank" rel="noopener noreferrer">
                         <Image 
-                          src={product.img} 
+                          src={product.img.replace('/300/', '/200/')} 
                           alt={product.brand} 
-                          width={300}
-                          height={300}
-                          className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`} 
+                          width={200}
+                          height={200}
+                          className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`}
+                          loading={index < 3 ? 'eager' : 'lazy'}
+                          priority={index < 2}
                         />
                       </a>
                     )}
