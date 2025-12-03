@@ -38,17 +38,17 @@ export default function AIHub() {
       isAvailable: true
     },
     {
-      title: 'Cocktail Generator',
-      description: 'Få cocktailrecept baserat på vad du har hemma.',
-      icon: faGlassMartiniAlt,
-      path: '/ai/cocktail-generator',
-      isAvailable: false
-    },
-    {
       title: 'Food Pairings',
       description: 'Hitta den perfekta drycken att matcha med din mat.',
       icon: faWineGlass,
       path: '/ai/food-pairings',
+      isAvailable: true
+    },
+    {
+      title: 'Cocktail Generator',
+      description: 'Få cocktailrecept baserat på vad du har hemma.',
+      icon: faGlassMartiniAlt,
+      path: '/ai/cocktail-generator',
       isAvailable: false
     }
   ];

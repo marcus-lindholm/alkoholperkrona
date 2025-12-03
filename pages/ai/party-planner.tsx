@@ -86,6 +86,9 @@ export default function PartyPlanner() {
       }
       
       setPartyPlan(data.plan);
+      
+      // Scroll to top when results are ready
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error generating party plan:', error);
       setError(error instanceof Error ? error.message : 'Ett fel uppstod');
