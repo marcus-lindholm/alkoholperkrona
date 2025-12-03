@@ -163,6 +163,8 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
         <meta property="og:description" content="Upptäck nya produkter med hög APK på Systembolaget. Swipea dig igenom de mest prisvärda dryckerna." />
         <meta property="og:url" content="https://www.apkrona.se/explore" />
         <link rel="canonical" href="https://www.apkrona.se/explore" />
+        <link rel="dns-prefetch" href="https://product-cdn.systembolaget.se" />
+        <link rel="preconnect" href="https://product-cdn.systembolaget.se" />
       </Head>
       <div className={`w-full h-screen flex flex-col ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
         <div className="fixed top-0 w-full z-50">
@@ -195,6 +197,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                           className={`object-contain rounded mb-4 ${Styles.smallScreenImg}`}
                           loading={index < 3 ? 'eager' : 'lazy'}
                           priority={index < 2}
+                          unoptimized
                         />
                       </a>
                     )}

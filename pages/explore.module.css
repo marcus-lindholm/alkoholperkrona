@@ -16,8 +16,16 @@
 }
 
 .smallScreenImg {
-    width: 12rem;
-    height: 12rem;
+    width: 12rem !important;
+    height: 12rem !important;
+}
+
+/* Desktop screens - larger images */
+@media (min-width: 1024px) {
+    .smallScreenImg {
+      width: 20rem !important;
+      height: 20rem !important;
+    }
 }
 
 @keyframes slide {
@@ -39,8 +47,8 @@
 
 @media (max-height: 700px) {
     .smallScreenImg {
-      width: 6rem;
-      height: 6rem;
+      width: 6rem !important;
+      height: 6rem !important;
     }
 }
 
