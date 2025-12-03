@@ -3,6 +3,11 @@ const nextConfig = {
   // Enable compression for better performance
   compress: true,
   
+  // Turbopack configuration
+  turbopack: {
+    root: process.cwd(),
+  },
+  
   // Headers for security and SEO
   async headers() {
     return [
