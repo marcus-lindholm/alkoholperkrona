@@ -28,17 +28,17 @@ export default function PartyPlanner() {
   useEffect(() => {
     // Check for system dark mode preference and saved user preference
     const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedTheme = localStorage.getItem('theme');
+    const localDarkMode = localStorage.getItem('darkMode');
     
     // Use saved preference if available, otherwise use system preference
-    const darkModePreference = savedTheme ? (savedTheme === 'dark') : userPrefersDark;
+    const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
   }, []);
 
     const handleThemeToggle = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    localStorage.setItem('darkMode', newTheme.toString());
   };
 
   const eventTypes = [

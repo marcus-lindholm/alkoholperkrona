@@ -16,8 +16,8 @@
 }
 
 .smallScreenImg {
-    width: 16rem;
-    height: 16rem;
+    width: 12rem;
+    height: 12rem;
 }
 
 @keyframes slide {
@@ -39,8 +39,8 @@
 
 @media (max-height: 700px) {
     .smallScreenImg {
-      width: 8rem;
-      height: 8rem;
+      width: 6rem;
+      height: 6rem;
     }
 }
 
