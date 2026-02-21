@@ -17,7 +17,7 @@ import SeoContent from './components/SeoContent';
 import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { displaySortCriteria, displayFilterType, displayNestedFilterType, alcoholFacts } from './components/TranslateType';
 
-export default function Home({ searchParams }: { searchParams: any }) {
+export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Head from "next/head";
 import Script from "next/script";
 import seoKeywords from './seo';
 
@@ -54,6 +53,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.apkrona.se',
   },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  other: {
+    'theme-color': '#ffffff',
+  },
   verification: {
     google: 'google-site-verification-code-here', // Replace with your actual Google Search Console verification code
   },
@@ -66,12 +72,6 @@ export default function RootLayout({
 }>) {
     return (
     <html lang="sv">
-      <Head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#ffffff" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-      </Head>
       <body className={inter.className}>
         {children}
         <Script id="clarity-script" strategy="afterInteractive">
