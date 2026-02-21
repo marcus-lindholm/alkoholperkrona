@@ -33,6 +33,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
   const [nestedFilter, setNestedFilter] = useState<string | null>(null);
   const [filterOrdervara, setFilterOrdervara] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>('');
   const [sortCriteria, setSortCriteria] = useState<string>('apk');
   const [sortOrder, setSortOrder] = useState<string>('desc');
 
@@ -110,17 +111,23 @@ export default function Home({ searchParams }: { searchParams: any }) {
   
     fetchLastUpdatedDate();
   }, []);
+  // debounce search query by 400ms
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearchQuery(searchQuery), 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // hook when filters change
   useEffect(() => {
     setIsLoading(true);
     setPage(1);
-    fetchProducts(1, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-  }, [filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, fetchProducts]);
+    fetchProducts(1, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder);
+  }, [filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder, fetchProducts]);
 
   // hook when page changes
   useEffect(() => {
-    fetchProducts(page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder);
-  }, [page, filterType, nestedFilter, filterOrdervara, searchQuery, sortCriteria, sortOrder, fetchProducts]);
+    fetchProducts(page, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder);
+  }, [page, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder, fetchProducts]);
 
   // hook when beast mode preference changes
   useEffect(() => {
