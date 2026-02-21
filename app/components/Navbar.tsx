@@ -45,7 +45,7 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
               <Link 
                 key={item.path}
                 href={item.path}
-                className={`ml-4 mr-4 relative ${
+                className={`ml-4 mr-4 flex items-center ${
                   isActive(item.path) 
                     ? (isDarkMode ? 'text-sky-400' : 'text-sky-600') 
                     : hoverItem === item.path 
@@ -55,26 +55,24 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
                 onMouseEnter={() => setHoverItem(item.path)}
                 onMouseLeave={() => setHoverItem(null)}
               >
-                <FontAwesomeIcon icon={item.icon} size="lg" />
+                <span className="relative">
+                  <FontAwesomeIcon icon={item.icon} size="lg" />
+                  <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 h-1 w-4 rounded-full bg-sky-500 transition-opacity duration-300 ${
+                    hoverItem === item.path
+                      ? 'opacity-70'
+                      : !hoverItem && isActive(item.path)
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                  }`} />
+                </span>
+                <span className={`text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ${
+                  hoverItem === item.path ? 'max-w-[80px] opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'
+                }`}>
+                  {item.label}
+                </span>
               </Link>
             ))}
             
-            {/* Active indicator */}
-            <span 
-              className={`absolute -bottom-2 h-1 w-4 rounded-full bg-sky-500 transition-all duration-300 ease-in-out ${
-                hoverItem !== null ? 'opacity-70' : 'opacity-100'
-              }`}
-              style={{
-                left: `${
-                  navItems.findIndex(item => 
-                    hoverItem 
-                      ? item.path === hoverItem 
-                      : isActive(item.path) ? item.path : null
-                  ) * 53 + 27
-                }px`,
-                transform: 'translateX(-50%)'
-              }}
-            />
           </div>
           <label className="switch ml-4">
             <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
