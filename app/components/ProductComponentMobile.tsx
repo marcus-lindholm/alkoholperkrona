@@ -25,7 +25,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
 
   return (
-    <div className={`w-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`w-full overflow-x-hidden ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       {products.map((product, index) => {
           let latestRanking = 'N/A';
           let rankingChange = '';
@@ -76,7 +76,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         }));
 
         return (
-          <div key={index} className={`p-4 mb-4 border rounded ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}>
+          <div key={index} className={`p-4 mb-4 border rounded overflow-hidden ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}>
             <div className="flex justify-between items-center mb-2">
               <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 <div className="text-xl">
@@ -124,7 +124,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
               </div>
             </div>
             {expandedProduct === product.id && (
-              <div className={`mt-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded`}>
+              <div className={`mt-4 overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded`}>
                 <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
               </div>
             )}
