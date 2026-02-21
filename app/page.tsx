@@ -274,6 +274,8 @@ export default function Home({ searchParams }: { searchParams: any }) {
                     }}
                     onClearNestedFilter={() => setNestedFilter(null)}
                     onToggleOrdervara={() => setFilterOrdervara(!filterOrdervara)}
+                    setSortCriteria={setSortCriteria}
+                    setSortOrder={setSortOrder}
                   />
                 </div>
               </>
