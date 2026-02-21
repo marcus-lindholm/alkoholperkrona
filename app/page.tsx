@@ -296,13 +296,67 @@ export default function Home({ searchParams }: { searchParams: any }) {
             </div>
             <div className="w-full min-h-screen flex justify-center">
               {isLoading ? (
-                <div className="flex flex-col justify-center items-center w-full h-5/6">
-                  <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+                <div className="w-full mt-6 relative">
+                  {/* Random fact overlay */}
                   {showRandomFact && randomFact && (
-                    <p className="mt-4 text-sm text-gray-500 text-center fade-in">
-                      {randomFact}
-                    </p>
+                    <div className="absolute inset-0 z-10 flex items-start justify-center pt-32 lg:pt-40 pointer-events-none">
+                      <div className={`max-w-md mx-4 px-6 py-4 rounded-xl shadow-lg backdrop-blur-sm fade-in ${isDarkMode ? 'bg-gray-900/80 text-gray-200' : 'bg-white/80 text-gray-700'}`}>
+                        <p className="text-xs uppercase tracking-wider font-semibold mb-1 opacity-60">Visste du att...</p>
+                        <p className="text-sm leading-relaxed">{randomFact}</p>
+                      </div>
+                    </div>
                   )}
+                  {/* Desktop skeleton: table rows */}
+                  <div className="hidden lg:block">
+                    <div className={`overflow-x-auto w-full mt-10 rounded ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                      {/* Table header skeleton */}
+                      <div className={`flex px-4 py-3 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                        {['w-8', 'w-24', 'w-48', 'w-24', 'w-20', 'w-16', 'w-16'].map((w, i) => (
+                          <div key={i} className={`${w} h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                        ))}
+                      </div>
+                      {/* Table row skeletons */}
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className={`flex items-center px-4 py-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} animate-pulse`}>
+                          <div className={`w-8 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-20 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-44 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-24 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-16 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-14 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} mr-6`} />
+                          <div className={`w-14 h-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Mobile skeleton: product cards */}
+                  <div className="block lg:hidden space-y-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className={`p-4 border rounded animate-pulse ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}>
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-6 h-5 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-36 h-5 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1">
+                          <div className="space-y-2">
+                            <div className={`w-12 h-3 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-16 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-20 h-3 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-16 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-24 h-7 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'} mt-2`} />
+                          </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className={`w-24 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-16 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-14 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                            <div className={`w-12 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="w-full">

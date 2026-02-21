@@ -171,8 +171,32 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
           <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
         </div>
         {loading && products.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-gray-400"></div>
+          <div className="flex items-center justify-center h-full pt-20 sm:pt-0">
+            <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg animate-pulse ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
+              {/* Brand / Name skeleton */}
+              <div className="flex justify-center mb-4">
+                <div className={`w-48 h-6 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+              </div>
+              {/* Image skeleton */}
+              <div className="flex flex-col items-center">
+                <div className={`w-[200px] h-[200px] rounded mb-4 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                {/* Price skeleton */}
+                <div className={`w-28 h-7 rounded mb-4 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`} />
+                {/* Type skeleton */}
+                <div className={`w-20 h-4 rounded mb-4 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                {/* Stats skeleton */}
+                <div className="grid grid-cols-2 gap-4 mb-4 w-full">
+                  <div className="space-y-2 flex flex-col items-center">
+                    <div className={`w-24 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                    <div className={`w-28 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                  </div>
+                  <div className="space-y-2 flex flex-col items-center">
+                    <div className={`w-28 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                    <div className={`w-24 h-4 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div ref={reelsContainerRef} className={`${Styles.reelsContainer}`}>
