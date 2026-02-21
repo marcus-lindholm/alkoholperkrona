@@ -82,8 +82,8 @@ export default function FoodPairings() {
   };
 
   const getSystembolagetSearchUrl = (productName: string) => {
-    const searchQuery = encodeURIComponent(productName);
-    return `https://www.systembolaget.se/sortiment/?searchQuery=${searchQuery}`;
+    const searchQuery = productName.trim().replace(/\s+/g, '+');
+    return `https://www.systembolaget.se/sortiment/?q=${searchQuery}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -230,7 +230,7 @@ export default function FoodPairings() {
 
               {pairingResult.generalTip && (
                 <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white'} shadow-lg`}>
-                  <h4 className="font-semibold mb-2">💡 Bonus tips:</h4>
+                  <h4 className="font-semibold mb-2">💡 Bonustips:</h4>
                   <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     {pairingResult.generalTip}
                   </p>
