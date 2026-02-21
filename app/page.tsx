@@ -157,7 +157,7 @@ export default function Home() {
   };
 
   const [randomFact, setRandomFact] = useState<string | null>(null);
-  const [showRandomFact, setShowRandomFact] = useState(true);
+  const [showRandomFact, setShowRandomFact] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   useEffect(() => {
@@ -165,7 +165,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isLoading) {
+      const timer = setTimeout(() => {
+        setShowRandomFact(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    } else {
       setShowRandomFact(false);
     }
   }, [isLoading]);
