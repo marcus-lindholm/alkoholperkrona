@@ -19,7 +19,7 @@ type ProductType = {
   createdAt: Date;
   updatedAt: Date;
   img: string;
-  BeverageRanking: { date: Date; ranking: number }[];
+  BeverageRanking: { date: Date; ranking: number; apk: number }[];
 };
 
 type ProductComponentProps = {
@@ -116,7 +116,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
         const rankingHistoryData = product.BeverageRanking.map(entry => ({
           date: entry.date.toString(),
           rank: entry.ranking,
-          apk: product.apk,
+          apk: entry.apk,
         }));
 
         return (

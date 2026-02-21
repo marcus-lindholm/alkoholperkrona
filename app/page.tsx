@@ -50,7 +50,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     createdAt: Date;
     updatedAt: Date;
     img: string;
-    BeverageRanking: { date: Date; ranking: number; apk?: number }[];  };
+    BeverageRanking: { date: Date; ranking: number; apk: number }[];  };
 
   const fetchProducts = useCallback(async (page: number, filterType: string | null, nestedFilter: string | null, filterOrdervara: boolean, searchQuery: string, sortCriteria: string, sortOrder: string) => {
     const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;

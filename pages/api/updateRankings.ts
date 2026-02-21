@@ -59,8 +59,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderBy: { date: 'desc' },
       });
 
+      // Compare APK values rounded to 4 decimals to avoid floating-point drift
+      const apkUnchanged = lastRanking && lastRanking.apk.toFixed(4) === product.apk.toFixed(4);
+
       // This is where we check if APK has changed - always create a new entry if APK is different
-      if (lastRanking && lastRanking.apk === product.apk) {
+      if (apkUnchanged) {
         // APK hasn't changed - only update if rank changed
         if (lastRanking.ranking === currentRank) {
           console.log(

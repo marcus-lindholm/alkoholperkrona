@@ -18,7 +18,7 @@ type ProductType = {
   createdAt: Date;
   updatedAt: Date;
   img: string;
-  BeverageRanking: { date: Date; ranking: number }[];
+  BeverageRanking: { date: Date; ranking: number; apk: number }[];
 };
 
 const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
@@ -72,7 +72,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         const rankingHistoryData = product.BeverageRanking.map(entry => ({
           date: entry.date.toString(),
           rank: entry.ranking,
-          apk: product.apk,
+          apk: entry.apk,
         }));
 
         return (
