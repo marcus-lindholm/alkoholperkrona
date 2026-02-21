@@ -24,17 +24,50 @@ interface PairingResult {
   generalTip: string;
 }
 
+const randomFacts = [
+  "Tanninerna i rödvin binder sig till proteiner i kött och skapar en harmonisk smakbalans.",
+  "En tumregel: vita viner passar till fisk och vita kött, röda till mörkt kött – men regler är till för att brytas.",
+  "Champagne är ett av få viner som passar till nästan alla maträtter, tack vare sin syra och bubblor.",
+  "Ölets kolsyra skär igenom fettet i stekt mat och rensar gommen på ett sätt vin inte kan.",
+  "Salta rätter mildrar upplevelsen av tanniner och bitterhet – perfekt med en kraftig IPA.",
+  "Äppelcider är ett klassiskt val till normandisk mat med grädde, smör och äpple.",
+  "Riesling är vinets schweiziska armékniv – fungerar med allt från skaldjur till kryddstark thaimat.",
+  "Portvin och blåmögelost är ett klassiskt par – sältan och fettet balanserar vinets sötma.",
+  "Belgiska abbeyöl kompletterar komplexa, rika rätter som lamm och grytor utmärkt.",
+  "Alkoholfri mousserande dryck med citrus passar utmärkt till lättare sallader och fisk.",
+  "Prosecco till pasta all'arrabbiata – bubblorna dämpar hettan i rätten.",
+  "Malbec från Argentina är gjord för grillade köttbitar – ett av vinvärldens mest självklara par.",
+  "Sherry passar överraskande bra till nötter, oliver och tapas – en underskattad match.",
+  "Umami i rätter som sushi och parmesan förstärks av vin med låg tanninhalt.",
+];
+
 export default function FoodPairings() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pairingResult, setPairingResult] = useState<PairingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const [factVisible, setFactVisible] = useState(true);
   
   // Form state
   const [foodType, setFoodType] = useState<string>('');
   const [dishDescription, setDishDescription] = useState<string>('');
   const [mealType, setMealType] = useState<string>('Middag');
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!loading) return;
+    setCurrentFactIndex(Math.floor(Math.random() * randomFacts.length));
+    setFactVisible(true);
+    const interval = setInterval(() => {
+      setFactVisible(false);
+      setTimeout(() => {
+        setCurrentFactIndex(prev => (prev + 1) % randomFacts.length);
+        setFactVisible(true);
+      }, 500);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   useEffect(() => {
     const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -327,6 +360,16 @@ export default function FoodPairings() {
                 {error && (
                   <div className="p-4 rounded-lg bg-red-500/10 border border-red-500 text-red-500">
                     {error}
+                  </div>
+                )}
+
+                {loading && (
+                  <div
+                    className={`p-4 rounded-lg border transition-opacity duration-500 ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-sky-50 border-sky-200 text-gray-700'}`}
+                    style={{ opacity: factVisible ? 1 : 0 }}
+                  >
+                    <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${isDarkMode ? 'text-sky-400' : 'text-sky-600'}`}>Visste du att...</p>
+                    <p className="text-sm">{randomFacts[currentFactIndex]}</p>
                   </div>
                 )}
 
