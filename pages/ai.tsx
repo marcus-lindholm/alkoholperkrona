@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGlassWhiskey, faWineGlass, faGlassMartiniAlt } from '@fortawesome/free-solid-svg-icons';
+import { faGlassWhiskey, faWineGlass } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../app/components/Navbar';
 import MobileNav from '../app/components/MobileNav';
 import FooterComponent from '../app/components/FooterComponent';
@@ -44,13 +44,6 @@ export default function AIHub() {
       path: '/ai/food-pairings',
       isAvailable: true
     },
-    {
-      title: 'Cocktail Generator',
-      description: 'Få cocktailrecept baserat på vad du har hemma.',
-      icon: faGlassMartiniAlt,
-      path: '/ai/cocktail-generator',
-      isAvailable: false
-    }
   ];
 
   return (
