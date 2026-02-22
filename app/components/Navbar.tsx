@@ -20,10 +20,10 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
   };
 
   const navItems = [
-    { path: '/', icon: faHome, label: 'Home' },
-    { path: '/explore', icon: faCompass, label: 'Explore' },
-    { path: '/ai', icon: faMagicWandSparkles, label: 'AI' },
-    { path: '/settings', icon: faCog, label: 'Settings' }
+    { path: '/', icon: faHome, label: 'Hem' },
+    { path: '/explore', icon: faCompass, label: 'Utforska' },
+    { path: '/ai', icon: faMagicWandSparkles, label: 'AI-tjänster' },
+    { path: '/settings', icon: faCog, label: 'Inställningar' }
   ];
 
   return (
