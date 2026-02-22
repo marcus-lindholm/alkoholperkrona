@@ -9,8 +9,8 @@ import Head from 'next/head';
 
 const Settings = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isBeastMode, setBeastMode] = useState(false);
-  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
+  const [isBeastMode, setBeastMode] = useState(true);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(true);
   const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,11 +20,11 @@ const Settings = () => {
     const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
 
-    const beastModePreference = localStorage.getItem('beastMode') === 'true';
-    setBeastMode(beastModePreference);
+    const beastModeStored = localStorage.getItem('beastMode');
+    setBeastMode(beastModeStored === null ? true : beastModeStored === 'true');
 
-    const detailedInfoPreference = localStorage.getItem('showDetailedInfo') === 'true';
-    setShowDetailedInfo(detailedInfoPreference);
+    const detailedInfoStored = localStorage.getItem('showDetailedInfo');
+    setShowDetailedInfo(detailedInfoStored === null ? true : detailedInfoStored === 'true');
 
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
     setIsGlutenFree(glutenFreePreference);
