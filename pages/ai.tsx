@@ -66,7 +66,7 @@ export default function AIHub() {
             Upptäck APKronas AI-tjänster som hjälper dig att planera fester, hitta drinkrecept och mycket mer. Observera att denna sida är i Beta-stadiet och vissa funktioner kan vara undermåliga, under utveckling eller inte tillgängliga än.
           </p>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <div className="grid md:grid-cols-2 gap-6 mt-8 max-w-4xl mx-auto">
             {aiFeatures.map((feature, index) => (
               <div 
                 key={index}

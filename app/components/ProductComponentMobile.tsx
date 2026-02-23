@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faStarOfLife, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import RankingHistoryChart from './RankingHistoryChart';
 import translateType from './TranslateType';
@@ -64,8 +64,8 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
               }
             }
           }
-        // Check if the product is new (created within the last week)
-        const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        // Check if the product is new (created within the last month)
+        const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
         const priceFormatted = Number.isInteger(product.price) ? product.price.toString() : product.price.toFixed(2);
 
@@ -76,15 +76,20 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         }));
 
         return (
-          <div key={index} className={`p-4 mb-4 border rounded overflow-hidden ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}>
+          <div
+            key={index}
+            onClick={() => window.open(product.url, '_blank', 'noopener,noreferrer')}
+            className={`p-4 mb-4 border rounded overflow-hidden cursor-pointer transition-all duration-200 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}
+          >
             <div className="flex justify-between items-center mb-2">
               <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 <div className="text-xl">
                   {rankingChange === 'increased' && <FontAwesomeIcon icon={faArrowUp} className="text-green-500 mr-2" size="xs" title="Högre placering än tidigare" />}
                   {rankingChange === 'decreased' && <FontAwesomeIcon icon={faArrowDown} className="text-red-500 mr-2" size="xs" title="Lägre placering än tidigare" />}
-                  {isNewProduct && <FontAwesomeIcon icon={faStarOfLife} className="text-yellow-500 mr-2" size="xs" title="Ny produkt på listan" />}
                   {latestRanking}.
-                  <span className='ml-2'><strong>{product.brand}</strong><br/></span>
+                  <span className='ml-2'><strong>{product.brand}</strong></span>
+                  {isNewProduct && <span className="inline-block px-2 py-0.5 ml-2 text-xs font-semibold rounded-full bg-yellow-400 text-yellow-900 align-middle">Nyhet</span>}
+                  <br/>
                   {showDetailedInfo && <span className="text-sm opacity-75">{product.name}</span>}
                 </div>
               </a>
@@ -117,14 +122,15 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   {product.alcohol} %
                 </div>
                 {isBeastMode && (
-                  <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}>
+                  <button onClick={(e) => { e.stopPropagation(); setExpandedProduct(expandedProduct === product.id ? null : product.id); }}>
                     <FontAwesomeIcon icon={expandedProduct === product.id ? faChevronUp : faChevronDown} />
                   </button>
                 )}
               </div>
             </div>
             {expandedProduct === product.id && (
-              <div className={`mt-4 overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded`}>
+              <div className={`mt-4 overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded p-2`}>
+                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Placering och APK över tid. Ny datapunkt tillkommer om APK förändras. Äldsta datan är från sommaren 2025.</p>
                 <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
               </div>
             )}

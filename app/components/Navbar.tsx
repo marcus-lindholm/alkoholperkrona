@@ -66,7 +66,7 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
                   }`} />
                 </span>
                 <span className={`text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ${
-                  hoverItem === item.path ? 'max-w-[80px] opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'
+                  hoverItem === item.path ? 'max-w-[120px] opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'
                 }`}>
                   {item.label}
                 </span>

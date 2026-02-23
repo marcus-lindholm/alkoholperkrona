@@ -23,8 +23,8 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isBeastMode, setBeastMode] = useState(false);
-  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
+  const [isBeastMode, setBeastMode] = useState(true);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(true);
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [fetchError, setFetchError] = useState(false);
@@ -59,7 +59,8 @@ export default function Home() {
     const darkModePreference = localDarkMode ? (localDarkMode === 'true') : userPrefersDark;
     setIsDarkMode(darkModePreference);
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
-    const beastModePreference = localStorage.getItem('beastMode') === 'true';
+    const beastModeStored = localStorage.getItem('beastMode');
+    const beastModePreference = beastModeStored === null ? true : beastModeStored === 'true';
 
     console.log('fetching products');
     try {
@@ -131,14 +132,14 @@ export default function Home() {
 
   // hook when beast mode preference changes
   useEffect(() => {
-    const beastModePreference = localStorage.getItem('beastMode') === 'true';
-    setBeastMode(beastModePreference);
+    const beastModeStored = localStorage.getItem('beastMode');
+    setBeastMode(beastModeStored === null ? true : beastModeStored === 'true');
   }, []);
 
   //hook when show detailed info preference changes
   useEffect(() => {
-    const detailedInfoPreference = localStorage.getItem('showDetailedInfo') === 'true';
-    setShowDetailedInfo(detailedInfoPreference);
+    const detailedInfoStored = localStorage.getItem('showDetailedInfo');
+    setShowDetailedInfo(detailedInfoStored === null ? true : detailedInfoStored === 'true');
   }, []);
 
   const handleThemeToggle = () => {

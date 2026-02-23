@@ -177,6 +177,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           price: true,
           url: true,
           img: true,
+          createdAt: true,
           // Remove the date filter entirely:
           BeverageRanking: {
             orderBy: {
