@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faCompass, faHome, faMagicWandSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faCompass, faHome, faMagicWandSparkles, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { usePathname } from 'next/navigation';
 
 type NavbarProps = {
@@ -27,16 +27,16 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
   ];
 
   return (
-    <div className={`fixed top-0 left-0 right-0 flex justify-between items-center ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} p-4 z-50`}>
+    <div className={`fixed top-0 left-0 right-0 flex justify-between items-center ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} px-3 py-1.5 sm:p-4 z-50`}>
       <Link href="/" className="flex items-center">
         <Image
           src={"/beer_emoji.png"}
           alt="APK"
-          width={25}
-          height={25}
-          className="object-contain"
+          width={18}
+          height={18}
+          className="object-contain sm:w-[25px] sm:h-[25px]"
         />
-        <h1 className="text-2xl font-bold ml-2">APKrona.se</h1>
+        <h1 className="text-base sm:text-2xl font-bold ml-1.5 sm:ml-2">APKrona.se</h1>
       </Link>
       {handleThemeToggle && (
         <div className="flex items-center">
@@ -74,11 +74,32 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
             ))}
             
           </div>
-          <label className="switch ml-4">
-            <input type="checkbox" checked={isDarkMode} onChange={handleThemeToggle} />
-            <span className="slider round"></span>
-          </label>
-          <span className="ml-2">{isDarkMode ? '🌙' : '☀️'}</span>
+          <button
+            onClick={handleThemeToggle}
+            aria-label="Toggle theme"
+            className="relative ml-3 sm:ml-4 flex-shrink-0 rounded-full transition-colors duration-300 focus:outline-none"
+            style={{
+              width: 'clamp(36px, 10vw, 56px)',
+              height: 'clamp(20px, 6vw, 32px)',
+              backgroundColor: isDarkMode ? '#2196F3' : '#ccc',
+            }}
+          >
+            <span
+              className="absolute flex items-center justify-center rounded-full bg-white shadow transition-transform duration-300"
+              style={{
+                width: 'clamp(14px, 4.2vw, 24px)',
+                height: 'clamp(14px, 4.2vw, 24px)',
+                top: '50%',
+                transform: isDarkMode
+                  ? 'translateY(-50%) translateX(calc(clamp(36px, 10vw, 56px) - clamp(14px, 4.2vw, 24px) - 3px))'
+                  : 'translateY(-50%) translateX(3px)',
+                fontSize: 'clamp(8px, 2.5vw, 14px)',
+                lineHeight: 1,
+              }}
+            >
+              <FontAwesomeIcon icon={isDarkMode ? faMoon : faSun} style={{ color: isDarkMode ? '#93c5fd' : '#f59e0b' }} />
+            </span>
+          </button>
         </div>
       )}
     </div>

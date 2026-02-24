@@ -78,8 +78,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
         return (
           <div
             key={index}
-            onClick={() => window.open(product.url, '_blank', 'noopener,noreferrer')}
-            className={`p-4 mb-4 border rounded overflow-hidden cursor-pointer transition-all duration-200 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}
+            className={`p-4 mb-4 border rounded overflow-hidden transition-all duration-200 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}
           >
             <div className="flex justify-between items-center mb-2">
               <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
@@ -103,13 +102,25 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   <span className="text-medium">{product.vpk}</span>
                 </div>
                 <div className="mb-1">
-                  <span className="text-2xl font-bold">{priceFormatted} kr</span>
+                  <a href={product.url} target="_blank" rel="noopener noreferrer">
+                    <span className="text-2xl font-bold hover:underline">{priceFormatted} kr</span>
+                  </a>
                 </div>
               </div>
               <div className='items-right text-right'>
                 <div className="mb-2 whitespace-nowrap">
-                  <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    Till produkt <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
+                  <a href={product.url} target="_blank" rel="noopener noreferrer">
+                    <span
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-sm transition-colors"
+                      style={{
+                        backgroundColor: isDarkMode ? '#1a5c22' : '#2e7d32',
+                        color: isDarkMode ? '#f5d020' : '#fde68a',
+                        fontFamily: 'var(--font-fjalla), sans-serif',
+                        border: `1px solid ${isDarkMode ? '#f5d020' : '#fde68a'}`,
+                      }}
+                    >
+                      Systembolaget <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" />
+                    </span>
                   </a>
                 </div>
                 <div className="mb-2 ml-2">

@@ -225,7 +225,7 @@ export default function Home() {
         </div>
       ) : (
         <div className="items-left w-full flex flex-col">
-          <div className="w-full mt-14 sm:mt-0 left-4 flex items-left">
+          <div className="w-full mt-10 sm:mt-0 left-4 flex items-left">
             {lastUpdated ? (
               <span className="text-xs text-gray-400">Senast uppdaterad: {lastUpdated}</span>
             ) : (

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import seoKeywords from './seo';
 
 const inter = Inter({ subsets: ["latin"] });
+const fjallaOne = Oswald({ subsets: ["latin"], weight: "500", variable: "--font-fjalla" });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.apkrona.se'),
@@ -72,7 +73,7 @@ export default function RootLayout({
 }>) {
     return (
     <html lang="sv">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${fjallaOne.variable}`}>
         {children}
         <Script id="clarity-script" strategy="afterInteractive">
           {`
