@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           : '';
 
       const randomProducts = await prisma.$queryRawUnsafe(`
-        SELECT id, brand, name, apk, type, alcohol, volume, price, url, img
+        SELECT id, brand, name, apk, type, alcohol, volume, price, url, img, vpk
         FROM "Beverage"
         WHERE "type" NOT LIKE '%Ordervaror%'
         AND "img" IS NOT NULL AND "img" != ''
@@ -176,6 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           volume: true,
           price: true,
           url: true,
+          vpk: true,
           img: true,
           createdAt: true,
           // Remove the date filter entirely:

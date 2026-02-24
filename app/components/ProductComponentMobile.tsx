@@ -99,7 +99,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   <span className="text-sm opacity-85">APK</span><br/>
                   <span className="text-medium">{product.apk}</span><br/>
                   <span className="text-sm opacity-85">Volym/kr</span><br/>
-                  <span className="text-medium">{product.vpk}</span>
+                  <span className="text-medium">{product.vpk.toFixed(3)}</span>
                 </div>
                 <div className="mb-1">
                   <a href={product.url} target="_blank" rel="noopener noreferrer">
@@ -141,7 +141,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
             </div>
             {expandedProduct === product.id && (
               <div className={`mt-4 overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded p-2`}>
-                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Placering och APK över tid. Ny datapunkt tillkommer om APK förändras. Äldsta datan är från sommaren 2025.</p>
+                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Placering och APK över tid. Ny datapunkt tillkommer om APK förändras. Att endast en datapunkt visas betyder att APK har varit konstant sedan dess.</p>
                 <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
               </div>
             )}

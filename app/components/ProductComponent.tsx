@@ -166,7 +166,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
             {isBeastMode && expandedProduct === product.id && (
               <tr className={`hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}>
                 <td colSpan={9} className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Placering och APK över tid. Ny datapunkt tillkommer om APK förändras. Äldsta datan är från sommaren 2025.</p>
+                  <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Placering och APK över tid. Ny datapunkt tillkommer om APK förändras. Att endast en datapunkt visas betyder att APK har varit konstant sedan dess.</p>
                   <RankingHistoryChart data={rankingHistoryData} isDarkMode={isDarkMode} />
                 </td>
               </tr>

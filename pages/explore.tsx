@@ -234,7 +234,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                     <div className="text-center mb-4 grid grid-cols-2 gap-4">
                       <div>
                         <span className="text-sm opacity-85">APK: {product.apk}</span><br />
-                        <span className="text-sm opacity-85">Volym/kr: {product.vpk}</span><br />
+                        <span className="text-sm opacity-85">Volym/kr: {product.vpk.toFixed(3)}</span><br />
                       </div>
                       <div>
                         <span className="text-sm opacity-85">Volym: {product.volume} ml</span><br />
