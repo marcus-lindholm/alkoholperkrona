@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { faArrowUpRightFromSquare, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Image from "next/image";
+import { getApiBaseUrl } from '../lib/api';
 import ProductComponent from './components/ProductComponent';
 import ProductComponentMobile from './components/ProductComponentMobile';
 import FilterComponent from './components/FilterComponent';
@@ -76,7 +77,7 @@ export default function Home() {
         beastMode: beastModePreference.toString(),
       });
       
-      const response = await fetch(`/api/products?${params.toString()}`);
+      const response = await fetch(`${getApiBaseUrl()}/api/products?${params.toString()}`);
       if (!response.ok) {
         if (response.status === 500) {
           setFetchError(true);
@@ -101,7 +102,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchLastUpdatedDate() {
       try {
-        const response = await fetch('/api/lastUpdate');
+        const response = await fetch(`${getApiBaseUrl()}/api/lastUpdate`);
         const data = await response.json();
         const formattedDate = format(new Date(data.lastUpdated), 'yyyy-MM-dd HH:mm');
         setLastUpdated(formattedDate);

@@ -7,6 +7,7 @@ import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
 import Head from 'next/head';
 import Image from 'next/image';
+import { getApiBaseUrl } from '../lib/api';
 
 type ProductType = {
   id: string;
@@ -59,7 +60,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
         isGlutenFree: glutenFree.toString(),
       });
 
-      const response = await fetch(`/api/products?${params.toString()}`);
+      const response = await fetch(`${getApiBaseUrl()}/api/products?${params.toString()}`);
       const data = await response.json();
       setProducts((prevProducts) => [...prevProducts, ...data]);
     } catch (error) {

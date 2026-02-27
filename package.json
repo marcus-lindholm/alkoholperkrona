@@ -7,9 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-sitemap": "ts-node app/generate-sitemap.ts"
+    "generate-sitemap": "ts-node app/generate-sitemap.ts",
+    "cap:build": "set CAPACITOR_BUILD=true&& set NEXT_PUBLIC_API_URL=https://www.apkrona.se&& next build && npx cap sync",
+    "cap:build:ps": "npx cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_API_URL=https://www.apkrona.se next build && npx cap sync",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/ios": "^8.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",

@@ -8,6 +8,7 @@ import Head from 'next/head';
 import Navbar from '../../app/components/Navbar';
 import MobileNav from '../../app/components/MobileNav';
 import FooterComponent from '../../app/components/FooterComponent';
+import { getApiBaseUrl } from '../../lib/api';
 import 'tailwindcss/tailwind.css';
 
 interface Pairing {
@@ -132,7 +133,7 @@ export default function FoodPairings() {
     setPairingResult(null);
 
     try {
-      const response = await fetch('/api/foodPairings', {
+      const response = await fetch(`${getApiBaseUrl()}/api/foodPairings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

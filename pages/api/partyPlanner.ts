@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { setCorsHeaders } from '../../lib/cors';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (setCorsHeaders(req, res)) return;
+
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

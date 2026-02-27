@@ -8,6 +8,7 @@ import Navbar from '../../app/components/Navbar';
 import MobileNav from '../../app/components/MobileNav';
 import FooterComponent from '../../app/components/FooterComponent';
 import ReactMarkdown from 'react-markdown';
+import { getApiBaseUrl } from '../../lib/api';
 import remarkGfm from 'remark-gfm';
 import 'tailwindcss/tailwind.css';
 import styles from '../../styles/Markdown.module.css';
@@ -65,7 +66,7 @@ export default function PartyPlanner() {
     setError(null);
     
     try {
-      const response = await fetch('/api/partyPlanner', {
+      const response = await fetch(`${getApiBaseUrl()}/api/partyPlanner`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

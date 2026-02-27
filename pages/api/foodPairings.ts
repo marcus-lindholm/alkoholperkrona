@@ -1,10 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { setCorsHeaders } from '../../lib/cors';
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (setCorsHeaders(req, res)) return;
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import { setCorsHeaders } from '../../lib/cors';
 
 const prisma = new PrismaClient();
 
@@ -28,6 +29,8 @@ export async function getLastUpdatedDate(): Promise<string | null> {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (setCorsHeaders(req, res)) return;
+
   const lastUpdatedDate = await getLastUpdatedDate();
   res.status(200).json({ lastUpdated: lastUpdatedDate });
 }

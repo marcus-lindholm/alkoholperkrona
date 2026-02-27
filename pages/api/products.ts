@@ -1,10 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { subDays, subMonths } from 'date-fns';
+import { setCorsHeaders } from '../../lib/cors';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (setCorsHeaders(req, res)) return;
+
   const {
     page,
     limit,
