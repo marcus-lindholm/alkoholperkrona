@@ -5,8 +5,10 @@ const config: CapacitorConfig = {
   appName: 'APKrona',
   webDir: 'out',
   server: {
-    // Allow loading from your production API
+    // Allow navigation and XHR to your production API
     allowNavigation: ['www.apkrona.se', 'apkrona.se'],
+    // Android scheme (https://localhost by default in Cap 8)
+    androidScheme: 'https',
   },
   ios: {
     contentInset: 'automatic',

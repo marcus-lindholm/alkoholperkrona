@@ -8,7 +8,8 @@ const ALLOWED_ORIGINS = [
   'https://www.apkrona.se',
   'https://apkrona.se',
   'capacitor://localhost',  // iOS Capacitor
-  'http://localhost',       // Android Capacitor
+  'https://localhost',      // Android Capacitor (default in Capacitor 8+)
+  'http://localhost',       // Android Capacitor (legacy/fallback)
 ];
 
 /**
