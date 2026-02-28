@@ -5,9 +5,11 @@ const config: CapacitorConfig = {
   appName: 'APKrona',
   webDir: 'out',
   server: {
-    // Load the live website directly — the app acts as a native wrapper
+    // Load the live website directly inside the WebView
     url: 'https://www.apkrona.se',
     androidScheme: 'https',
+    // Keep all navigation within the app (don't open system browser)
+    allowNavigation: ['*.apkrona.se', 'apkrona.se', 'www.apkrona.se'],
   },
   ios: {
     contentInset: 'automatic',
