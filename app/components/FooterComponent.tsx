@@ -36,8 +36,7 @@ const FooterComponent = ({ isDarkMode, isLoading }: FooterComponentProps) => {
         />
       </a>
       <p className="text-xs text-gray-500 top-0 right-0 mt-2 mr-2">
-        APKrona.se uppdateras i regel en gång per dag. Produkter markerade som alkoholfria enligt Systembolagets
-        defintion är exkluderade från denna lista. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget
+        APKrona.se uppdateras i regel en gång per dag. Eget ansvar gäller vid konsumption av alkohol. APKrona.se tar inget
         ansvar för hur webbplatsen brukas. Buggar förekommer. APKrona.se bör endast ses som en kul grej, inget annat.
         Kul att du hittade hit!
       </p>
