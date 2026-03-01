@@ -40,6 +40,8 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const reelsContainerRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
   const hasInitializedRef = useRef(false);
+  const touchStartY = useRef<number | null>(null);
+  const isScrolling = useRef(false);
   
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
@@ -101,18 +103,64 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     fetchProducts(glutenFreePreference);
   }, []); // Empty dependency array - only run once on mount
 
+  // Touch handlers to limit each swipe to exactly one product
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    // Prevent native scroll so we can control it ourselves
+    if (touchStartY.current !== null) {
+      e.preventDefault();
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    if (touchStartY.current === null || !reelsContainerRef.current || isScrolling.current) return;
+
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaY = touchStartY.current - touchEndY;
+    const threshold = 30; // minimum swipe distance in px
+
+    if (Math.abs(deltaY) > threshold) {
+      const screenHeight = window.innerHeight;
+      const currentSnap = Math.round(reelsContainerRef.current.scrollTop / screenHeight);
+      const targetSnap = deltaY > 0 ? currentSnap + 1 : currentSnap - 1;
+      const clampedSnap = Math.max(0, targetSnap);
+
+      isScrolling.current = true;
+      reelsContainerRef.current.scrollTo({
+        top: clampedSnap * screenHeight,
+        behavior: 'smooth',
+      });
+
+      // Reset scrolling lock after animation completes
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, 400);
+    }
+
+    touchStartY.current = null;
+  }, []);
+
   useEffect(() => {
     const reelsContainer = reelsContainerRef.current;
     if (reelsContainer) {
       reelsContainer.addEventListener('scroll', handleScroll);
+      reelsContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+      reelsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+      reelsContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
   
     return () => {
       if (reelsContainer) {
         reelsContainer.removeEventListener('scroll', handleScroll);
+        reelsContainer.removeEventListener('touchstart', handleTouchStart);
+        reelsContainer.removeEventListener('touchmove', handleTouchMove);
+        reelsContainer.removeEventListener('touchend', handleTouchEnd);
       }
     };
-  }, [handleScroll]);
+  }, [handleScroll, handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   useEffect(() => {
     if (!userHasScrolled) {
