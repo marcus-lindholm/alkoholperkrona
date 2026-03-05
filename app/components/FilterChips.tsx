@@ -254,7 +254,7 @@ const FilterChips: React.FC<FilterChipsProps> = ({
             isDarkMode ? 'bg-sky-600 text-white' : 'bg-sky-200 text-black'
           } flex items-center ${isMobile ? 'gap-1' : 'gap-1.5'}`}
         >
-          <span>Ordervaror</span>
+          <span>Inkl. Ordervaror</span>
           {onToggleOrdervara && (
             <span
               onClick={(e) => {
