@@ -4,14 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSpinner, faFlask, faUtensils, faMoneyBill, faUsers, faClock } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import Head from 'next/head';
 import Navbar from '../../app/components/Navbar';
 import MobileNav from '../../app/components/MobileNav';
 import FooterComponent from '../../app/components/FooterComponent';
 import ReactMarkdown from 'react-markdown';
 import { getApiBaseUrl } from '../../lib/api';
 import remarkGfm from 'remark-gfm';
-import 'tailwindcss/tailwind.css';
-import styles from '../../styles/Markdown.module.css';
 
 export default function PartyPlanner() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -104,6 +103,15 @@ export default function PartyPlanner() {
   };
 
   return (
+    <>
+    <Head>
+      <title>AI Party Planner - Planera Festen med AI | APKrona.se</title>
+      <meta name="description" content="Låt AI planera dryckerna till din fest. Få en komplett inköpslista från Systembolaget baserat på budget, antal gäster och preferenser." />
+      <meta property="og:title" content="AI Party Planner - Planera Festen med AI" />
+      <meta property="og:description" content="Låt AI planera dryckerna till din fest. Få en komplett inköpslista från Systembolaget." />
+      <meta property="og:url" content="https://www.apkrona.se/ai/party-planner" />
+      <link rel="canonical" href="https://www.apkrona.se/ai/party-planner" />
+    </Head>
     <main className={`flex w-full min-h-screen flex-col items-center justify-between p-4 sm:p-8 md:p-16 lg:p-24 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       
@@ -294,5 +302,6 @@ export default function PartyPlanner() {
       
       <FooterComponent isDarkMode={isDarkMode} isLoading={false} />
     </main>
+    </>
   );
 }

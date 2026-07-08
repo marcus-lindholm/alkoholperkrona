@@ -1,12 +1,24 @@
+import { fileURLToPath } from 'url';
+import path from 'path';
+
 const isCapacitorBuild = process.env.CAPACITOR_BUILD === 'true';
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable static export for Capacitor builds
   ...(isCapacitorBuild && { output: 'export' }),
 
+  // Pin the workspace root so Turbopack doesn't guess from stray lockfiles
+  turbopack: {
+    root: projectRoot,
+  },
+
   // Enable compression for better performance
   compress: true,
+
+  // Don't advertise the framework in response headers
+  poweredByHeader: false,
   
   // Headers for security and SEO (not supported in static export)
   ...(!isCapacitorBuild && {

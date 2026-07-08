@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-import { subDays, subMonths } from 'date-fns';
+import { subMonths } from 'date-fns';
 import { setCorsHeaders } from '../../lib/cors';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (setCorsHeaders(req, res)) return;
@@ -19,13 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     sortOrder,
     random,
     isGlutenFree,
-    beastMode,
   } = req.query;
 
   try {
-    // Convert beastMode to a boolean
-    const isBeastMode = beastMode === 'true';
-
     // Handle random product fetching
     if (random === 'true') {
       const glutenFreeCondition =
@@ -47,9 +41,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    // Pagination and limits
-    const pageNumber = parseInt(page as string, 10) || 1;
-    const limitNumber = parseInt(limit as string, 10) || 20;
+    // Pagination and limits (clamped so a single request can't sweep the whole table)
+    const pageNumber = Math.max(parseInt(page as string, 10) || 1, 1);
+    const limitNumber = Math.min(Math.max(parseInt(limit as string, 10) || 20, 1), 100);
     const skip = (pageNumber - 1) * limitNumber;
 
     // Filters
@@ -159,9 +153,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       orderBy.apk = 'desc'; // Default sorting
     }
 
-    // Determine ranking history date range
-    // const rankingDateLimit = isBeastMode ? subMonths(new Date(), 1) : subDays(new Date(), 2);
-
     // Fetch products
     const [products, totalProducts] = await Promise.all([
       prisma.beverage.findMany({
@@ -182,10 +173,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           vpk: true,
           img: true,
           createdAt: true,
-          // Remove the date filter entirely:
           BeverageRanking: {
             orderBy: {
               date: 'desc', // Order by most recent date
+            },
+            select: {
+              date: true,
+              ranking: true,
+              apk: true,
             },
           },
         },
@@ -207,7 +202,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Unknown error fetching products');
       res.status(500).json({ error: 'Failed to fetch products', message: 'Unknown error occurred' });
     }
-  } finally {
-    await prisma.$disconnect();
   }
 }

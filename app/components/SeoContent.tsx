@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 
 interface SeoContentProps {
   isDarkMode: boolean;
@@ -66,9 +65,10 @@ export default function SeoContent({ isDarkMode, onCategoryClick }: SeoContentPr
 
   return (
     <section className={`w-full max-w-6xl mx-auto mt-16 mb-8 px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-      <Script id="faq-schema" type="application/ld+json" strategy="beforeInteractive">
-        {JSON.stringify(faqSchema)}
-      </Script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
 
       <article className="space-y-10">
         {/* Hero / intro */}

@@ -1,8 +1,6 @@
 "use client"
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { faArrowUpRightFromSquare, faSearch } from '@fortawesome/free-solid-svg-icons';
-import Image from "next/image";
 import { getApiBaseUrl } from '../lib/api';
 import ProductComponent from './components/ProductComponent';
 import ProductComponentMobile from './components/ProductComponentMobile';
@@ -15,8 +13,8 @@ import MobileNav from './components/MobileNav';
 import FooterComponent from './components/FooterComponent';
 import FilterChips from './components/FilterChips';
 import SeoContent from './components/SeoContent';
-import { faArrowUpShortWide, faArrowDownShortWide, faSliders } from '@fortawesome/free-solid-svg-icons';
-import { displaySortCriteria, displayFilterType, displayNestedFilterType, alcoholFacts } from './components/TranslateType';
+import { faArrowUpShortWide, faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
+import { displaySortCriteria, alcoholFacts } from './components/TranslateType';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -119,17 +117,24 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // hook when filters change
+  // Fetch when filters or page change. A filter change resets pagination and
+  // refetches page 1; only a "load more" (page bump with unchanged filters)
+  // appends. Keeping this in one effect avoids issuing duplicate requests.
+  const filterKey = JSON.stringify([filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder]);
+  const prevFilterKeyRef = React.useRef<string | null>(null);
   useEffect(() => {
-    setIsLoading(true);
-    setPage(1);
-    fetchProducts(1, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder);
-  }, [filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder, fetchProducts]);
-
-  // hook when page changes
-  useEffect(() => {
+    const filtersChanged = prevFilterKeyRef.current !== filterKey;
+    prevFilterKeyRef.current = filterKey;
+    if (filtersChanged) {
+      setIsLoading(true);
+      if (page !== 1) {
+        setPage(1); // effect re-runs with page 1 and fetches then
+        return;
+      }
+    }
     fetchProducts(page, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder);
-  }, [page, filterType, nestedFilter, filterOrdervara, debouncedSearchQuery, sortCriteria, sortOrder, fetchProducts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filterKey, fetchProducts]);
 
   // hook when beast mode preference changes
   useEffect(() => {
@@ -217,12 +222,12 @@ export default function Home() {
       <Navbar isDarkMode={isDarkMode} handleThemeToggle={handleThemeToggle} />
       {fetchError ? (
         <div className='text-center mt-16'>
-          <p className="text-white-400">
+          <p>
             <strong>Hoppsan!</strong> Trycket har varit högre än väntat de senaste dagarna. 😮‍💨 Eftersom sidan inte är vinstdrivande finns begränsningar på serverkapaciteten som nollställs varje månad. Om du ser detta har gränsen troligtvis redan nåtts för denna månad. <strong>Välkommen tillbaka nästa månad.</strong>
           </p>
-          <h1 className="text-center mt-16 text-white-400 text-2xl font-bold">
+          <p className="text-center mt-16 text-2xl font-bold">
             Öppnar igen om: <br></br> {timeRemaining}
-          </h1>
+          </p>
         </div>
       ) : (
         <div className="items-left w-full flex flex-col">

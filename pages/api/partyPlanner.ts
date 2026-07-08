@@ -10,14 +10,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { guests, budget, eventType, duration, preferences = [] } = req.body;
-    
-    if (!guests || !budget || !eventType || !duration) {
+    const { guests, budget, eventType, duration, preferences = [] } = req.body ?? {};
+
+    if (!guests || !budget || !eventType || !duration || !Array.isArray(preferences)) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
-    
-    const prompt = `Jag planerar ${eventType} för ${guests} personer som kommer att pågå i ungefär ${duration} timmar.
-    Min budget för drycker är ${budget} SEK. Preferenser att ta hänsyn till: ${preferences.join(', ')}.
+
+    // Coerce and clamp numeric inputs so the prompt can't be fed nonsense
+    const guestCount = Math.min(Math.max(parseInt(String(guests), 10) || 1, 1), 1000);
+    const budgetSek = Math.min(Math.max(parseInt(String(budget), 10) || 100, 100), 1000000);
+
+    const prompt = `Jag planerar ${eventType} för ${guestCount} personer som kommer att pågå i ungefär ${duration} timmar.
+    Min budget för drycker är ${budgetSek} SEK. Preferenser att ta hänsyn till: ${preferences.join(', ')}.
 
     Skapa en inköpslista från Systembolaget med specifika produkter, kvantiteter, och förklara varför varje produkt valdes.
     Fokusera på produkter med högt APK-värde (alkohol per krona) samtidigt som kvaliteten bibehålls och preferenserna beaktas.

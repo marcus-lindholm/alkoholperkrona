@@ -61,7 +61,9 @@ const Settings = () => {
   return (
     <div className={isDarkMode ? 'dark' : ''}>
       <Head>
-        <title>APKrona.se - Inställningar</title>
+        <title>Inställningar | APKrona.se</title>
+        <meta name="description" content="Anpassa APKrona.se – mörkt läge, detaljerad produktinformation, historisk data och glutenfritt filter." />
+        <link rel="canonical" href="https://www.apkrona.se/settings" />
       </Head>
       <Navbar
         isDarkMode={isDarkMode}

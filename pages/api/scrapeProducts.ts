@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { sendEmail } from '../../lib/emailService';
 import axios from 'axios';
+import prisma from '../../lib/prisma';
 
-const prisma = new PrismaClient();
 let allFetchedProducts: string[] = [];
 
 export default async function handler(req: any, res: any) {

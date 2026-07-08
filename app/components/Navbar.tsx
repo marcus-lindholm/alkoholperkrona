@@ -36,7 +36,7 @@ const Navbar = ({ isDarkMode, handleThemeToggle }: NavbarProps) => {
           height={18}
           className="object-contain sm:w-[25px] sm:h-[25px]"
         />
-        <h1 className="text-base sm:text-2xl font-bold ml-1.5 sm:ml-2">APKrona.se</h1>
+        <span className="text-base sm:text-2xl font-bold ml-1.5 sm:ml-2">APKrona.se</span>
       </Link>
       {handleThemeToggle && (
         <div className="flex items-center">

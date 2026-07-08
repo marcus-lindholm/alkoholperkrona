@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
@@ -58,12 +58,11 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-  other: {
-    'theme-color': '#ffffff',
-  },
-  verification: {
-    google: 'google-site-verification-code-here', // Replace with your actual Google Search Console verification code
-  },
+  manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0ea5e9',
 };
 
 export default function RootLayout({
@@ -84,34 +83,40 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
           `}
         </Script>
-        {/* JSON-LD Structured Data */}
-        <Script id="json-ld" type="application/ld+json" strategy="beforeInteractive">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": "APKrona.se",
-            "url": "https://www.apkrona.se",
-            "description": "Sveriges bästa APK-jämförare för Systembolaget. Hitta mest alkohol per krona.",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://www.apkrona.se?searchQuery={search_term_string}"
-              },
-              "query-input": "required name=search_term_string"
-            }
-          })}
-        </Script>
-        <Script id="organization-ld" type="application/ld+json" strategy="beforeInteractive">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "APKrona.se",
-            "url": "https://www.apkrona.se",
-            "logo": "https://www.apkrona.se/favicon.ico",
-            "sameAs": []
-          })}
-        </Script>
+        {/* JSON-LD Structured Data — plain script tags so crawlers see them in the initial HTML */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "APKrona.se",
+              "url": "https://www.apkrona.se",
+              "description": "Sveriges bästa APK-jämförare för Systembolaget. Hitta mest alkohol per krona.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://www.apkrona.se?searchQuery={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "APKrona.se",
+              "url": "https://www.apkrona.se",
+              "logo": "https://www.apkrona.se/beer_emoji.png",
+              "sameAs": []
+            }),
+          }}
+        />
       </body>
     </html>
   );

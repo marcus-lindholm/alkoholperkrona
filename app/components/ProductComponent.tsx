@@ -35,6 +35,9 @@ type ProductComponentProps = {
 
 const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo, sortCriteria, sortOrder, setSortCriteria, setSortOrder }: ProductComponentProps) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+  // Products created after this cutoff get the "Nyhet" badge (stable per mount)
+  // eslint-disable-next-line react-hooks/purity -- Date.now is intentional: the badge is time-based
+  const newProductCutoff = React.useMemo(() => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), []);
   const handleSort = (criteria: string) => {
     if (sortCriteria === criteria) {
       setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
@@ -110,7 +113,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
         }
 
         // Check if the product is new (created within the last month)
-        const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const isNewProduct = new Date(product.createdAt) > newProductCutoff;
 
         const priceFormatted = Number.isInteger(product.price) ? product.price.toString() : product.price.toFixed(2);
 

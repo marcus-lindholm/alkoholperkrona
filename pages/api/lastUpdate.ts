@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { setCorsHeaders } from '../../lib/cors';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma';
 
 export async function getLastUpdatedDate(): Promise<string | null> {
   try {
@@ -23,8 +21,6 @@ export async function getLastUpdatedDate(): Promise<string | null> {
   } catch (error) {
     console.error('Error fetching the latest updated date:', error);
     return null;
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -32,5 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (setCorsHeaders(req, res)) return;
 
   const lastUpdatedDate = await getLastUpdatedDate();
+  res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate');
   res.status(200).json({ lastUpdated: lastUpdatedDate });
 }

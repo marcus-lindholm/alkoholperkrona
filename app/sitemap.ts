@@ -32,10 +32,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/ai/food-pairings`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/settings`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/integrity-policy`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.3,
     },
   ]
 }

@@ -52,7 +52,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   };
 
   const fetchProducts = useCallback(async (glutenFree: boolean) => {
-    if (loading || isFetchingRef.current) return;
+    if (isFetchingRef.current) return;
     isFetchingRef.current = true;
     setLoading(true);
     console.log('Fetching products...');
@@ -72,7 +72,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       setFetchCount(prevCount => prevCount + 1);
       isFetchingRef.current = false;
     }
-  }, []); // Remove loading dependency since we use isFetchingRef
+  }, []); // isFetchingRef guards against concurrent fetches
 
   const handleScroll = useCallback(() => {
     setUserHasScrolled(true);
@@ -101,7 +101,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     const glutenFreePreference = localStorage.getItem('isGlutenFree') === 'true';
     setIsGlutenFree(glutenFreePreference);
     fetchProducts(glutenFreePreference);
-  }, []); // Empty dependency array - only run once on mount
+  }, [fetchProducts]); // fetchProducts is stable; hasInitializedRef guards re-runs
 
   // Touch handlers to limit each swipe to exactly one product
   const handleTouchStart = useCallback((e: TouchEvent) => {

@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../lib/prisma';
 
-const prisma = new PrismaClient();
 let isRunning = false;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -111,6 +110,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: "Error updating rankings." });
   } finally {
     isRunning = false;
-    await prisma.$disconnect();
   }
 }

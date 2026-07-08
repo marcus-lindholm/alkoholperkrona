@@ -23,6 +23,9 @@ type ProductType = {
 
 const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDetailedInfo }: { products: ProductType[], isDarkMode: boolean, isBeastMode: boolean, showDetailedInfo: boolean }) => {
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+  // Products created after this cutoff get the "Nyhet" badge (stable per mount)
+  // eslint-disable-next-line react-hooks/purity -- Date.now is intentional: the badge is time-based
+  const newProductCutoff = React.useMemo(() => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), []);
 
   return (
     <div className={`w-full overflow-x-hidden ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
@@ -65,7 +68,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
             }
           }
         // Check if the product is new (created within the last month)
-        const isNewProduct = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const isNewProduct = new Date(product.createdAt) > newProductCutoff;
 
         const priceFormatted = Number.isInteger(product.price) ? product.price.toString() : product.price.toFixed(2);
 

@@ -12,9 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { foodType, dishDescription, mealType, preferences } = req.body;
+  const { foodType, dishDescription, mealType, preferences = [] } = req.body ?? {};
 
-  if (!foodType || !dishDescription) {
+  if (!foodType || !dishDescription || !Array.isArray(preferences)) {
     return res.status(400).json({ error: 'Saknade parametrar' });
   }
 

@@ -9,7 +9,6 @@ import Navbar from '../../app/components/Navbar';
 import MobileNav from '../../app/components/MobileNav';
 import FooterComponent from '../../app/components/FooterComponent';
 import { getApiBaseUrl } from '../../lib/api';
-import 'tailwindcss/tailwind.css';
 
 interface Pairing {
   productName: string;
