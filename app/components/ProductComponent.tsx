@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Tooltip } from '@nextui-org/react';
 import RankingHistoryChart from './RankingHistoryChart';
 import translateType from './TranslateType';
+import { productUrl } from '../../lib/api';
 
 type ProductType = {
   id: string;
@@ -126,7 +127,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
         return (
           <React.Fragment key={index}>
             <tr
-              onClick={() => window.open(product.url, '_blank', 'noopener,noreferrer')}
+              onClick={() => window.open(productUrl(product.url), '_blank', 'noopener,noreferrer')}
               className={`cursor-pointer transition-all duration-200 hover:shadow-[inset_0_0_0_2px_rgba(56,189,248,0.7),0_0_12px_rgba(56,189,248,0.4)] ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} ${index % 2 === 0 ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-50') : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}
             >
               <td className={`px-4 py-2 border-b whitespace-nowrap overflow-hidden ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
@@ -144,7 +145,7 @@ const ProductComponent = ({ products = [], isDarkMode, isBeastMode, showDetailed
               </td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>{product.apk}</td>
               <td className={`px-4 py-2 border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer" className="hover:underline">
                   <strong>{product.brand} <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="xs" /></strong><br/>
                   {showDetailedInfo && <span className='text-sm opacity-85'>{product.name}</span>}
                 </a>

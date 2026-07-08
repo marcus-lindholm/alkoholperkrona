@@ -7,7 +7,7 @@ import Navbar from '@/app/components/Navbar';
 import Styles from './explore.module.css';
 import Head from 'next/head';
 import Image from 'next/image';
-import { getApiBaseUrl } from '../lib/api';
+import { getApiBaseUrl, productUrl } from '../lib/api';
 
 type ProductType = {
   id: string;
@@ -253,7 +253,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
               <div key={product.id} className={`w-full flex flex-col items-center justify-start sm:justify-center p-4 pt-20 sm:pt-0 ${Styles.reel} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
                 <div className={`w-full max-w-md p-4 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
                   <div className="flex justify-between items-start mb-4">
-                    <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer" className="hover:underline">
                       <div className="text-2xl text-center">
                         {product.brand}
                         <span className="ml-2"><strong>{product.name}</strong></span>
@@ -261,7 +261,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
                     </a>
                   </div>                  <div className="flex flex-col items-center">
                     {product.img && (
-                      <a href={product.url} target="_blank" rel="noopener noreferrer">
+                      <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer">
                         <Image 
                           src={product.img.replace('/300/', '/200/')} 
                           alt={product.brand} 

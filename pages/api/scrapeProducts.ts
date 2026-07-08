@@ -102,8 +102,9 @@ function formatProduct(apiProduct: any) {
     imgUrl = `https://product-cdn.systembolaget.se/productimages/${apiProduct.imageModules.productId}/${apiProduct.imageModules.productId}_400.webp`;
   }
   
-  // Create URL to Systembolaget
-  const url = `https://systembolaget.se/${apiProduct.productNumber}`;
+  // Create URL to Systembolaget. Must use www — the apex domain has an invalid
+  // TLS cert. www 308-redirects to the full product page.
+  const url = `https://www.systembolaget.se/${apiProduct.productNumber}`;
   
   // Calculate metrics
   const alcohol = apiProduct.alcoholPercentage || 0;

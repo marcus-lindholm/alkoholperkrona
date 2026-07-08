@@ -3,6 +3,7 @@ import { faArrowDown, faArrowUp, faArrowUpRightFromSquare, faChevronUp, faChevro
 import React, { useState } from 'react';
 import RankingHistoryChart from './RankingHistoryChart';
 import translateType from './TranslateType';
+import { productUrl } from '../../lib/api';
 
 type ProductType = {
   id: string;
@@ -84,7 +85,7 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
             className={`p-4 mb-4 border rounded overflow-hidden transition-all duration-200 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white'}`}
           >
             <div className="flex justify-between items-center mb-2">
-              <a href={product.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+              <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 <div className="text-xl">
                   {rankingChange === 'increased' && <FontAwesomeIcon icon={faArrowUp} className="text-green-500 mr-2" size="xs" title="Högre placering än tidigare" />}
                   {rankingChange === 'decreased' && <FontAwesomeIcon icon={faArrowDown} className="text-red-500 mr-2" size="xs" title="Lägre placering än tidigare" />}
@@ -105,14 +106,14 @@ const ProductComponentMobile = ({ products = [], isDarkMode, isBeastMode, showDe
                   <span className="text-medium">{product.vpk.toFixed(3)}</span>
                 </div>
                 <div className="mb-1">
-                  <a href={product.url} target="_blank" rel="noopener noreferrer">
+                  <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer">
                     <span className="text-2xl font-bold hover:underline">{priceFormatted} kr</span>
                   </a>
                 </div>
               </div>
               <div className='items-right text-right'>
                 <div className="mb-2 whitespace-nowrap">
-                  <a href={product.url} target="_blank" rel="noopener noreferrer">
+                  <a href={productUrl(product.url)} target="_blank" rel="noopener noreferrer">
                     <span
                       className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-sm transition-colors"
                       style={{
