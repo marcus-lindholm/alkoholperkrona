@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
     const prompt = `Du är en expert på mat- och dryckespairings från Systembolaget i Sverige. 
 

@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     Svara på svenska.`;
     
-    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-3-flash-preview:generateContent', {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
