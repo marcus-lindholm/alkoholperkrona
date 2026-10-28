@@ -32,7 +32,6 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
-  const [fetchCount, setFetchCount] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [hasAutoScrolled, setHasAutoScrolled] = useState(0);
   const [userHasScrolled, setUserHasScrolled] = useState(false);
@@ -42,6 +41,19 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
   const hasInitializedRef = useRef(false);
   const touchStartY = useRef<number | null>(null);
   const isScrolling = useRef(false);
+  const productCountRef = useRef(0);
+  const hasMoreRef = useRef(true);
+
+  // Height of one reel, measured from the DOM. The reels are sized with CSS
+  // (100vh), which on mobile browsers is taller than window.innerHeight while
+  // the address bar is visible. Using innerHeight for the scroll math made every
+  // swipe drift a little further from the real snap points until scroll-snap
+  // pulled the container back to the current reel and swiping stopped working.
+  const getReelHeight = useCallback(() => {
+    const container = reelsContainerRef.current;
+    const firstReel = container?.firstElementChild as HTMLElement | null;
+    return firstReel?.offsetHeight || container?.clientHeight || window.innerHeight;
+  }, []);
   
   const handleThemeToggle = () => {
     setIsDarkMode(prevMode => {
@@ -63,13 +75,17 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       });
 
       const response = await fetch(`${getApiBaseUrl()}/api/products?${params.toString()}`);
-      const data = await response.json();
-      setProducts((prevProducts) => [...prevProducts, ...data]);
+      const data: ProductType[] = await response.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        hasMoreRef.current = false;
+      } else {
+        productCountRef.current += data.length;
+        setProducts((prevProducts) => [...prevProducts, ...data]);
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
-      setFetchCount(prevCount => prevCount + 1);
       isFetchingRef.current = false;
     }
   }, []); // isFetchingRef guards against concurrent fetches
@@ -79,15 +95,16 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
 
     if (reelsContainerRef.current) {
       const scrollTop = reelsContainerRef.current.scrollTop;
-      const screenHeight = window.innerHeight;
-      const currentIndex = Math.floor((scrollTop + screenHeight) / screenHeight);
+      const reelHeight = getReelHeight();
+      const currentIndex = Math.round(scrollTop / reelHeight);
       setCurrentProductIndex(currentIndex);
-  
-      if (currentIndex >= (20 * fetchCount) - 3) {
+
+      // Load the next batch a few products before the end of the loaded list
+      if (hasMoreRef.current && currentIndex >= productCountRef.current - 4) {
         fetchProducts(isGlutenFree);
       }
     }
-  }, [fetchCount, isGlutenFree, fetchProducts]);
+  }, [isGlutenFree, fetchProducts, getReelHeight]);
 
   useEffect(() => {
     if (hasInitializedRef.current) return; // Prevent multiple initializations
@@ -123,14 +140,15 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     const threshold = 30; // minimum swipe distance in px
 
     if (Math.abs(deltaY) > threshold) {
-      const screenHeight = window.innerHeight;
-      const currentSnap = Math.round(reelsContainerRef.current.scrollTop / screenHeight);
+      const reelHeight = getReelHeight();
+      const currentSnap = Math.round(reelsContainerRef.current.scrollTop / reelHeight);
       const targetSnap = deltaY > 0 ? currentSnap + 1 : currentSnap - 1;
-      const clampedSnap = Math.max(0, targetSnap);
+      const lastSnap = Math.max(0, productCountRef.current - 1);
+      const clampedSnap = Math.min(Math.max(0, targetSnap), lastSnap);
 
       isScrolling.current = true;
       reelsContainerRef.current.scrollTo({
-        top: clampedSnap * screenHeight,
+        top: clampedSnap * reelHeight,
         behavior: 'smooth',
       });
 
@@ -141,7 +159,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
     }
 
     touchStartY.current = null;
-  }, []);
+  }, [getReelHeight]);
 
   useEffect(() => {
     const reelsContainer = reelsContainerRef.current;
@@ -167,7 +185,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
       const timeout = setTimeout(() => {
         const interval = setInterval(() => {
           setScrollPosition(prevPosition => {
-            const screenHeight = window.innerHeight;
+            const screenHeight = getReelHeight();
             const maxScroll = reelsContainerRef.current?.scrollHeight ? reelsContainerRef.current.scrollHeight - screenHeight : 0;
             setHasAutoScrolled(prevScrolled => {
               if (prevScrolled >= 1) {
@@ -191,7 +209,7 @@ const Explore = ({ showDetailedInfo }: { showDetailedInfo: boolean }) => {
 
       return () => clearTimeout(timeout);
     }
-  }, [userHasScrolled]);
+  }, [userHasScrolled, getReelHeight]);
 
   useEffect(() => {
     if (reelsContainerRef.current) {
